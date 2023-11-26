@@ -1,56 +1,65 @@
-// src/database-integration/database-integration.service.spec.ts
+import { Test, TestingModule } from "@nestjs/testing";
+import { DatabaseIntegrationService } from "./database-integration.service";
+import { Repository } from "typeorm";
+import { Credential } from "./entities/credential.entity";
+import { getRepositoryToken } from "@nestjs/typeorm";
 
-import { Test, TestingModule } from '@nestjs/testing';
-import { DatabaseIntegrationService } from './database-integration.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Credential } from './entities/credential.entity';
-import { Repository } from 'typeorm';
-
-describe('DatabaseIntegrationService', () => {
+describe("DatabaseIntegrationService", () => {
   let service: DatabaseIntegrationService;
-  let credentialRepository: Repository<Credential>;
+  let mockCredentialRepository: Partial<Repository<Credential>>;
 
   beforeEach(async () => {
+    mockCredentialRepository = {
+      create: jest.fn().mockImplementation((dto) => dto),
+      save: jest
+        .fn()
+        .mockImplementation((credential) =>
+          Promise.resolve({ id: 1, ...credential })
+        ),
+      delete: jest
+        .fn()
+        .mockImplementation((id) => Promise.resolve({ affected: 1 })),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseIntegrationService,
         {
           provide: getRepositoryToken(Credential),
-          useValue: {
-            create: jest.fn(),
-            save: jest.fn(),
-          },
+          useValue: mockCredentialRepository,
         },
       ],
     }).compile();
 
     service = module.get<DatabaseIntegrationService>(
-      DatabaseIntegrationService,
-    );
-    credentialRepository = module.get<Repository<Credential>>(
-      getRepositoryToken(Credential),
+      DatabaseIntegrationService
     );
   });
 
-  it('should create a credential', async () => {
+  it("should create a new credential", async () => {
     const createCredentialDto = {
       userId: 1,
-      serviceNameId: 1,
-      credentialTypeId: 1,
-      data: {},
+      serviceName: "Google",
+      credentialType: "OAuth2",
+      data: { token: "abc" },
     };
-    const credential = new Credential();
-    Object.assign(credential, createCredentialDto);
 
-    jest.spyOn(credentialRepository, 'create').mockReturnValue(credential);
-    jest.spyOn(credentialRepository, 'save').mockResolvedValue(credential);
+    const result = await service.createCredential(createCredentialDto);
 
-    expect(await service.createCredential(createCredentialDto)).toEqual(
-      credential,
+    expect(mockCredentialRepository.create).toHaveBeenCalledWith(
+      createCredentialDto
     );
-    expect(credentialRepository.create).toHaveBeenCalledWith(
-      createCredentialDto,
+    expect(mockCredentialRepository.save).toHaveBeenCalledWith(
+      createCredentialDto
     );
-    expect(credentialRepository.save).toHaveBeenCalledWith(credential);
+    expect(result).toEqual({ id: 1, ...createCredentialDto });
+  });
+
+  it("should delete an existing credential", async () => {
+    const credentialId = 1;
+
+    await service.deleteCredential(credentialId);
+
+    expect(mockCredentialRepository.delete).toHaveBeenCalledWith(credentialId);
   });
 });

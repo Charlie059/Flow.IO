@@ -1,14 +1,6 @@
 // src/database-integration/entities/credential.entity.ts
 
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
-import { ServiceName } from './service-name.entity';
-import { CredentialType } from './credential-type.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 @Entity()
 export class Credential {
@@ -18,20 +10,21 @@ export class Credential {
   @Column()
   userId: number;
 
-  @ManyToOne(() => ServiceName)
-  @JoinColumn({ name: 'service_name_id' })
-  serviceName: ServiceName;
+  @Column()
+  serviceName: string;
 
-  @ManyToOne(() => CredentialType)
-  @JoinColumn({ name: 'credential_type_id' })
-  credentialType: CredentialType;
+  @Column("integer", { array: true })
+  nodeAccessIds: number[];
 
-  @Column('json')
-  data: any;
+  @Column()
+  credentialType: string;
 
-  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  @Column("json")
+  metaData: any;
+
+  @Column({ default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ default: () => "CURRENT_TIMESTAMP" })
   updatedAt: Date;
 }

@@ -1,59 +1,28 @@
 // src/database-integration/database-integration.service.ts
 
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Credential } from './entities/credential.entity';
-import { CreateCredentialDto } from './dto/create-credential.dto';
-import { NotFoundException } from '@nestjs/common';
-import { ServiceName } from './entities/service-name.entity';
-import { CredentialType } from './entities/credential-type.entity';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Credential } from "./entities/credential.entity";
+import { CreateCredentialDto } from "./dto/create-credential.dto";
+import { NotFoundException } from "@nestjs/common";
 
 @Injectable()
 export class DatabaseIntegrationService {
   constructor(
     @InjectRepository(Credential)
-    private credentialRepository: Repository<Credential>,
-    @InjectRepository(ServiceName)
-    private serviceNameRepository: Repository<ServiceName>,
-    @InjectRepository(CredentialType)
-    private credentialTypeRepository: Repository<CredentialType>,
+    private credentialRepository: Repository<Credential>
   ) {}
 
   async createCredential(
-    createCredentialDto: CreateCredentialDto,
+    createCredentialDto: CreateCredentialDto
   ): Promise<Credential> {
-    const serviceName = await this.serviceNameRepository.findOne({
-      where: {
-        id: createCredentialDto.serviceNameId,
-      },
-    });
-
-    if (!serviceName) {
-      throw new NotFoundException(
-        `ServiceName with ID "${createCredentialDto.serviceNameId}" not found`,
-      );
-    }
-
-    const credentialType = await this.credentialTypeRepository.findOne({
-      where: {
-        id: createCredentialDto.credentialTypeId,
-      },
-    });
-
-    if (!credentialType) {
-      throw new NotFoundException(
-        `CredentialType with ID "${createCredentialDto.credentialTypeId}" not found`,
-      );
-    }
-
-    const newCredential = this.credentialRepository.create({
-      userId: createCredentialDto.userId,
-      serviceName,
-      credentialType,
-      data: createCredentialDto.data,
-    });
-
+    Logger.log(
+      "Received create_credential db request: ",
+      createCredentialDto,
+      "AppController"
+    );
+    const newCredential = this.credentialRepository.create(createCredentialDto);
     return await this.credentialRepository.save(newCredential);
   }
 
