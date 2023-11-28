@@ -5,5 +5,5 @@ export class CreateCredentialDto {
   serviceName: string;
   nodeAccessIds: number[];
   credentialType: string;
-  metaData: JSON;
+  encryptedCredential: string;
 }

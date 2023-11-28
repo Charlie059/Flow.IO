@@ -19,8 +19,8 @@ export class Credential {
   @Column()
   credentialType: string;
 
-  @Column("json")
-  metaData: any;
+  @Column()
+  encryptedCredential: string;
 
   @Column({ default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;

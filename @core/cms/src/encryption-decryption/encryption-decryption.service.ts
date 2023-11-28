@@ -1,39 +1,105 @@
-import { Injectable } from "@nestjs/common";
-import * as crypto from "crypto";
+// src/encryption-decryption/encryption-decryption.service.ts
+import { Injectable, Logger } from "@nestjs/common";
+import * as vault from "node-vault";
 
 @Injectable()
 export class EncryptionDecryptionService {
-  private readonly algorithm = "aes-256-ctr";
-  private readonly secretKey: string = process.env.SECRET_KEY;
-  private readonly iv: string = process.env.IV;
+  private vaultClient: any;
 
   constructor() {
-    this.iv = this.iv.slice(16);
+    try {
+      this.vaultClient = vault({
+        apiVersion: "v1",
+        endpoint: "http://host.docker.internal:8200",
+        token: "myroot",
+      });
+    } catch (error) {
+      Logger.error(error);
+      throw error;
+    }
   }
 
-  encrypt(text: string): string {
-    const cipher = crypto.createCipheriv(
-      this.algorithm,
-      this.secretKey,
-      this.iv
-    );
-    const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+  /**
+   * Encrypt data using Vault Transit engine
+   * @param credentialId
+   * @param data
+   * @returns encrypted data
+   */
+  async encryptData(credentialId: string, data: any): Promise<string> {
+    try {
+      const base64data = Buffer.from(data).toString("base64");
+      Logger.log(base64data, "EncryptionDecryptionService");
+      const result = await this.vaultClient.write("transit/encrypt/key", {
+        plaintext: base64data,
+      });
 
-    return encrypted.toString("hex");
+      Logger.log(result.data.ciphertext, "EncryptionDecryptionService");
+      return result.data.ciphertext;
+    } catch (error: any) {
+      Logger.error(error);
+      throw error;
+    }
   }
 
-  decrypt(text: string): string {
-    const encryptedText = Buffer.from(text, "hex");
-    const decipher = crypto.createDecipheriv(
-      this.algorithm,
-      this.secretKey,
-      this.iv
-    );
-    const decrypted = Buffer.concat([
-      decipher.update(encryptedText),
-      decipher.final(),
-    ]);
+  /**
+   * Decrypt data using Vault Transit engine
+   * @param key
+   * @param ciphertext
+   * @returns decrypted data
+   */
+  async decryptData(key, ciphertext): Promise<string> {
+    try {
+      const result = await this.vaultClient.write(
+        `${process.env.VAULT_TRANSIT_PATH}/decrypt/${key}`,
+        { ciphertext }
+      );
+      return Buffer.from(result.data.plaintext, "base64").toString();
+    } catch (error) {
+      Logger.error(error);
+      throw error;
+    }
+  }
 
-    return decrypted.toString();
+  /**
+   * Store encrypted data in Vault KV store
+   * @param path
+   * @param encryptedData
+   */
+  async storeData(path: string, encryptedData: any): Promise<void> {
+    try {
+      await this.vaultClient.write(path, { encrypted_value: encryptedData });
+    } catch (error) {
+      Logger.error(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieve encrypted data from Vault KV store
+   * @param path
+   */
+  async retrieveData(path: string): Promise<string> {
+    try {
+      const result = await this.vaultClient.read(path);
+      return result.data.encrypted_value;
+    } catch (error) {
+      Logger.error(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Rotate key in Vault Transit engine
+   * @param keyName
+   */
+  async rotateKey(keyName: string): Promise<void> {
+    try {
+      await this.vaultClient.write(
+        `${process.env.VAULT_TRANSIT_PATH}/keys/${keyName}/rotate`
+      );
+    } catch (error) {
+      Logger.error(error);
+      throw error;
+    }
   }
 }

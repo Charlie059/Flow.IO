@@ -41,7 +41,8 @@ describe("DatabaseIntegrationService", () => {
       userId: 1,
       serviceName: "Google",
       credentialType: "OAuth2",
-      data: { token: "abc" },
+      encryptedCredential: "V2 secret/google",
+      nodeAccessIds: [1, 2, 3],
     };
 
     const result = await service.createCredential(createCredentialDto);
