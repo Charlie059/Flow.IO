@@ -22,9 +22,25 @@ export class AppController {
 
   @MessagePattern("encrypt_data")
   async handleEncryptData(message: any) {
-    Logger.log("Received data:", message, "AppController");
-    const data = this.encryptionDecryptionService.encryptData("123", "pwd");
-    // Logger.log("Encrypted data:", data, "AppController");
-    return data;
+    const encrypt_data =
+      await this.encryptionDecryptionService.encryptData("data");
+    console.log("encrypt_data", encrypt_data);
+
+    // Store the data to the KV store
+    const credentialId = "111";
+    await this.encryptionDecryptionService.storeData(
+      credentialId,
+      encrypt_data
+    );
+
+    // Retrieve the data from the KV store
+    const data =
+      await this.encryptionDecryptionService.retrieveData(credentialId);
+
+    // Decrypt the data
+    const decrypt_data =
+      await this.encryptionDecryptionService.decryptData(data);
+
+    return encrypt_data;
   }
 }

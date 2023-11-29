@@ -1,17 +1,17 @@
 // src/encryption-decryption/encryption-decryption.service.ts
 import { Injectable, Logger } from "@nestjs/common";
-import * as vault from "node-vault";
+import NodeVault, * as vault from "node-vault";
 
 @Injectable()
 export class EncryptionDecryptionService {
-  private vaultClient: any;
+  private vaultClient: NodeVault.client;
 
   constructor() {
     try {
       this.vaultClient = vault({
         apiVersion: "v1",
-        endpoint: "http://host.docker.internal:8200",
-        token: "myroot",
+        endpoint: process.env.VAULT_ADDR,
+        token: process.env.VAULT_TOKEN,
       });
     } catch (error) {
       Logger.error(error);
@@ -25,15 +25,16 @@ export class EncryptionDecryptionService {
    * @param data
    * @returns encrypted data
    */
-  async encryptData(credentialId: string, data: any): Promise<string> {
+  async encryptData(data: any): Promise<string> {
     try {
       const base64data = Buffer.from(data).toString("base64");
-      Logger.log(base64data, "EncryptionDecryptionService");
-      const result = await this.vaultClient.write("transit/encrypt/key", {
-        plaintext: base64data,
-      });
+      const result = await this.vaultClient.write(
+        process.env.VAULT_TRANSIT_ENCRYPT_PATH,
+        {
+          plaintext: base64data,
+        }
+      );
 
-      Logger.log(result.data.ciphertext, "EncryptionDecryptionService");
       return result.data.ciphertext;
     } catch (error: any) {
       Logger.error(error);
@@ -43,15 +44,14 @@ export class EncryptionDecryptionService {
 
   /**
    * Decrypt data using Vault Transit engine
-   * @param key
-   * @param ciphertext
+   * @param cipherText
    * @returns decrypted data
    */
-  async decryptData(key, ciphertext): Promise<string> {
+  async decryptData(cipherText: string): Promise<string> {
     try {
       const result = await this.vaultClient.write(
-        `${process.env.VAULT_TRANSIT_PATH}/decrypt/${key}`,
-        { ciphertext }
+        `${process.env.VAULT_TRANSIT_DECRYPT_PATH}`,
+        { ciphertext: cipherText }
       );
       return Buffer.from(result.data.plaintext, "base64").toString();
     } catch (error) {
@@ -62,12 +62,17 @@ export class EncryptionDecryptionService {
 
   /**
    * Store encrypted data in Vault KV store
-   * @param path
-   * @param encryptedData
+   * @param nodeID - unique identifier for the node
+   * @param encryptedData - encrypted credentials
    */
-  async storeData(path: string, encryptedData: any): Promise<void> {
+  async storeData(credentialId: string, encryptedData: string): Promise<void> {
     try {
-      await this.vaultClient.write(path, { encrypted_value: encryptedData });
+      const path = `${process.env.VAULT_KV_PATH}/data/${credentialId}`;
+      await this.vaultClient.write(path, {
+        data: {
+          encrypted_value: encryptedData,
+        },
+      });
     } catch (error) {
       Logger.error(error);
       throw error;
@@ -78,25 +83,11 @@ export class EncryptionDecryptionService {
    * Retrieve encrypted data from Vault KV store
    * @param path
    */
-  async retrieveData(path: string): Promise<string> {
+  async retrieveData(credentialId: string): Promise<string> {
     try {
+      const path = `${process.env.VAULT_KV_PATH}/data/${credentialId}`;
       const result = await this.vaultClient.read(path);
-      return result.data.encrypted_value;
-    } catch (error) {
-      Logger.error(error);
-      throw error;
-    }
-  }
-
-  /**
-   * Rotate key in Vault Transit engine
-   * @param keyName
-   */
-  async rotateKey(keyName: string): Promise<void> {
-    try {
-      await this.vaultClient.write(
-        `${process.env.VAULT_TRANSIT_PATH}/keys/${keyName}/rotate`
-      );
+      return result.data.data.encrypted_value;
     } catch (error) {
       Logger.error(error);
       throw error;
