@@ -5,12 +5,14 @@ import { DatabaseIntegrationService } from "./database-integration/database-inte
 import { EncryptionDecryptionService } from "./encryption-decryption/encryption-decryption.service";
 import { CreateCredentialDto } from "./database-integration/dto/create-credential.dto";
 import { ValidateCredentialPipe } from "./common/pipes/validate-credential.pipe";
+import { ExternalAuthIntegrationService } from "./external-auth-integration/services/external-auth-integration.service";
 
 @Controller()
 export class AppController {
   constructor(
     private databaseIntegrationService: DatabaseIntegrationService,
-    private encryptionDecryptionService: EncryptionDecryptionService
+    private encryptionDecryptionService: EncryptionDecryptionService,
+    private externalAuthIntegrationService: ExternalAuthIntegrationService
   ) {}
 
   @MessagePattern("create_credential")
@@ -42,5 +44,11 @@ export class AppController {
       await this.encryptionDecryptionService.decryptData(data);
 
     return encrypt_data;
+  }
+
+  @MessagePattern("oauth")
+  async handleOAuth(message: any) {
+    const url = this.externalAuthIntegrationService.authenticate("GOOGLE");
+    return url;
   }
 }

@@ -10,7 +10,10 @@ import { AppController } from "./app.controller";
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ".env",
+    }),
     DatabaseIntegrationModule,
     CredentialManagementModule,
     ExternalAuthIntegrationModule,
@@ -19,5 +22,6 @@ import { AppController } from "./app.controller";
     ApiDocumentationModule,
   ],
   controllers: [AppController],
+  providers: [],
 })
 export class AppModule {}
