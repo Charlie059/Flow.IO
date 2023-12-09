@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+  some-postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: flowio-authentication
+    ports:
+      - 5432:5432
+    networks:
+      - flowio-auth-net
+
+  authentication-service:
+    build: .
+    ports:
+      - 8080:8080
+    networks:
+      - flowio-auth-net
+
+
+
+networks:
+  flowio-auth-net:
