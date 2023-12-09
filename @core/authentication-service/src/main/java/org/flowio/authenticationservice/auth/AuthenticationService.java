@@ -30,7 +30,7 @@ public class AuthenticationService {
                 || request.getPassword() == null
                 ) {
             return AuthenticationResponse.builder()
-                .message("Firstname, lastname, login email and password must not be null")
+//                .message("Firstname, lastname, login email and password must not be null")
                 .build();
         }
 
