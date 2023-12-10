@@ -1,11 +1,13 @@
-package org.flowio.authenticationservice.auth;
+package org.flowio.authenticationservice.service;
 
 
 import lombok.RequiredArgsConstructor;
-import org.flowio.authenticationservice.Entities.LoginUser;
-import org.flowio.authenticationservice.Entities.LoginUserRepository;
-import org.flowio.authenticationservice.Entities.Role;
-import org.flowio.authenticationservice.config.JwtService;
+import org.flowio.authenticationservice.dto.AuthenticationRequest;
+import org.flowio.authenticationservice.dto.AuthenticationResponse;
+import org.flowio.authenticationservice.dto.RegisterRequest;
+import org.flowio.authenticationservice.model.LoginUser;
+import org.flowio.authenticationservice.repository.LoginUserRepository;
+import org.flowio.authenticationservice.model.Role;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;

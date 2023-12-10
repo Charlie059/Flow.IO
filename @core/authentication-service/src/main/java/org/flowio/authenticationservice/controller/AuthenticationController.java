@@ -1,6 +1,10 @@
-package org.flowio.authenticationservice.auth;
+package org.flowio.authenticationservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.flowio.authenticationservice.dto.AuthenticationRequest;
+import org.flowio.authenticationservice.dto.AuthenticationResponse;
+import org.flowio.authenticationservice.service.AuthenticationService;
+import org.flowio.authenticationservice.dto.RegisterRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -3,7 +3,7 @@ package org.flowio.authenticationservice.config;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.flowio.authenticationservice.Entities.LoginUserRepository;
+import org.flowio.authenticationservice.repository.LoginUserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

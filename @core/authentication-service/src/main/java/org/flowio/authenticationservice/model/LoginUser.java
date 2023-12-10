@@ -1,4 +1,4 @@
-package org.flowio.authenticationservice.Entities;
+package org.flowio.authenticationservice.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

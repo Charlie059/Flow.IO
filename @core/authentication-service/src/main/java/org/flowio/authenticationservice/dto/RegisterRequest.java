@@ -1,4 +1,4 @@
-package org.flowio.authenticationservice.auth;
+package org.flowio.authenticationservice.dto;
 
 
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package org.flowio.authenticationservice.config;
+package org.flowio.authenticationservice.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
