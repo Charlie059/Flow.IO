@@ -13,6 +13,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Stream;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -25,14 +27,15 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
 
-        if(
-                request.getFirstname() == null
-                || request.getLastname() == null
-                || request.getLoginEmail() == null
-                || request.getPassword() == null
-                ) {
+        if(Stream.of(
+                request.getFirstname(),
+                request.getLastname(),
+                request.getLoginEmail(),
+                request.getPassword()
+                )
+            .anyMatch(str -> str == null || str.isEmpty())) {
             return AuthenticationResponse.builder()
-                .message("Firstname, lastname, login email and password must not be null")
+                .message("Firstname, lastname, login email and password must not be null or empty.")
                 .build();
         }
 
@@ -44,9 +47,10 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .build();
         loginUserRepository.save(loginUser);
-        var jwtToken = jwtService.generateJwtToken(loginUser);
+        var accessToken = jwtService.generateJwtToken(loginUser);
         return AuthenticationResponse.builder()
-                .jwtToken(jwtToken)
+                .accessToken(accessToken)
+                .message("Successfully registered.")
                 .build();
     }
 
@@ -59,9 +63,10 @@ public class AuthenticationService {
         );
         var loginUser = loginUserRepository.findByLoginEmail(request.getLoginEmail())
                         .orElseThrow();
-        var jwtToken = jwtService.generateJwtToken(loginUser);
+        var accessToken = jwtService.generateJwtToken(loginUser);
         return AuthenticationResponse.builder()
-                .jwtToken(jwtToken)
+                .accessToken(accessToken)
+                .message("Successfully authenticated.")
                 .build();
     }
 }

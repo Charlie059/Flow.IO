@@ -47,7 +47,9 @@ Register a new user with the service.
 
   ```json
   {
-      "jwtToken": "abcdefg"
+      "refreshToken": "1234567",
+      "accessToken": "abcdefg".
+      "message": "Successfully registered."
   }
   ```
 
@@ -78,7 +80,9 @@ Authenticate a user and retrieve a JWT token.
 
   ```json
   {
-      "jwtToken": "abcdefg"
+      "refreshToken": "1234567",
+      "accessToken": "abcdefg".
+      "message": "Successfully authenticated."
   }
   ```
 
