@@ -6,8 +6,6 @@ import org.flowio.authenticationservice.dto.AuthenticationResponse;
 import org.flowio.authenticationservice.service.AuthenticationService;
 import org.flowio.authenticationservice.dto.RegisterRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,5 +30,26 @@ public class AuthenticationController {
             @RequestBody AuthenticationRequest request
     ) {
         return ResponseEntity.ok(service.authenticate(request));
+    }
+
+    @PostMapping("/get-access-token")
+    public ResponseEntity<AuthenticationResponse> getAccessToken(
+            @RequestBody AuthenticationRequest request
+    ) {
+        return ResponseEntity.ok(service.getAccessTokenUsingRefreshToken(request));
+    }
+
+    @PostMapping("/renew-refresh-token")
+    public ResponseEntity<AuthenticationResponse> renewRefreshToken(
+            @RequestBody AuthenticationRequest request
+    ) {
+        return ResponseEntity.ok(service.renewRefreshToken(request));
+    }
+
+    @PostMapping("/revoke-refresh-token")
+    public ResponseEntity<AuthenticationResponse> revokeRefreshToken(
+            @RequestBody AuthenticationRequest request
+    ) {
+        return ResponseEntity.ok(service.revokeRefreshToken(request));
     }
 }

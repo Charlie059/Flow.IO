@@ -29,20 +29,29 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateJwtToken(UserDetails userDetails){
-        return generateJwtToken(new HashMap<>(), userDetails);
+//    public String generateJwtToken(UserDetails userDetails){
+//        return generateJwtToken(new HashMap<>(), userDetails);
+//    }
+
+    public String generateJwtToken(
+            Map<String, Object> extraClaims,
+            int expirationIn,
+            UserDetails userDetails
+    ) {
+        return generateJwtToken(extraClaims, expirationIn, userDetails.getUsername());
     }
 
     public String generateJwtToken(
             Map<String, Object> extraClaims,
-            UserDetails userDetails
+            int expirationIn,
+            String username
     ) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60)) // an hour
+                .setExpiration(new Date(System.currentTimeMillis() + expirationIn)) // an hour
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -52,8 +61,18 @@ public class JwtService {
         return (username.equals((userDetails.getUsername())) && ! isTokenExpired(jwtToken));
     }
 
+    public boolean isTokenValid(String jwtToken) {
+        return ! isTokenExpired(jwtToken);
+    }
+
     private boolean isTokenExpired(String jwtToken) {
         return extractExpiration(jwtToken).before(new Date());
+    }
+
+
+    public String extractTokenType(String jwtToken) {
+        var tokenType = extractClaim(jwtToken, claims -> claims.get("tokenType"));
+        return tokenType.toString();
     }
 
     private Date extractExpiration(String jwtToken) {

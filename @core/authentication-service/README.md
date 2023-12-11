@@ -20,20 +20,8 @@ docker-compose up
 
 ### 1. Register
 
-Register a new user with the service.
-
-- **Endpoint:** `POST http://localhost:8080/api/v1/auth/register`
-
-- Request Body:
-
-  ```json
-  {
-      "firstname": "fname",
-      "lastname": "lname",
-      "loginEmail": "test@test.com",
-      "password": "1234"
-  }
-  ```
+Register a new user with the service,
+and retrieve an accessToken and a refreshToken.
 
 - Curl Command:
 
@@ -48,25 +36,15 @@ Register a new user with the service.
   ```json
   {
       "refreshToken": "1234567",
-      "accessToken": "abcdefg".
+      "accessToken": "abcdefg",
       "message": "Successfully registered."
   }
   ```
 
-### 2. Authenticate
+### 2. Authenticate with Email address and Password
 
-Authenticate a user and retrieve a JWT token.
-
-- **Endpoint:** `POST http://localhost:8080/api/v1/auth/authenticate`
-
-- Request Body:
-
-  ```json
-  {
-      "loginEmail": "test@test.com",
-      "password": "1234"
-  }
-  ```
+Authenticate a user with Email address and Password,
+and retrieve an access token and a refresh token.
 
 - Curl Command:
 
@@ -81,18 +59,82 @@ Authenticate a user and retrieve a JWT token.
   ```json
   {
       "refreshToken": "1234567",
-      "accessToken": "abcdefg".
+      "accessToken": "abcdefg",
       "message": "Successfully authenticated."
   }
   ```
 
-### 3. Refresh Access Token (TODO)
+### 3. Get Access Token
+
+Get a new AccessToken using RefreshToken, 
+it won't revoke the old AccessToken.
+
+- Curl Command:
+
+  ```bash
+  curl -X POST http://localhost:8080/api/v1/auth/get-access-token \
+       -H 'Content-Type: application/json' \
+       -d '{"refreshToken": "1234567"}'
+  ```
+
+- Typical Response:
+
+  ```json
+  {
+      "refreshToken": "null",
+      "accessToken": "bcdefgh",
+      "message": "Access token successfully generated."
+  }
+  ```
+
+### 4. Renew Refresh Token
+
+Get a new RefreshToken using RefreshToken,
+it will revoke the old RefreshToken.
 
 
+- Curl Command:
+
+  ```bash
+  curl -X POST http://localhost:8080/api/v1/auth/renew-refresh-token \
+       -H 'Content-Type: application/json' \
+       -d '{"refreshToken": "1234567"}'
+  ```
+
+- Typical Response:
+
+  ```json
+  {
+      "refreshToken": "2345678",
+      "accessToken": "null",
+      "message": "Refresh token successfully renewed."
+  }
+  ```
 
 
+### 5. Revoke Refresh Token (TODO)
 
-### 4. PingPong (Authenticated Endpoint)
+Revoke a RefreshToken by sending the token you want to revoke.
+
+- Curl Command:
+
+  ```bash
+  curl -X POST http://localhost:8080/api/v1/auth/revoke-refresh-token \
+       -H 'Content-Type: application/json' \
+       -d '{"refreshToken": "1234567"}'
+  ```
+
+- Typical Response:
+
+  ```json
+  {
+      "refreshToken": "null",
+      "accessToken": "null",
+      "message": "Successfully revoked."
+  }
+  ```
+
+### 6. PingPong (Authenticated Endpoint)
 
 Check the service status. Requires the user to be logged in.
 
