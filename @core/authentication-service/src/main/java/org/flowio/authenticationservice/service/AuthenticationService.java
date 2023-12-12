@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
@@ -27,6 +28,30 @@ public class AuthenticationService {
 
     private final int accessTokenExpirationTime = 1000 * 15; // 15 mins
     private final int refreshTokenExpirationTime = 1000 * 60 * 24; // 1 day
+
+    private String buildAccessToken(LoginUser loginUser) {
+        return buildAccessToken(loginUser.getLoginEmail());
+    }
+
+    private String buildAccessToken(String loginEmail) {
+            return jwtService.generateJwtToken(
+            new HashMap<>(){{ put("tokenType", "accessToken"); }},
+            accessTokenExpirationTime,
+            loginEmail
+            );
+    }
+
+    private String buildRefreshToken(LoginUser loginUser) {
+        return buildRefreshToken(loginUser.getLoginEmail());
+    }
+
+    private String buildRefreshToken(String loginEmail) {
+            return jwtService.generateJwtToken(
+            new HashMap<>(){{ put("tokenType", "refreshToken"); put("firstIat", new Date(System.currentTimeMillis())); }},
+            refreshTokenExpirationTime,
+            loginEmail
+            );
+    }
 
     public AuthenticationResponse register(RegisterRequest request) {
 
@@ -50,16 +75,8 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .build();
         loginUserRepository.save(loginUser);
-        var accessToken = jwtService.generateJwtToken(
-                        new HashMap<>(){{ put("tokenType", "accessToken"); }},
-                        accessTokenExpirationTime,
-                        loginUser
-                );
-        var refreshToken = jwtService.generateJwtToken(
-                        new HashMap<>(){{ put("tokenType", "refreshToken"); }},
-                        refreshTokenExpirationTime,
-                        loginUser
-                );
+        var accessToken = buildAccessToken(loginUser);
+        var refreshToken = buildRefreshToken(loginUser);
                 return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -76,16 +93,8 @@ public class AuthenticationService {
         );
         var loginUser = loginUserRepository.findByLoginEmail(request.getLoginEmail())
                         .orElseThrow();
-        var accessToken = jwtService.generateJwtToken(
-                        new HashMap<>(){{ put("tokenType", "accessToken"); }},
-                        accessTokenExpirationTime,
-                        loginUser
-                );
-        var refreshToken = jwtService.generateJwtToken(
-                        new HashMap<>(){{ put("tokenType", "refreshToken"); }},
-                        refreshTokenExpirationTime,
-                        loginUser
-                );
+        var accessToken = buildAccessToken(loginUser);
+        var refreshToken = buildRefreshToken(loginUser);
                 return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -100,13 +109,11 @@ public class AuthenticationService {
                     .message("Invalid refresh token.")
                     .build();
         }
-        var accessToken = jwtService.generateJwtToken(
-                        new HashMap<>(){{ put("tokenType", "accessToken"); }},
-                        accessTokenExpirationTime,
-                        jwtService.extractUserEmail(refreshToken)
-                );
+        var accessToken = buildAccessToken(jwtService.extractUserEmail(refreshToken));
+        var newRefreshToken = buildRefreshToken(jwtService.extractUserEmail(refreshToken));
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)
+                .refreshToken(newRefreshToken)
                 .message("Access token successfully generated.")
                 .build();
 
@@ -120,12 +127,7 @@ public class AuthenticationService {
                     .build();
         }
         revokeRefreshToken(request);
-
-        var newRefreshToken = jwtService.generateJwtToken(
-                new HashMap<>(){{ put("tokenType", "refreshToken"); }},
-                refreshTokenExpirationTime,
-                jwtService.extractUserEmail(refreshToken)
-        );
+        var newRefreshToken = buildRefreshToken(jwtService.extractUserEmail(refreshToken));
         return AuthenticationResponse.builder()
                 .refreshToken(newRefreshToken)
                 .message("Refresh token successfully renewed.")

@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -29,18 +28,6 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-//    public String generateJwtToken(UserDetails userDetails){
-//        return generateJwtToken(new HashMap<>(), userDetails);
-//    }
-
-    public String generateJwtToken(
-            Map<String, Object> extraClaims,
-            int expirationIn,
-            UserDetails userDetails
-    ) {
-        return generateJwtToken(extraClaims, expirationIn, userDetails.getUsername());
-    }
-
     public String generateJwtToken(
             Map<String, Object> extraClaims,
             int expirationIn,
@@ -54,11 +41,6 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + expirationIn)) // an hour
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    public boolean isTokenValid(String jwtToken, UserDetails userDetails) {
-        final String username = extractUserEmail(jwtToken);
-        return (username.equals((userDetails.getUsername())) && ! isTokenExpired(jwtToken));
     }
 
     public boolean isTokenValid(String jwtToken) {
