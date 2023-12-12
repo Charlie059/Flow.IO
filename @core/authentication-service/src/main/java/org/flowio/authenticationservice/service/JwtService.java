@@ -19,6 +19,7 @@ public class JwtService {
     private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970"; // todo use environment variable
 
 
+
     public String extractUserEmail(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
     }
@@ -30,14 +31,14 @@ public class JwtService {
 
     public String generateJwtToken(
             Map<String, Object> extraClaims,
-            int expirationIn,
+            long expirationIn,
             String username
     ) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
+//                .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationIn)) // an hour
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
@@ -57,8 +58,28 @@ public class JwtService {
         return tokenType.toString();
     }
 
+    public Long extractFirstIat(String jwtToken) {
+        var iat = extractClaim(jwtToken, claims -> claims.get("firstIat"));
+        if (iat != null) {
+            return Long.parseLong(iat.toString());
+        }
+        return null;
+    }
+
+    public Long extractThisIat(String jwtToken) {
+        var iat = extractClaim(jwtToken, claims -> claims.get("thisIat"));
+        if (iat != null) {
+            return Long.parseLong(iat.toString());
+        }
+        return null;
+    }
+
     private Date extractExpiration(String jwtToken) {
         return extractClaim(jwtToken, Claims::getExpiration);
+    }
+
+    public Date extractIssuedAt(String jwtToken) {
+        return extractClaim(jwtToken, Claims::getIssuedAt);
     }
 
     private Claims extractAllClaims(String token) {

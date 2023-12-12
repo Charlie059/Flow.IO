@@ -39,13 +39,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.getAccessTokenUsingRefreshToken(request));
     }
 
-    @PostMapping("/renew-refresh-token")
-    public ResponseEntity<AuthenticationResponse> renewRefreshToken(
-            @RequestBody AuthenticationRequest request
-    ) {
-        return ResponseEntity.ok(service.renewRefreshToken(request));
-    }
-
     @PostMapping("/revoke-refresh-token")
     public ResponseEntity<AuthenticationResponse> revokeRefreshToken(
             @RequestBody AuthenticationRequest request

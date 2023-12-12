@@ -11,10 +11,10 @@ This README provides information about a JWT token-based authentication service.
 ### Tech Stacks:
 
 1. Spring Boot 3.2.0
-2. JDK 17
+2. Java 17
 3. Spring Security
-4. PostgreSQL for User information
-5. Redis for Refresh Token
+4. PostgreSQL for user information
+5. Redis for refresh token
 
 ## How to Run
 ### 1. Set up Secret_Key environment (TODO)
@@ -102,32 +102,15 @@ it won't revoke the old AccessToken, but will revoke the one time RefreshToken.
   }
   ```
 
-### 4. Renew Refresh Token
-
-Get a new RefreshToken using RefreshToken,
-it will revoke the old RefreshToken.
-
-
-- Curl Command:
-
-  ```bash
-  curl -X POST http://localhost:8080/api/v1/auth/renew-refresh-token \
-       -H 'Content-Type: application/json' \
-       -d '{"refreshToken": "token"}'
-  ```
-
-- Typical Response:
-
   ```json
   {
-      "refreshToken": "new token",
-      "accessToken": "null",
-      "message": "Refresh token successfully renewed."
+      "refreshToken": null,
+      "accessToken": null,
+      "message": "The refresh token has exceeded the usage limit."
   }
   ```
 
-
-### 5. Revoke Refresh Token (TODO)
+### 4. Revoke Refresh Token
 
 Revoke a RefreshToken by sending the token you want to revoke.
 
@@ -145,11 +128,11 @@ Revoke a RefreshToken by sending the token you want to revoke.
   {
       "refreshToken": "null",
       "accessToken": "null",
-      "message": "Successfully revoked."
+      "message": "Revoked."
   }
   ```
 
-### 6. PingPong (Authenticated Endpoint)
+### 5. PingPong (Authenticated Endpoint)
 
 Check the service status. Requires the user to be logged in.
 

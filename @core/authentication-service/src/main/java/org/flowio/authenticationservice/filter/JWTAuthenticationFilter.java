@@ -1,4 +1,4 @@
-package org.flowio.authenticationservice.config;
+package org.flowio.authenticationservice.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

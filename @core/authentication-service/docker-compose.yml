@@ -11,6 +11,13 @@ services:
     networks:
       - flowio-auth-net
 
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    networks:
+      - flowio-auth-net
+
   authentication-service:
     build: .
     ports:

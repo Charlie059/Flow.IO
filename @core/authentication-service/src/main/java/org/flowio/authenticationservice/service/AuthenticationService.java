@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.stream.Stream;
@@ -26,8 +27,12 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    private final int accessTokenExpirationTime = 1000 * 15; // 15 mins
-    private final int refreshTokenExpirationTime = 1000 * 60 * 24; // 1 day
+    private final RedisService redisService;
+
+    private final long accessTokenExpirationTime = 1000 * 60 * 10; // 10 mins
+    private final long refreshTokenExpirationTime = 1000 * 60 * 60 * 24; // 1 day
+
+
 
     private String buildAccessToken(LoginUser loginUser) {
         return buildAccessToken(loginUser.getLoginEmail());
@@ -41,16 +46,32 @@ public class AuthenticationService {
             );
     }
 
-    private String buildRefreshToken(LoginUser loginUser) {
-        return buildRefreshToken(loginUser.getLoginEmail());
+    private String buildRefreshToken(LoginUser loginUser, String firstIat) {
+        return buildRefreshToken(loginUser.getLoginEmail(), firstIat);
     }
 
-    private String buildRefreshToken(String loginEmail) {
+    private String buildRefreshToken(String loginEmail, String firstIat) {
             return jwtService.generateJwtToken(
-            new HashMap<>(){{ put("tokenType", "refreshToken"); put("firstIat", new Date(System.currentTimeMillis())); }},
+            new HashMap<>(){{
+                put("tokenType", "refreshToken");
+                put("firstIat", firstIat);
+                put("thisIat", System.currentTimeMillis());
+            }},
             refreshTokenExpirationTime,
             loginEmail
             );
+    }
+
+    private void addRTokenLastUsage(String key){
+        redisService.addKeyValue(
+                key,
+                System.currentTimeMillis(),
+                refreshTokenExpirationTime
+        );
+    }
+
+    private Long getRTokenLastUsage(String key){
+        return redisService.getValue(key);
     }
 
     public AuthenticationResponse register(RegisterRequest request) {
@@ -76,7 +97,7 @@ public class AuthenticationService {
                 .build();
         loginUserRepository.save(loginUser);
         var accessToken = buildAccessToken(loginUser);
-        var refreshToken = buildRefreshToken(loginUser);
+        var refreshToken = buildRefreshToken(loginUser, String.valueOf(System.currentTimeMillis()));
                 return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -94,7 +115,7 @@ public class AuthenticationService {
         var loginUser = loginUserRepository.findByLoginEmail(request.getLoginEmail())
                         .orElseThrow();
         var accessToken = buildAccessToken(loginUser);
-        var refreshToken = buildRefreshToken(loginUser);
+        var refreshToken = buildRefreshToken(loginUser, String.valueOf(System.currentTimeMillis()));
                 return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -102,40 +123,85 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse getAccessTokenUsingRefreshToken(AuthenticationRequest request) {
-        var refreshToken = request.getRefreshToken();
-        if (! jwtService.isTokenValid(refreshToken) || !  "refreshToken".equals(jwtService.extractTokenType(refreshToken))) {
-                return AuthenticationResponse.builder()
-                    .message("Invalid refresh token.")
-                    .build();
-        }
-        var accessToken = buildAccessToken(jwtService.extractUserEmail(refreshToken));
-        var newRefreshToken = buildRefreshToken(jwtService.extractUserEmail(refreshToken));
-        return AuthenticationResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(newRefreshToken)
-                .message("Access token successfully generated.")
-                .build();
+    public AuthenticationResponse getAccessTokenUsingRefreshToken(AuthenticationRequest request){
 
-    }
+        final var refreshToken = request.getRefreshToken();
 
-    public AuthenticationResponse renewRefreshToken(AuthenticationRequest request) {
-        var refreshToken = request.getRefreshToken();
-        if (! jwtService.isTokenValid(refreshToken) || !  "refreshToken".equals(jwtService.extractTokenType(refreshToken))) {
+        final String userEmail = jwtService.extractUserEmail(refreshToken);
+        final Long firstIat = jwtService.extractFirstIat(refreshToken);
+        final Long thisIat = jwtService.extractThisIat(refreshToken);
+        final String tokenType = jwtService.extractTokenType(refreshToken);
+
+
+        if (
+                !  "refreshToken".equals(tokenType)
+                        || firstIat == null
+                        || thisIat == null
+                        || userEmail == null
+                        || ! jwtService.isTokenValid(refreshToken)
+        ) {
             return AuthenticationResponse.builder()
                     .message("Invalid refresh token.")
                     .build();
         }
-        revokeRefreshToken(request);
-        var newRefreshToken = buildRefreshToken(jwtService.extractUserEmail(refreshToken));
+
+        // check if issuedAt before lastUsageDate (invalid / exceeded the usage limit / revoked)
+
+        final Long lastUsage = getRTokenLastUsage(userEmail + firstIat);
+
+        System.out.println("firstIat: " + firstIat );
+        System.out.println("lastUsage: " + lastUsage );
+        System.out.println("thisIat: " + thisIat );
+
+        if (lastUsage != null && lastUsage > thisIat){
+            // add last usage to redis
+            addRTokenLastUsage(userEmail + firstIat);
+
+            return AuthenticationResponse.builder()
+                    .message("The refresh token has exceeded the usage limit.")
+                    .build();
+        }
+
+
+        // refresh last usage
+        addRTokenLastUsage(userEmail + firstIat);
+
+
+        var newRefreshToken = buildRefreshToken(userEmail, String.valueOf(firstIat));
+        var accessToken = buildAccessToken(userEmail);
+
+
         return AuthenticationResponse.builder()
+                .accessToken(accessToken)
                 .refreshToken(newRefreshToken)
-                .message("Refresh token successfully renewed.")
+                .message("Succeed.")
                 .build();
 
     }
 
-    public AuthenticationResponse revokeRefreshToken(AuthenticationRequest request) {// TODO
-        return null;
+    public AuthenticationResponse revokeRefreshToken(AuthenticationRequest request) {
+        final var refreshToken = request.getRefreshToken();
+
+        final String userEmail = jwtService.extractUserEmail(refreshToken);
+        final Long firstIat = jwtService.extractFirstIat(refreshToken);
+        final String tokenType = jwtService.extractTokenType(refreshToken);
+
+        if (
+                !  "refreshToken".equals(tokenType)
+                        || firstIat == null
+                        || userEmail == null
+                        || ! jwtService.isTokenValid(refreshToken)
+        ) {
+            return AuthenticationResponse.builder()
+                    .message("Invalid refresh token.")
+                    .build();
+        }
+
+        // add last usage to redis
+        addRTokenLastUsage(userEmail + firstIat);
+
+        return AuthenticationResponse.builder()
+                .message("Revoked.")
+                .build();
     }
 }
