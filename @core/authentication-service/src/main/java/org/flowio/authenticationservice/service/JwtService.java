@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.flowio.authenticationservice.model.LoginUser;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -18,7 +19,37 @@ public class JwtService {
 
     private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970"; // todo use environment variable
 
+    // TODO read from yml
+    private final long accessTokenExpirationTime = 1000 * 60 * 10; // 10 mins
+    private final long refreshTokenExpirationTime = 1000 * 60 * 60 * 24; // 1 day
 
+    private String buildAccessToken(LoginUser loginUser, String familyId) {
+        return buildAccessToken(loginUser.getLoginEmail(), familyId);
+    }
+
+    String buildAccessToken(String loginEmail, String familyId) {
+        return generateJwtToken(
+                new HashMap<>(){{
+                    put("tokenType", "accessToken");
+                    put("familyId", familyId);
+                    put("myIat", String.valueOf(System.currentTimeMillis()));
+                }},
+                accessTokenExpirationTime,
+                loginEmail
+        );
+    }
+
+    String buildRefreshToken(String loginEmail, String familyId) {
+        return generateJwtToken(
+                new HashMap<>() {{
+                    put("tokenType", "refreshToken");
+                    put("familyId", familyId);
+                    put("myIat", String.valueOf(System.currentTimeMillis()));
+                }},
+                refreshTokenExpirationTime,
+                loginEmail
+        );
+    }
 
     public String extractUserEmail(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
@@ -29,7 +60,7 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateJwtToken(
+    private String generateJwtToken(
             Map<String, Object> extraClaims,
             long expirationIn,
             String username
@@ -58,16 +89,16 @@ public class JwtService {
         return tokenType.toString();
     }
 
-    public Long extractFirstIat(String jwtToken) {
-        var iat = extractClaim(jwtToken, claims -> claims.get("firstIat"));
+    public Long extractFamilyId(String jwtToken) {
+        var iat = extractClaim(jwtToken, claims -> claims.get("familyId"));
         if (iat != null) {
             return Long.parseLong(iat.toString());
         }
         return null;
     }
 
-    public Long extractThisIat(String jwtToken) {
-        var iat = extractClaim(jwtToken, claims -> claims.get("thisIat"));
+    public Long extractMyIat(String jwtToken) {
+        var iat = extractClaim(jwtToken, claims -> claims.get("myIat"));
         if (iat != null) {
             return Long.parseLong(iat.toString());
         }
@@ -76,10 +107,6 @@ public class JwtService {
 
     private Date extractExpiration(String jwtToken) {
         return extractClaim(jwtToken, Claims::getExpiration);
-    }
-
-    public Date extractIssuedAt(String jwtToken) {
-        return extractClaim(jwtToken, Claims::getIssuedAt);
     }
 
     private Claims extractAllClaims(String token) {

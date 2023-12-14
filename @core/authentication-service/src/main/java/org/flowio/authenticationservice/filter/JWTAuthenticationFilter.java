@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.flowio.authenticationservice.dto.AuthenticationResponse;
 import org.flowio.authenticationservice.service.JwtService;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -78,18 +79,23 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-
-        if (jwtService.isTokenValid(jwt)) {
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null,
-                    userDetails.getAuthorities()
-            );
-            authToken.setDetails(
-                new WebAuthenticationDetailsSource().buildDetails(request)
-            );
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+        if (! jwtService.isTokenValid(jwt)) {
+            filterChain.doFilter(request, response);
+            return;
         }
+
+
+        // valid token
+
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
+        );
+        authToken.setDetails(
+                new WebAuthenticationDetailsSource().buildDetails(request)
+        );
+        SecurityContextHolder.getContext().setAuthentication(authToken);
 
         // Forward the request to the next filter in the chain
         filterChain.doFilter(request, response);

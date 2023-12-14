@@ -13,8 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
@@ -26,53 +24,24 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
     private final RedisService redisService;
 
+    // TODO read from yml
     private final long accessTokenExpirationTime = 1000 * 60 * 10; // 10 mins
     private final long refreshTokenExpirationTime = 1000 * 60 * 60 * 24; // 1 day
 
 
-
-    private String buildAccessToken(LoginUser loginUser) {
-        return buildAccessToken(loginUser.getLoginEmail());
+    private AuthenticationResponse buildTokenResponse(String userEmail, String familyId) {
+        var newRefreshToken = jwtService.buildRefreshToken(userEmail, familyId);
+        var accessToken = jwtService.buildAccessToken(userEmail, familyId);
+        return AuthenticationResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(newRefreshToken)
+                .message("Succeed.")
+                .build();
     }
 
-    private String buildAccessToken(String loginEmail) {
-            return jwtService.generateJwtToken(
-            new HashMap<>(){{ put("tokenType", "accessToken"); }},
-            accessTokenExpirationTime,
-            loginEmail
-            );
-    }
 
-    private String buildRefreshToken(LoginUser loginUser, String firstIat) {
-        return buildRefreshToken(loginUser.getLoginEmail(), firstIat);
-    }
-
-    private String buildRefreshToken(String loginEmail, String firstIat) {
-            return jwtService.generateJwtToken(
-            new HashMap<>(){{
-                put("tokenType", "refreshToken");
-                put("firstIat", firstIat);
-                put("thisIat", System.currentTimeMillis());
-            }},
-            refreshTokenExpirationTime,
-            loginEmail
-            );
-    }
-
-    private void addRTokenLastUsage(String key){
-        redisService.addKeyValue(
-                key,
-                System.currentTimeMillis(),
-                refreshTokenExpirationTime
-        );
-    }
-
-    private Long getRTokenLastUsage(String key){
-        return redisService.getValue(key);
-    }
 
     public AuthenticationResponse register(RegisterRequest request) {
 
@@ -82,7 +51,7 @@ public class AuthenticationService {
                 request.getLoginEmail(),
                 request.getPassword()
                 )
-            .anyMatch(str -> str == null || str.isEmpty())) {
+            .anyMatch(str -> str == null || str.length() <= 2)) {
             return AuthenticationResponse.builder()
                 .message("Firstname, lastname, login email and password must not be null or empty.")
                 .build();
@@ -96,13 +65,7 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .build();
         loginUserRepository.save(loginUser);
-        var accessToken = buildAccessToken(loginUser);
-        var refreshToken = buildRefreshToken(loginUser, String.valueOf(System.currentTimeMillis()));
-                return AuthenticationResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .message("Successfully registered.")
-                .build();
+        return buildTokenResponse(loginUser.getLoginEmail(), String.valueOf(System.currentTimeMillis()));
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -114,13 +77,7 @@ public class AuthenticationService {
         );
         var loginUser = loginUserRepository.findByLoginEmail(request.getLoginEmail())
                         .orElseThrow();
-        var accessToken = buildAccessToken(loginUser);
-        var refreshToken = buildRefreshToken(loginUser, String.valueOf(System.currentTimeMillis()));
-                return AuthenticationResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .message("Successfully authenticated.")
-                .build();
+        return buildTokenResponse(loginUser.getLoginEmail(), String.valueOf(System.currentTimeMillis()));
     }
 
     public AuthenticationResponse getAccessTokenUsingRefreshToken(AuthenticationRequest request){
@@ -128,15 +85,16 @@ public class AuthenticationService {
         final var refreshToken = request.getRefreshToken();
 
         final String userEmail = jwtService.extractUserEmail(refreshToken);
-        final Long firstIat = jwtService.extractFirstIat(refreshToken);
-        final Long thisIat = jwtService.extractThisIat(refreshToken);
+        final Long familyId = jwtService.extractFamilyId(refreshToken);
+        final String familyIdStr = String.valueOf(familyId);
+        final Long myIat = jwtService.extractMyIat(refreshToken);
         final String tokenType = jwtService.extractTokenType(refreshToken);
 
 
         if (
                 !  "refreshToken".equals(tokenType)
-                        || firstIat == null
-                        || thisIat == null
+                        || familyId == null
+                        || myIat == null
                         || userEmail == null
                         || ! jwtService.isTokenValid(refreshToken)
         ) {
@@ -147,15 +105,13 @@ public class AuthenticationService {
 
         // check if issuedAt before lastUsageDate (invalid / exceeded the usage limit / revoked)
 
-        final Long lastUsage = getRTokenLastUsage(userEmail + firstIat);
 
-        System.out.println("firstIat: " + firstIat );
-        System.out.println("lastUsage: " + lastUsage );
-        System.out.println("thisIat: " + thisIat );
+        final Long lastUsage = redisService.getRefreshTLastUsage(userEmail, familyIdStr);
 
-        if (lastUsage != null && lastUsage > thisIat){
+        if (lastUsage != null && lastUsage > myIat){
             // add last usage to redis
-            addRTokenLastUsage(userEmail + firstIat);
+            redisService.addRefreshTLastUsage(userEmail, familyIdStr);
+            redisService.addAccessTLastUsage(userEmail, familyIdStr);
 
             return AuthenticationResponse.builder()
                     .message("The refresh token has exceeded the usage limit.")
@@ -164,31 +120,22 @@ public class AuthenticationService {
 
 
         // refresh last usage
-        addRTokenLastUsage(userEmail + firstIat);
+        redisService.addRefreshTLastUsage(userEmail, familyIdStr);
 
-
-        var newRefreshToken = buildRefreshToken(userEmail, String.valueOf(firstIat));
-        var accessToken = buildAccessToken(userEmail);
-
-
-        return AuthenticationResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(newRefreshToken)
-                .message("Succeed.")
-                .build();
-
+        return buildTokenResponse(userEmail, familyIdStr);
     }
 
     public AuthenticationResponse revokeRefreshToken(AuthenticationRequest request) {
         final var refreshToken = request.getRefreshToken();
 
         final String userEmail = jwtService.extractUserEmail(refreshToken);
-        final Long firstIat = jwtService.extractFirstIat(refreshToken);
+        final Long familyId = jwtService.extractFamilyId(refreshToken);
+        final String familyIdStr = String.valueOf(familyId);
         final String tokenType = jwtService.extractTokenType(refreshToken);
 
         if (
                 !  "refreshToken".equals(tokenType)
-                        || firstIat == null
+                        || familyId == null
                         || userEmail == null
                         || ! jwtService.isTokenValid(refreshToken)
         ) {
@@ -198,7 +145,8 @@ public class AuthenticationService {
         }
 
         // add last usage to redis
-        addRTokenLastUsage(userEmail + firstIat);
+        redisService.addRefreshTLastUsage(userEmail, familyIdStr);
+        redisService.addAccessTLastUsage(userEmail, familyIdStr);
 
         return AuthenticationResponse.builder()
                 .message("Revoked.")

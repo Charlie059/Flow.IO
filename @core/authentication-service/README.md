@@ -52,7 +52,7 @@ and retrieve an accessToken and a refreshToken.
   {
       "refreshToken": "new token",
       "accessToken": "new token",
-      "message": "Successfully registered."
+      "message": "Succeed."
   }
   ```
 
@@ -75,7 +75,7 @@ and retrieve an access token and a refresh token.
   {
       "refreshToken": "new token",
       "accessToken": "new token",
-      "message": "Successfully authenticated."
+      "message": "Succeed."
   }
   ```
 
@@ -98,7 +98,7 @@ it won't revoke the old AccessToken, but will revoke the one time RefreshToken.
   {
       "refreshToken": "new token",
       "accessToken": "new token",
-      "message": "Access token successfully generated."
+      "message": "Succeed."
   }
   ```
 
