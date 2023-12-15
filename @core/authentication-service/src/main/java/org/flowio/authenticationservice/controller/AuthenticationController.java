@@ -35,14 +35,14 @@ public class AuthenticationController {
     @PostMapping("/get-access-token")
     public ResponseEntity<AuthenticationResponse> getAccessToken(
             @RequestBody AuthenticationRequest request
-    ) {
+    ) throws Exception {
         return ResponseEntity.ok(service.getAccessTokenUsingRefreshToken(request));
     }
 
     @PostMapping("/revoke-refresh-token")
     public ResponseEntity<AuthenticationResponse> revokeRefreshToken(
             @RequestBody AuthenticationRequest request
-    ) {
+    ) throws Exception {
         return ResponseEntity.ok(service.revokeRefreshToken(request));
     }
 }

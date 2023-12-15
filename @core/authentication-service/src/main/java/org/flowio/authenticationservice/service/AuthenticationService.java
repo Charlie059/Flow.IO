@@ -13,7 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.stream.Stream;
 
 @Service
@@ -80,7 +79,7 @@ public class AuthenticationService {
         return buildTokenResponse(loginUser.getLoginEmail(), String.valueOf(System.currentTimeMillis()));
     }
 
-    public AuthenticationResponse getAccessTokenUsingRefreshToken(AuthenticationRequest request){
+    public AuthenticationResponse getAccessTokenUsingRefreshToken(AuthenticationRequest request) throws Exception {
 
         final var refreshToken = request.getRefreshToken();
 
@@ -106,21 +105,14 @@ public class AuthenticationService {
         // check if issuedAt before lastUsageDate (invalid / exceeded the usage limit / revoked)
 
 
-        final Long lastUsage = redisService.getRefreshTLastUsage(userEmail, familyIdStr);
+        final Long lastUsage = redisService.getAndUpdateTokenLastUsage(userEmail, familyIdStr, 'R');
 
         if (lastUsage != null && lastUsage > myIat){
-            // add last usage to redis
-            redisService.addRefreshTLastUsage(userEmail, familyIdStr);
-            redisService.addAccessTLastUsage(userEmail, familyIdStr);
-
             return AuthenticationResponse.builder()
                     .message("The refresh token has exceeded the usage limit.")
                     .build();
         }
 
-
-        // refresh last usage
-        redisService.addRefreshTLastUsage(userEmail, familyIdStr);
 
         return buildTokenResponse(userEmail, familyIdStr);
     }
@@ -145,8 +137,8 @@ public class AuthenticationService {
         }
 
         // add last usage to redis
-        redisService.addRefreshTLastUsage(userEmail, familyIdStr);
-        redisService.addAccessTLastUsage(userEmail, familyIdStr);
+//        redisService.getAndUpdateTokenLastUsage(userEmail, familyIdStr, 'R');
+        redisService.addTokenLastUsage(userEmail, familyIdStr, 'R');
 
         return AuthenticationResponse.builder()
                 .message("Revoked.")
