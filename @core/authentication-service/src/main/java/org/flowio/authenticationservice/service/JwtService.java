@@ -5,7 +5,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.flowio.authenticationservice.model.LoginUser;
+import lombok.RequiredArgsConstructor;
+
+import org.flowio.authenticationservice.config.JwtConfig;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -15,17 +17,16 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
-    private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970"; // todo use environment variable
+
+    private final JwtConfig jwtConfig;
+
 
     // TODO read from yml
     private final long accessTokenExpirationTime = 1000 * 60 * 10; // 10 mins
     private final long refreshTokenExpirationTime = 1000 * 60 * 60 * 24; // 1 day
-
-    private String buildAccessToken(LoginUser loginUser, String familyId) {
-        return buildAccessToken(loginUser.getLoginEmail(), familyId);
-    }
 
     String buildAccessToken(String loginEmail, String familyId) {
         return generateJwtToken(
@@ -119,7 +120,7 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(jwtConfig.getSecretKey());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

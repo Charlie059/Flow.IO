@@ -1,3 +1,6 @@
+jwt:
+  secretKey: ${SECRET_KEY}
+
 spring:
   datasource:
     url: jdbc:postgresql://some-postgres:5432/flowio-authentication
@@ -26,3 +29,7 @@ spring:
           max-idle: 10
           min-idle: 0
       timeout: 1000
+
+server:
+  port: 8080
+

@@ -17,9 +17,12 @@ This README provides information about a JWT token-based authentication service.
 5. Redis for refresh token
 
 ## How to Run
-### 1. Set up Secret_Key environment (TODO)
+### 1. Set up Secret_Key environment
+**Replace the Secret key below in production.**
 
-
+```bash
+export SECRET_KEY='404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970'
+```
 
 ### 2. Docker Compose Up
 

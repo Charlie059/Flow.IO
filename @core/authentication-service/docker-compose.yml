@@ -24,6 +24,8 @@ services:
       - 8080:8080
     networks:
       - flowio-auth-net
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
 
 
 
