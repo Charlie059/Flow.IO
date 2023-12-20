@@ -1,4 +1,5 @@
 import { OAuth2Options } from "src/@types";
+import { CallbackDto } from "../dto/callback.dto";
 
 export class GoogleProvider {
   private config: OAuth2Options = {
@@ -28,5 +29,9 @@ export class GoogleProvider {
     });
 
     return `${this.config.credentials.auth.authorizeUrl}?${params.toString()}`;
+  }
+
+  callback(data: CallbackDto) {
+
   }
 }

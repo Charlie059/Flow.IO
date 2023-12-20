@@ -1,6 +1,7 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { CredentialProviderDto } from "./dto/credential-provider.dto";
 import { ProviderFactory } from "./providers/provider-factory";
+import { CallbackDto } from "./dto/callback.dto";
 
 @Injectable()
 export class ExternalAuthIntegrationService {
@@ -11,7 +12,7 @@ export class ExternalAuthIntegrationService {
     return ProviderFactory.getProvider(data.provider).getAuthUrl(data.userId);
   }
 
-  async callback(data: CredentialProviderDto) {
-
+  async callback(data: CallbackDto) {
+    return ProviderFactory.getProvider(data.provider).callback(data);
   }
 }
