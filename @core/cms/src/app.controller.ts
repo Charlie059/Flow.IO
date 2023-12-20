@@ -47,16 +47,16 @@ export class AppController {
     return encrypt_data;
   }
 
-  @MessagePattern("external_auth")
+  @MessagePattern("oauth")
   async handleExternalAuth(message: CredentialProviderDto) {
-    Logger.log("Received external auth request:", message, "AppController");
+    Logger.log("Received oauth request:", message, "AppController");
     return this.externalAuthIntegrationService.requestAuth(message);
   }
 
   // TODO: dto for callback data
-  @MessagePattern("external_auth_callback")
+  @MessagePattern("oauth_callback")
   async handleExternalAuthCallback(message: any) {
-    Logger.log("Received external auth callback data:", message, "AppController");
+    Logger.log("Received oauth callback data:", message, "AppController");
     return this.externalAuthIntegrationService.handleCallback(message);
   }
 }
