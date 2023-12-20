@@ -57,6 +57,6 @@ export class AppController {
   @MessagePattern("external_auth_callback")
   async handleExternalAuthCallback(message: any) {
     Logger.log("Received external auth callback data:", message, "AppController");
-    return this.externalAuthIntegrationService.callback(message);
+    return this.externalAuthIntegrationService.handleCallback(message);
   }
 }

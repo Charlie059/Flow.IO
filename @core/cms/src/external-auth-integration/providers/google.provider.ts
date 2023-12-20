@@ -31,7 +31,7 @@ export class GoogleProvider {
     return `${this.config.credentials.auth.authorizeUrl}?${params.toString()}`;
   }
 
-  callback(data: CallbackDto) {
-
+  handleCallback(data: CallbackDto) {
+    // TODO: callback logic
   }
 }

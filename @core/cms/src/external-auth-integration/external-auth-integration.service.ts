@@ -12,7 +12,7 @@ export class ExternalAuthIntegrationService {
     return ProviderFactory.getProvider(data.provider).getAuthUrl(data.userId);
   }
 
-  async callback(data: CallbackDto) {
-    return ProviderFactory.getProvider(data.provider).callback(data);
+  async handleCallback(data: CallbackDto) {
+    return ProviderFactory.getProvider(data.provider).handleCallback(data);
   }
 }
