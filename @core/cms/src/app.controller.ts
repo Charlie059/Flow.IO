@@ -5,12 +5,15 @@ import { DatabaseIntegrationService } from "./database-integration/database-inte
 import { EncryptionDecryptionService } from "./encryption-decryption/encryption-decryption.service";
 import { CreateCredentialDto } from "./database-integration/dto/create-credential.dto";
 import { ValidateCredentialPipe } from "./common/pipes/validate-credential.pipe";
+import { CredentialProviderDto } from "./external-auth-integration/dto/credential-provider.dto";
+import { ExternalAuthIntegrationService } from './external-auth-integration/external-auth-integration.service';
 
 @Controller()
 export class AppController {
   constructor(
     private databaseIntegrationService: DatabaseIntegrationService,
-    private encryptionDecryptionService: EncryptionDecryptionService
+    private encryptionDecryptionService: EncryptionDecryptionService,
+    private externalAuthIntegrationService: ExternalAuthIntegrationService
   ) {}
 
   @MessagePattern("create_credential")
@@ -42,5 +45,18 @@ export class AppController {
       await this.encryptionDecryptionService.decryptData(data);
 
     return encrypt_data;
+  }
+
+  @MessagePattern("external_auth")
+  async handleExternalAuth(message: CredentialProviderDto) {
+    Logger.log("Received external auth request:", message, "AppController");
+    return this.externalAuthIntegrationService.requestAuth(message);
+  }
+
+  // TODO: dto for callback data
+  @MessagePattern("external_auth_callback")
+  async handleExternalAuthCallback(message: any) {
+    Logger.log("Received external auth callback data:", message, "AppController");
+    return this.externalAuthIntegrationService.callback(message);
   }
 }

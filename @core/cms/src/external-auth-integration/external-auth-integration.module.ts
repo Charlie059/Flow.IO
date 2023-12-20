@@ -1,4 +1,8 @@
 import { Module } from '@nestjs/common';
+import { ExternalAuthIntegrationService } from './external-auth-integration.service';
 
-@Module({})
+@Module({
+  providers: [ExternalAuthIntegrationService],
+  exports: [ExternalAuthIntegrationService],
+})
 export class ExternalAuthIntegrationModule {}
