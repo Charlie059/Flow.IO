@@ -6,6 +6,7 @@ export class GoogleOAuthV2Config {
   clientSecret: string;
   redirectUri: string;
   authUrl: string;
+  tokenUrl: string;
   scope: string[];
 
   constructor() {
@@ -13,6 +14,7 @@ export class GoogleOAuthV2Config {
     this.clientSecret = process.env.GOOGLE_OAUTH_V2_CLIENT_SECRET;
     this.redirectUri = process.env.GOOGLE_OAUTH_V2_REDIRECT_URI;
     this.authUrl = process.env.GOOGLE_OAUTH_V2_URL;
+    this.tokenUrl = process.env.GOOGLE_OAUTH_TOKEN_URL;
     this.scope = ["https://www.googleapis.com/auth/drive"];
   }
 }
