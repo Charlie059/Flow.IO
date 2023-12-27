@@ -14,16 +14,20 @@ export class AuthCallbackController {
   async handleCallback(@Query() query: any, @Res() res: Response) {
     const encodedState = query.state;
 
-    // Decode Base 64 URL to string
     const encryptedState = decodeBase64UrlToString(encodedState);
 
     // Decrypt State
     const decryptedState =
       await this.encryptionDecryptionService.decryptData(encryptedState);
 
+    Logger.log(`Decrypted State: ${decryptedState}`, "AuthCallbackController");
+
     const state = JSON.parse(decryptedState);
     const key = `oauth-${state.providerInfo.provider}-${state.providerInfo.version}`;
+
+    // TODO: Error handling
     const providerService = this.providerFactory.getProvider(key);
+
     await providerService.handleCallback(query, res);
   }
 }

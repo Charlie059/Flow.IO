@@ -39,14 +39,12 @@ export class GoogleOAuthV2Service implements IOAuth {
       scope,
       callbackUri,
     } = this.config;
-    const redirectUri = callbackUri;
-    const joinedScope = scope.join(" ");
 
     const encodedState = await this.buildState();
     const url = createOAuth2Url(this.config, {
       client_id: clientId,
-      redirect_uri: redirectUri,
-      scope: joinedScope,
+      redirect_uri: callbackUri,
+      scope: scope.join(" "),
       state: encodedState,
     });
 
