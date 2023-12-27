@@ -32,48 +32,11 @@ export class GoogleOAuthV2Service implements IOAuth {
    * @returns {Promise<string>} The Google OAuth URL.
    */
   async authenticate(): Promise<string> {
-    const {
-      credentials: {
-        client: { id: clientId },
-      },
-      scope,
-      callbackUri,
-    } = this.config;
-
     const encodedState = await this.buildState();
-    const url = createOAuth2Url(this.config, {
-      client_id: clientId,
-      redirect_uri: callbackUri,
-      scope: scope.join(" "),
-      state: encodedState,
-    });
+    const url = createOAuth2Url(this.config, { state: encodedState });
 
     Logger.log(`Redirecting to Google OAuth URL: ${url}`);
     return url;
-  }
-
-  /**
-   * Builds the state parameter for OAuth authentication.
-   * @private
-   * @returns {Promise<string>} The base64 URL-encoded state.
-   */
-  private async buildState(): Promise<string> {
-    const oAuth2State: IOAuth2State = {
-      userId: "aaaa", // Replace with real user ID
-      providerInfo: {
-        provider: "google",
-        version: "v2",
-      },
-    };
-
-    return new OAuth2StateProcessor(
-      oAuth2State,
-      this.encryptionDecryptionService
-    )
-      .stringify()
-      .then((p) => p.encrypt())
-      .then((p) => p.toBase64())
-      .then((p) => p.getResult());
   }
 
   /**
@@ -101,5 +64,33 @@ export class GoogleOAuthV2Service implements IOAuth {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  async verifyToken?(token: string): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
+   * Builds the state parameter for OAuth authentication.
+   * @private
+   * @returns {Promise<string>} The base64 URL-encoded state.
+   */
+  private async buildState(): Promise<string> {
+    const oAuth2State: IOAuth2State = {
+      userId: "aaaa", // Replace with real user ID
+      providerInfo: {
+        provider: "google",
+        version: "v2",
+      },
+    };
+
+    return new OAuth2StateProcessor(
+      oAuth2State,
+      this.encryptionDecryptionService
+    )
+      .stringify()
+      .then((p) => p.encrypt())
+      .then((p) => p.toBase64())
+      .then((p) => p.getResult());
   }
 }

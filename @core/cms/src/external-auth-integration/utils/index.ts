@@ -46,22 +46,22 @@ export function createOAuth2Url(
   params: OAuth2UrlParams
 ): string {
   // Ensure the base URL is present
-  if (!config || !config.credentials.authUrl.authorizeUrl) {
+  if (!config || !config.provider.authorizeUrl) {
     throw new Error(
       "Invalid OAuth2 configuration - 'authorizeUrl' is required"
     );
   }
 
-  const url = new URL(config.credentials.authUrl.authorizeUrl);
-
-  // Default OAuth2 parameters
-  const defaultParams = {
-    response_type: "code",
-    access_type: "offline",
-  };
+  const url = new URL(config.provider.authorizeUrl);
 
   // Merge custom parameters with default parameters
-  const searchParams = new URLSearchParams({ ...defaultParams, ...params });
+  const searchParams = new URLSearchParams({
+    client_id: config.credentials.id,
+    redirect_uri: config.provider.callbackUri,
+    scope: config.scope.join(" "),
+    ...config.provider.callbackUriParams,
+    ...params,
+  });
 
   url.search = searchParams.toString();
   return url.toString();
@@ -79,13 +79,13 @@ export async function exchangeCodeForToken(
   config: IOAuth2Config,
   code: string
 ) {
-  const tokenUrl = config.credentials.authUrl.tokenUrl;
+  const tokenUrl = config.provider.tokenUrl;
   const GRANT_TYPE = "authorization_code";
 
   const payload = {
-    client_id: config.credentials.client.id,
-    client_secret: config.credentials.client.secret,
-    redirect_uri: config.callbackUri,
+    client_id: config.credentials.id,
+    client_secret: config.credentials.secret,
+    redirect_uri: config.provider.callbackUri,
     grant_type: GRANT_TYPE,
     code: code,
   };

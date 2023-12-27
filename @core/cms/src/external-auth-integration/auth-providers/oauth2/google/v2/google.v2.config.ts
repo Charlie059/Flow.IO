@@ -12,17 +12,19 @@ export class GoogleOAuthV2Config {
     // Initialize the OAuth2 configuration object
     this.oAuth2Config = {
       credentials: {
-        client: {
-          id: process.env.GOOGLE_OAUTH_V2_CLIENT_ID,
-          secret: process.env.GOOGLE_OAUTH_V2_CLIENT_SECRET,
-        },
-        authUrl: {
-          authorizeUrl: process.env.GOOGLE_OAUTH_V2_URL,
-          tokenUrl: process.env.GOOGLE_OAUTH_TOKEN_URL,
-        },
+        id: process.env.GOOGLE_OAUTH_V2_CLIENT_ID,
+        secret: process.env.GOOGLE_OAUTH_V2_CLIENT_SECRET,
       },
       scope: ["https://www.googleapis.com/auth/drive"],
-      callbackUri: process.env.GOOGLE_OAUTH_V2_REDIRECT_URI,
+      provider: {
+        authorizeUrl: process.env.GOOGLE_OAUTH_V2_URL,
+        tokenUrl: process.env.GOOGLE_OAUTH_TOKEN_URL,
+        callbackUri: process.env.GOOGLE_OAUTH_V2_REDIRECT_URI,
+        callbackUriParams: {
+          response_type: "code",
+          access_type: "offline",
+        },
+      },
     };
   }
 }
