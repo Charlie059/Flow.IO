@@ -5,7 +5,7 @@ import { DatabaseIntegrationService } from "./database-integration/database-inte
 import { EncryptionDecryptionService } from "./encryption-decryption/encryption-decryption.service";
 import { CreateCredentialDto } from "./database-integration/dto/create-credential.dto";
 import { ValidateCredentialPipe } from "./common/pipes/validate-credential.pipe";
-import { ExternalAuthIntegrationService } from "./external-auth-integration/services/external-auth-integration.service";
+import { ExternalAuthIntegrationService } from "./external-auth-integration/external-auth-integration.service";
 
 @Controller()
 export class AppController {
@@ -48,7 +48,8 @@ export class AppController {
 
   @MessagePattern("oauth")
   async handleOAuth(message: any) {
-    const url = this.externalAuthIntegrationService.authenticate("GOOGLE");
+    const url =
+      this.externalAuthIntegrationService.authenticate("oauth-google-v2");
     return url;
   }
 }

@@ -21,7 +21,6 @@ export class EncryptionDecryptionService {
 
   /**
    * Encrypt data using Vault Transit engine
-   * @param credentialId
    * @param data
    * @returns encrypted data
    */

@@ -1,11 +1,14 @@
 import { Module } from "@nestjs/common";
-import { ExternalAuthIntegrationService } from "./services/external-auth-integration.service";
-import { OAuthService as OAuth2Service } from "./services/oauth2.service";
-import { OAuth2Controller } from "./controller/oauth2.controller";
+import { AuthProviderFactory } from "./auth-provider.factory";
+import { AuthCallbackController } from "./auth-callback.controller";
+import { OAuth2Module } from "./auth-providers/oauth2/oauth2.module";
+import { ExternalAuthIntegrationService } from "./external-auth-integration.service";
+import { EncryptionDecryptionModule } from "src/encryption-decryption/encryption-decryption.module";
 
 @Module({
-  providers: [ExternalAuthIntegrationService, OAuth2Service],
-  controllers: [OAuth2Controller],
-  exports: [ExternalAuthIntegrationService, OAuth2Service],
+  imports: [OAuth2Module, EncryptionDecryptionModule],
+  providers: [AuthProviderFactory, ExternalAuthIntegrationService],
+  controllers: [AuthCallbackController],
+  exports: [ExternalAuthIntegrationService],
 })
 export class ExternalAuthIntegrationModule {}
