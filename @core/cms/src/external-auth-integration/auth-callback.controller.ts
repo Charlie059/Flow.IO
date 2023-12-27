@@ -1,6 +1,7 @@
 import { Controller, Get, Logger, Query, Res } from "@nestjs/common";
 import { AuthProviderFactory } from "./auth-provider.factory";
 import { EncryptionDecryptionService } from "src/encryption-decryption/encryption-decryption.service";
+import { decodeBase64UrlToString } from "./utils";
 
 @Controller("oauth")
 export class AuthCallbackController {
@@ -13,13 +14,8 @@ export class AuthCallbackController {
   async handleCallback(@Query() query: any, @Res() res: Response) {
     const encodedState = query.state;
 
-    // Decode Base 64 URL to standardBase64
-    const standardBase64 = encodedState
-      .replace(/-/g, "+")
-      .replace(/_/g, "/")
-      .concat("=".repeat((4 - (encodedState.length % 4)) % 4));
-
-    const encryptedState = Buffer.from(standardBase64, "base64").toString();
+    // Decode Base 64 URL to string
+    const encryptedState = decodeBase64UrlToString(encodedState);
 
     // Decrypt State
     const decryptedState =

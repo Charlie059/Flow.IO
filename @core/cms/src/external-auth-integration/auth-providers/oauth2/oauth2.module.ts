@@ -5,7 +5,14 @@ import { EncryptionDecryptionModule } from "src/encryption-decryption/encryption
 import { HttpModule } from "@nestjs/axios";
 @Module({
   imports: [EncryptionDecryptionModule, HttpModule],
-  providers: [GoogleOAuthV2Service, GoogleOAuthV2Config],
+  providers: [
+    GoogleOAuthV2Service,
+    GoogleOAuthV2Config,
+    {
+      provide: "GoogleOAuthV2Config",
+      useFactory: () => new GoogleOAuthV2Config().oAuth2Config,
+    },
+  ],
   exports: [GoogleOAuthV2Service],
 })
 export class OAuth2Module {}
