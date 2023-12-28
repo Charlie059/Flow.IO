@@ -6,6 +6,7 @@ import {
 import { lastValueFrom } from "rxjs";
 import { map } from "rxjs/operators";
 import { HttpService } from "@nestjs/axios";
+import { Logger } from "@nestjs/common";
 
 /**
  * Converts a given string to a Base64 URL safe encoded string.
@@ -41,7 +42,7 @@ export function decodeBase64UrlToString(data: string): string {
  * @param params: OAuth2UrlParams
  * @returns {string} - The OAuth2 authorization URL.
  */
-export function createOAuth2Url(
+export function createOAuth2AuthUrl(
   config: IOAuth2Config,
   params: OAuth2UrlParams
 ): string {
@@ -67,6 +68,34 @@ export function createOAuth2Url(
   return url.toString();
 }
 
+/**
+ * Creates an OAuth2 token verification URL by merging the given parameters with the default parameters.
+ * @param config
+ * @param params
+ * @returns
+ */
+export function createOAuth2VerifyUrl(
+  config: IOAuth2Config,
+  params: OAuth2UrlParams
+): string {
+  Logger.debug(config, "createOAuth2VerifyUrl");
+  Logger.debug(params, "createOAuth2VerifyUrl");
+  // Ensure the base URL is present
+  if (!config || !config.provider.verifyTokenUrl || !params.access_token) {
+    throw new Error(
+      "Invalid OAuth2 configuration - 'verifyTokenUrl' and 'access_token' are required"
+    );
+  }
+
+  const url = new URL(config.provider.verifyTokenUrl);
+
+  const searchParams = new URLSearchParams({
+    access_token: params.access_token,
+  });
+
+  url.search = searchParams.toString();
+  return url.toString();
+}
 /**
  * Exchanges the given code for an OAuth2 token.
  * @param httpService  The HttpService instance.
@@ -95,6 +124,33 @@ export async function exchangeCodeForToken(
   );
 
   return response;
+}
+
+/**
+ * Verifies the given OAuth2 token.
+ * @param httpService
+ * @param config
+ * @param accessToken
+ * @returns {Promise<any>}
+ */
+export async function verifyToken(
+  httpService: HttpService,
+  config: IOAuth2Config,
+  accessToken: string
+): Promise<any> {
+  const verifyUrl = createOAuth2VerifyUrl(config, {
+    access_token: "aaa",
+  });
+
+  try {
+    await lastValueFrom(
+      httpService.get(verifyUrl).pipe(map((resp) => resp.data))
+    );
+    return true;
+  } catch (error) {
+    Logger.error(error, "verifyToken");
+    return false;
+  }
 }
 
 /**

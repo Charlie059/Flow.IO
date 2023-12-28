@@ -11,8 +11,9 @@ import { EncryptionDecryptionService } from "src/encryption-decryption/encryptio
 import { HttpService } from "@nestjs/axios";
 import {
   OAuth2StateProcessor,
-  createOAuth2Url,
+  createOAuth2AuthUrl,
   exchangeCodeForToken,
+  verifyToken,
 } from "src/external-auth-integration/utils";
 import { IOAuth2Config, IOAuth2State } from "../../@types";
 
@@ -33,7 +34,7 @@ export class GoogleOAuthV2Service implements IOAuth {
    */
   async authenticate(): Promise<string> {
     const encodedState = await this.buildState();
-    const url = createOAuth2Url(this.config, { state: encodedState });
+    const url = createOAuth2AuthUrl(this.config, { state: encodedState });
 
     Logger.log(`Redirecting to Google OAuth URL: ${url}`);
     return url;
@@ -67,7 +68,7 @@ export class GoogleOAuthV2Service implements IOAuth {
   }
 
   async verifyToken?(token: string): Promise<any> {
-    throw new Error("Method not implemented.");
+    return verifyToken(this.httpService, this.config, token);
   }
 
   /**

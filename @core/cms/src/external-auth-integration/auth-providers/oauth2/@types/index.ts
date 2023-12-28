@@ -16,11 +16,15 @@ export interface ICredentials {
  * @interface IProviderConfiguration
  * @property {string} authorizeUrl - The URL for the OAuth2 authorization endpoint.
  * @property {string} tokenUrl - The URL for the OAuth2 token endpoint.
+ * @property {string} callbackUri - The URI for the OAuth2 callback after authentication.·
+ * @property {string} [verifyTokenUrl] - The URL for the OAuth2 token verification endpoint.
+ * @property {{ [key: string]: string }} [callbackUriParams] - Optional additional parameters for the callback URI.
  */
 export interface IProviderConfiguration {
   authorizeUrl: string; // The URL for the OAuth2 authorization endpoint
   tokenUrl: string; // The URL for the OAuth2 token endpoint
   callbackUri: string; // The URI for the OAuth2 callback after authentication
+  verifyTokenUrl?: string; // The URL for the OAuth2 token verification endpoint
   callbackUriParams?: {
     // Optional additional parameters for the callback URI
     [key: string]: string;

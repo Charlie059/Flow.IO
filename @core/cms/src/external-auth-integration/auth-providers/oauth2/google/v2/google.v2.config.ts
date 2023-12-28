@@ -20,6 +20,7 @@ export class GoogleOAuthV2Config {
         authorizeUrl: process.env.GOOGLE_OAUTH_V2_URL,
         tokenUrl: process.env.GOOGLE_OAUTH_TOKEN_URL,
         callbackUri: process.env.GOOGLE_OAUTH_V2_REDIRECT_URI,
+        verifyTokenUrl: process.env.GOOGLE_OAUTH_V2_VALIDATE_URL,
         callbackUriParams: {
           response_type: "code",
           access_type: "offline",
