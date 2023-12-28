@@ -139,7 +139,7 @@ export async function verifyToken(
   accessToken: string
 ): Promise<any> {
   const verifyUrl = createOAuth2VerifyUrl(config, {
-    access_token: "aaa",
+    access_token: accessToken,
   });
 
   try {
