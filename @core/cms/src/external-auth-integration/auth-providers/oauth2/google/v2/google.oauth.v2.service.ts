@@ -47,7 +47,8 @@ export class GoogleOAuthV2Service implements IOAuth {
    */
   async handleCallback(query: any, @Res() res: any) {
     try {
-      if (!query.code) {
+      if (!query || !query.code) {
+        Logger.error("No code received", "GoogleOAuthV2Service");
         throw new HttpException("No code received", HttpStatus.BAD_REQUEST);
       }
 

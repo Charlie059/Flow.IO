@@ -29,7 +29,7 @@ export class AppController {
     console.log("encrypt_data", encrypt_data);
 
     // Store the data to the KV store
-    const credentialId = "111";
+    const credentialId = "123";
     await this.encryptionDecryptionService.storeData(
       credentialId,
       encrypt_data
@@ -42,6 +42,8 @@ export class AppController {
     // Decrypt the data
     const decrypt_data =
       await this.encryptionDecryptionService.decryptData(data);
+
+    console.log("decrypt_data", decrypt_data);
 
     return encrypt_data;
   }
