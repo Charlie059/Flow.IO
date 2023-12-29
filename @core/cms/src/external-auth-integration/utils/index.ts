@@ -36,66 +36,145 @@ export function decodeBase64UrlToString(data: string): string {
   return decodeData;
 }
 
+// /**
+//  * Creates an OAuth2 authorization URL by merging the given parameters with the default parameters.
+//  * @param config: IOAuth2Config
+//  * @param params: OAuth2UrlParams
+//  * @returns {string} - The OAuth2 authorization URL.
+//  */
+
+// // TODO: Create URL function like createOAuth2AuthUrl, createOAuth2VerifyUrl and createOAuth2RefreshUrl maybe with a generic function
+// export function createOAuth2AuthUrl(
+//   config: IOAuth2Config,
+//   params: OAuth2UrlParams
+// ): string {
+//   // Ensure the base URL is present
+//   if (!config || !config.provider.authorizeUrl) {
+//     throw new Error(
+//       "Invalid OAuth2 configuration - 'authorizeUrl' is required"
+//     );
+//   }
+
+//   const url = new URL(config.provider.authorizeUrl);
+
+//   // Merge custom parameters with default parameters
+//   const searchParams = new URLSearchParams({
+//     client_id: config.credentials.id,
+//     redirect_uri: config.provider.callbackUrl,
+//     scope: config.scope.join(" "),
+//     ...config.provider.callbackUrlParams,
+//     ...params,
+//   });
+
+//   url.search = searchParams.toString();
+//   return url.toString();
+// }
+
+// /**
+//  * Creates an OAuth2 token verification URL by merging the given parameters with the default parameters.
+//  * @param config
+//  * @param params
+//  * @returns
+//  */
+// export function createOAuth2VerifyUrl(
+//   config: IOAuth2Config,
+//   params: OAuth2UrlParams
+// ): string {
+//   // Ensure the base URL is present
+//   if (!config || !config.provider.verifyTokenUrl || !params.access_token) {
+//     throw new Error(
+//       "Invalid OAuth2 configuration - 'verifyTokenUrl' and 'access_token' are required"
+//     );
+//   }
+
+//   const url = new URL(config.provider.verifyTokenUrl);
+
+//   const searchParams = new URLSearchParams({
+//     access_token: params.access_token,
+//   });
+
+//   url.search = searchParams.toString();
+//   return url.toString();
+// }
+
+// /**
+//  * Creates an OAuth2 token refresh URL by merging the given parameters with the default parameters.
+//  * @param config
+//  * @param params
+//  * @returns
+//  */
+// export function createOAuth2RefreshUrl(
+//   config: IOAuth2Config,
+//   params: OAuth2UrlParams
+// ): string {
+//   // Ensure the base URL is present
+//   if (!config || !config.provider.refreshTokenUrl || !params.refresh_token) {
+//     throw new Error(
+//       "Invalid OAuth2 configuration - 'refreshTokenUrl' and 'refresh_token' are required"
+//     );
+//   }
+
+//   const url = new URL(config.provider.refreshTokenUrl);
+
+//   const searchParams = new URLSearchParams({
+//     refresh_token: params.refresh_token,
+//   });
+
+//   url.search = searchParams.toString();
+//   return url.toString();
+// }
+
 /**
- * Creates an OAuth2 authorization URL by merging the given parameters with the default parameters.
- * @param config: IOAuth2Config
- * @param params: OAuth2UrlParams
- * @returns {string} - The OAuth2 authorization URL.
- */
-export function createOAuth2AuthUrl(
-  config: IOAuth2Config,
-  params: OAuth2UrlParams
-): string {
-  // Ensure the base URL is present
-  if (!config || !config.provider.authorizeUrl) {
-    throw new Error(
-      "Invalid OAuth2 configuration - 'authorizeUrl' is required"
-    );
-  }
-
-  const url = new URL(config.provider.authorizeUrl);
-
-  // Merge custom parameters with default parameters
-  const searchParams = new URLSearchParams({
-    client_id: config.credentials.id,
-    redirect_uri: config.provider.callbackUrl,
-    scope: config.scope.join(" "),
-    ...config.provider.callbackUriParams,
-    ...params,
-  });
-
-  url.search = searchParams.toString();
-  return url.toString();
-}
-
-/**
- * Creates an OAuth2 token verification URL by merging the given parameters with the default parameters.
+ * Creates an OAuth2 URL by merging the given parameters with the default parameters.
  * @param config
  * @param params
+ * @param urlType
  * @returns
  */
-export function createOAuth2VerifyUrl(
+export function createOAuth2Url(
   config: IOAuth2Config,
-  params: OAuth2UrlParams
+  params: OAuth2UrlParams,
+  urlType: "authorize" | "verifyToken" | "refreshToken"
 ): string {
-  Logger.debug(config, "createOAuth2VerifyUrl");
-  Logger.debug(params, "createOAuth2VerifyUrl");
-  // Ensure the base URL is present
-  if (!config || !config.provider.verifyTokenUrl || !params.access_token) {
+  let baseUrl: string;
+
+  switch (urlType) {
+    case "authorize":
+      baseUrl = config.provider.authorizeUrl;
+      // Merge specific params for authorization
+      params = {
+        client_id: config.credentials.id,
+        redirect_uri: config.provider.callbackUrl,
+        scope: config.scope.join(" "),
+        ...config.provider.callbackUrlParams,
+        ...params,
+      };
+      break;
+    case "verifyToken":
+      baseUrl = config.provider.verifyTokenUrl;
+      // Additional checks or parameters for token verification can be added here
+      break;
+    case "refreshToken":
+      baseUrl = config.provider.refreshTokenUrl;
+      // Additional checks or parameters for token refresh can be added here
+      break;
+    default:
+      throw new Error("Invalid URL type specified");
+  }
+
+  if (!baseUrl) {
     throw new Error(
-      "Invalid OAuth2 configuration - 'verifyTokenUrl' and 'access_token' are required"
+      `Invalid OAuth2 configuration - '${urlType}Url' is required`
     );
   }
 
-  const url = new URL(config.provider.verifyTokenUrl);
-
-  const searchParams = new URLSearchParams({
-    access_token: params.access_token,
-  });
-
+  const url = new URL(baseUrl);
+  const searchParams = new URLSearchParams(params);
   url.search = searchParams.toString();
+
   return url.toString();
 }
+
 /**
  * Exchanges the given code for an OAuth2 token.
  * @param httpService  The HttpService instance.
@@ -131,28 +210,70 @@ export async function exchangeCodeForToken(
  * @param httpService
  * @param config
  * @param accessToken
+ * @param additionalParams Additional parameters to be sent along with the token verification request.
  * @returns {Promise<any>}
  */
+
 export async function verifyToken(
   httpService: HttpService,
   config: IOAuth2Config,
-  accessToken: string
+  accessToken: string,
+  additionalParams?: { [key: string]: string }
 ): Promise<any> {
-  const verifyUrl = createOAuth2VerifyUrl(config, {
-    access_token: accessToken,
-  });
+  const verifyUrl = createOAuth2Url(
+    config,
+    {
+      access_token: accessToken,
+      ...additionalParams,
+    },
+    "verifyToken"
+  );
 
-  try {
-    await lastValueFrom(
-      httpService.get(verifyUrl).pipe(map((resp) => resp.data))
-    );
-    return true;
-  } catch (error) {
-    Logger.error(error, "verifyToken");
-    return false;
-  }
+  const info = await lastValueFrom(
+    httpService.get(verifyUrl).pipe(map((resp) => resp.data))
+  );
+  return info;
 }
 
+/**
+ * Refreshes the given OAuth2 token.
+ * @param httpService
+ * @param config The OAuth2 configuration.
+ * @param refreshToken
+ * @param additionalParams Additional parameters to be sent along with the token refresh request.
+ * @returns Response from the token refresh endpoint.
+ */
+
+export async function refreshToken(
+  httpService: HttpService,
+  config: IOAuth2Config,
+  refreshToken: string,
+  additionalParams?: { [key: string]: string }
+): Promise<any> {
+  const refreshUrl = createOAuth2Url(
+    config,
+    {
+      refresh_token: refreshToken,
+      ...additionalParams,
+    },
+    "refreshToken"
+  );
+
+  Logger.debug(`Refresh URL: ${refreshUrl}`, "OAuth2Utils");
+
+  const payload = {
+    client_id: config.credentials.id,
+    client_secret: config.credentials.secret,
+    grant_type: "refresh_token",
+    refresh_token: refreshToken,
+  };
+
+  const response = await lastValueFrom(
+    httpService.post(refreshUrl, payload).pipe(map((resp) => resp.data))
+  );
+  Logger.debug(`Refresh response: ${JSON.stringify(response)}`, "OAuth2Utils");
+  return response;
+}
 /**
  * Processes the OAuth2 state object by stringifying, encrypting and encoding it.
  */

@@ -17,13 +17,13 @@ export class GoogleOAuthV2Config {
       },
       scope: ["https://www.googleapis.com/auth/drive"],
       provider: {
-        authorizeUrl: process.env.GOOGLE_OAUTH_V2_URL,
-        tokenUrl: process.env.GOOGLE_OAUTH_TOKEN_URL,
+        authorizeUrl: "https://accounts.google.com/o/oauth2/v2/auth",
+        tokenUrl: "https://accounts.google.com/o/oauth2/token ",
         callbackUrl: process.env.GOOGLE_OAUTH_V2_REDIRECT_URI,
-        verifyTokenUrl: process.env.GOOGLE_OAUTH_V2_VALIDATE_URL,
-        refreshTokenUrl: "https://accounts.google.com/o/oauth2/token",
+        verifyTokenUrl: "https://oauth2.googleapis.com/tokeninfo",
+        refreshTokenUrl: "https://oauth2.googleapis.com/token",
         tokenRefreshBuffer: 7776000, // 90 days
-        callbackUriParams: {
+        callbackUrlParams: {
           response_type: "code",
           access_type: "offline",
         },

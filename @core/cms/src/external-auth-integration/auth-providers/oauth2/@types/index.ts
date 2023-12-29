@@ -29,8 +29,8 @@ export interface IProviderConfiguration {
   verifyTokenUrl?: string; // The URL for the OAuth2 token verification endpoint
   refreshTokenUrl: string; // The URL for the OAuth2 token refresh endpoint
   tokenRefreshBuffer?: number; // Time in seconds before expiration to refresh the token
-  callbackUriParams?: {
-    // Optional additional parameters for the callback URI
+  callbackUrlParams?: {
+    // Optional additional parameters for the callback URL
     [key: string]: string;
   };
 }
@@ -77,4 +77,22 @@ export interface IOAuth2State {
     provider: string;
     version: string;
   };
+}
+
+/**
+ * Represents the response from the OAuth2 token verification endpoint.
+ * @export
+ * @interface TokenVerificationResponse
+ * @property {boolean} isValid - Whether the token is valid.
+ * @property {number} [expiresIn] - The number of seconds until the token expires.
+ * @property {string} [userId] - The user ID.
+ * @property {string[]} [scopes] - The list of scopes.
+ * @property {{ [key: string]: any }} [key: string] - Optional additional fields as per your application's requirements.
+ */
+export interface TokenVerificationResponse {
+  isValid: boolean;
+  expiresIn?: number;
+  scopes?: string[];
+  // Other fields as per your application's requirements
+  [key: string]: any;
 }

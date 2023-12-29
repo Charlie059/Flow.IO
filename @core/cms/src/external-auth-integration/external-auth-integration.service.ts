@@ -15,4 +15,26 @@ export class ExternalAuthIntegrationService {
 
     return await authProvider.authenticate();
   }
+
+  async verifyToken(providerKey: string, token: string): Promise<any> {
+    const authProvider = this.authProviderFactory.getProvider(providerKey);
+    if (!authProvider) {
+      throw new Error(
+        `Authentication provider not found for key: ${providerKey}`
+      );
+    }
+
+    return await authProvider.verifyToken(token);
+  }
+
+  async refreshToken(providerKey: string, refreshToken: string): Promise<any> {
+    const authProvider = this.authProviderFactory.getProvider(providerKey);
+    if (!authProvider) {
+      throw new Error(
+        `Authentication provider not found for key: ${providerKey}`
+      );
+    }
+
+    return await authProvider.refreshToken(refreshToken);
+  }
 }

@@ -14,7 +14,7 @@ export class AppController {
     private encryptionDecryptionService: EncryptionDecryptionService,
     private externalAuthIntegrationService: ExternalAuthIntegrationService
   ) {}
-
+  // TODO: Add DTO
   @MessagePattern("create_credential")
   @UsePipes(new ValidateCredentialPipe())
   async handleCreateCredential(message: CreateCredentialDto) {
@@ -22,6 +22,7 @@ export class AppController {
     return this.databaseIntegrationService.createCredential(message);
   }
 
+  // TODO: Add DTO
   @MessagePattern("encrypt_data")
   async handleEncryptData(message: any) {
     const encrypt_data =
@@ -48,11 +49,37 @@ export class AppController {
     return encrypt_data;
   }
 
+  // TODO: Add DTO
   @MessagePattern("oauth")
   async handleOAuth(message: any) {
     // TODO: Add JWT and pass params
     const url =
       this.externalAuthIntegrationService.authenticate("oauth-google-v2");
     return url;
+  }
+
+  // TODO: Add DTO
+  @MessagePattern("oauth_verify_token")
+  async handleOAuthVerifyToken(message: any) {
+    const token = message.token;
+    const providerKey = message.providerKey;
+    const data = await this.externalAuthIntegrationService.verifyToken(
+      providerKey,
+      token
+    );
+    Logger.log(`Received data: ${JSON.stringify(data)}`, "AppController");
+    return data;
+  }
+
+  // TODO: Add DTO
+  @MessagePattern("oauth_refresh_token")
+  async handleOAuthRefreshToken(message: any) {
+    const refreshToken = message.refreshToken;
+    const providerKey = message.providerKey;
+    const data = await this.externalAuthIntegrationService.refreshToken(
+      providerKey,
+      refreshToken
+    );
+    return data;
   }
 }

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { IOAuth } from "./auth-providers/oauth2/interface/ioauth.interface";
 import { GoogleOAuthV2Service as GoogleOAuthV2Service } from "./auth-providers/oauth2/google/v2/google.oauth.v2.service";
 

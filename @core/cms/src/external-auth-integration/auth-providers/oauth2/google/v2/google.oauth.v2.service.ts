@@ -11,11 +11,16 @@ import { EncryptionDecryptionService } from "src/encryption-decryption/encryptio
 import { HttpService } from "@nestjs/axios";
 import {
   OAuth2StateProcessor,
-  createOAuth2AuthUrl,
   exchangeCodeForToken,
   verifyToken,
+  refreshToken,
+  createOAuth2Url,
 } from "src/external-auth-integration/utils";
-import { IOAuth2Config, IOAuth2State } from "../../@types";
+import {
+  IOAuth2Config,
+  IOAuth2State,
+  TokenVerificationResponse,
+} from "../../@types";
 
 /**
  * Service to handle Google OAuth V2 authentication.
@@ -34,7 +39,11 @@ export class GoogleOAuthV2Service implements IOAuth {
    */
   async authenticate(): Promise<string> {
     const encodedState = await this.buildState();
-    const url = createOAuth2AuthUrl(this.config, { state: encodedState });
+    const url = createOAuth2Url(
+      this.config,
+      { state: encodedState },
+      "authorize"
+    );
 
     Logger.log(`Redirecting to Google OAuth URL: ${url}`);
     return url;
@@ -68,8 +77,35 @@ export class GoogleOAuthV2Service implements IOAuth {
     }
   }
 
-  async verifyToken?(token: string): Promise<any> {
-    return verifyToken(this.httpService, this.config, token);
+  /**
+   * Refreshes the access token using the refresh token.
+   * @param _refreshToken - The refresh token.
+   */
+  refreshToken(_refreshToken: string): Promise<any> {
+    return refreshToken(this.httpService, this.config, _refreshToken);
+  }
+
+  /**
+   * Verifies the access token.
+   * @param _accessToken
+   * @returns {Promise<any>} The response from the token verification endpoint.
+   */
+  async verifyToken(_accessToken: string): Promise<TokenVerificationResponse> {
+    try {
+      const verificationResponse = await verifyToken(
+        this.httpService,
+        this.config,
+        _accessToken
+      );
+      return {
+        isValid: true,
+        expiresIn: verificationResponse.expires_in,
+        scopes: verificationResponse.scope.split(" "),
+      } as TokenVerificationResponse;
+    } catch (error) {
+      Logger.error("Token verification failed", error);
+      return { isValid: false };
+    }
   }
 
   /**
