@@ -18,13 +18,17 @@ export interface ICredentials {
  * @property {string} tokenUrl - The URL for the OAuth2 token endpoint.
  * @property {string} callbackUri - The URI for the OAuth2 callback after authentication.·
  * @property {string} [verifyTokenUrl] - The URL for the OAuth2 token verification endpoint.
+ * @property {string} refreshTokenUrl - The URL for the OAuth2 token refresh endpoint.
+ * @property {number} [tokenRefreshBuffer] - Time in seconds before expiration to refresh the token.
  * @property {{ [key: string]: string }} [callbackUriParams] - Optional additional parameters for the callback URI.
  */
 export interface IProviderConfiguration {
   authorizeUrl: string; // The URL for the OAuth2 authorization endpoint
   tokenUrl: string; // The URL for the OAuth2 token endpoint
-  callbackUri: string; // The URI for the OAuth2 callback after authentication
+  callbackUrl: string; // The URL for the OAuth2 callback after authentication
   verifyTokenUrl?: string; // The URL for the OAuth2 token verification endpoint
+  refreshTokenUrl: string; // The URL for the OAuth2 token refresh endpoint
+  tokenRefreshBuffer?: number; // Time in seconds before expiration to refresh the token
   callbackUriParams?: {
     // Optional additional parameters for the callback URI
     [key: string]: string;

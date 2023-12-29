@@ -58,7 +58,7 @@ export function createOAuth2AuthUrl(
   // Merge custom parameters with default parameters
   const searchParams = new URLSearchParams({
     client_id: config.credentials.id,
-    redirect_uri: config.provider.callbackUri,
+    redirect_uri: config.provider.callbackUrl,
     scope: config.scope.join(" "),
     ...config.provider.callbackUriParams,
     ...params,
@@ -114,7 +114,7 @@ export async function exchangeCodeForToken(
   const payload = {
     client_id: config.credentials.id,
     client_secret: config.credentials.secret,
-    redirect_uri: config.provider.callbackUri,
+    redirect_uri: config.provider.callbackUrl,
     grant_type: GRANT_TYPE,
     code: code,
   };
