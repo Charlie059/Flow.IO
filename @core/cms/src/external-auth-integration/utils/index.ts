@@ -36,94 +36,6 @@ export function decodeBase64UrlToString(data: string): string {
   return decodeData;
 }
 
-// /**
-//  * Creates an OAuth2 authorization URL by merging the given parameters with the default parameters.
-//  * @param config: IOAuth2Config
-//  * @param params: OAuth2UrlParams
-//  * @returns {string} - The OAuth2 authorization URL.
-//  */
-
-// // TODO: Create URL function like createOAuth2AuthUrl, createOAuth2VerifyUrl and createOAuth2RefreshUrl maybe with a generic function
-// export function createOAuth2AuthUrl(
-//   config: IOAuth2Config,
-//   params: OAuth2UrlParams
-// ): string {
-//   // Ensure the base URL is present
-//   if (!config || !config.provider.authorizeUrl) {
-//     throw new Error(
-//       "Invalid OAuth2 configuration - 'authorizeUrl' is required"
-//     );
-//   }
-
-//   const url = new URL(config.provider.authorizeUrl);
-
-//   // Merge custom parameters with default parameters
-//   const searchParams = new URLSearchParams({
-//     client_id: config.credentials.id,
-//     redirect_uri: config.provider.callbackUrl,
-//     scope: config.scope.join(" "),
-//     ...config.provider.callbackUrlParams,
-//     ...params,
-//   });
-
-//   url.search = searchParams.toString();
-//   return url.toString();
-// }
-
-// /**
-//  * Creates an OAuth2 token verification URL by merging the given parameters with the default parameters.
-//  * @param config
-//  * @param params
-//  * @returns
-//  */
-// export function createOAuth2VerifyUrl(
-//   config: IOAuth2Config,
-//   params: OAuth2UrlParams
-// ): string {
-//   // Ensure the base URL is present
-//   if (!config || !config.provider.verifyTokenUrl || !params.access_token) {
-//     throw new Error(
-//       "Invalid OAuth2 configuration - 'verifyTokenUrl' and 'access_token' are required"
-//     );
-//   }
-
-//   const url = new URL(config.provider.verifyTokenUrl);
-
-//   const searchParams = new URLSearchParams({
-//     access_token: params.access_token,
-//   });
-
-//   url.search = searchParams.toString();
-//   return url.toString();
-// }
-
-// /**
-//  * Creates an OAuth2 token refresh URL by merging the given parameters with the default parameters.
-//  * @param config
-//  * @param params
-//  * @returns
-//  */
-// export function createOAuth2RefreshUrl(
-//   config: IOAuth2Config,
-//   params: OAuth2UrlParams
-// ): string {
-//   // Ensure the base URL is present
-//   if (!config || !config.provider.refreshTokenUrl || !params.refresh_token) {
-//     throw new Error(
-//       "Invalid OAuth2 configuration - 'refreshTokenUrl' and 'refresh_token' are required"
-//     );
-//   }
-
-//   const url = new URL(config.provider.refreshTokenUrl);
-
-//   const searchParams = new URLSearchParams({
-//     refresh_token: params.refresh_token,
-//   });
-
-//   url.search = searchParams.toString();
-//   return url.toString();
-// }
-
 /**
  * Creates an OAuth2 URL by merging the given parameters with the default parameters.
  * @param config
@@ -243,7 +155,6 @@ export async function verifyToken(
  * @param additionalParams Additional parameters to be sent along with the token refresh request.
  * @returns Response from the token refresh endpoint.
  */
-
 export async function refreshToken(
   httpService: HttpService,
   config: IOAuth2Config,

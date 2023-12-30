@@ -19,7 +19,7 @@ export class GoogleOAuthV2Config {
       provider: {
         authorizeUrl: "https://accounts.google.com/o/oauth2/v2/auth",
         tokenUrl: "https://accounts.google.com/o/oauth2/token ",
-        callbackUrl: process.env.GOOGLE_OAUTH_V2_REDIRECT_URI,
+        callbackUrl: `${process.env.HOST_CONFIG_URL}/oauth/callback`,
         verifyTokenUrl: "https://oauth2.googleapis.com/tokeninfo",
         refreshTokenUrl: "https://oauth2.googleapis.com/token",
         tokenRefreshBuffer: 7776000, // 90 days
