@@ -1,20 +1,20 @@
 import { Injectable } from "@nestjs/common";
-import { IOAuth } from "./auth-providers/oauth2/interface/ioauth.interface";
-import { GoogleOAuthV2Service as GoogleOAuthV2Service } from "./auth-providers/oauth2/google/v2/google.oauth.v2.service";
+import { GoogleV2Service } from "~/external-auth-integration/auth-providers/oauth2/google/v2/google.v2.service";
+import { IOAuth } from "~/external-auth-integration/auth-providers/oauth2/interface/ioauth.interface";
 
 @Injectable()
 export class AuthProviderFactory {
   private readonly providerMap = new Map<string, IOAuth>();
 
-  constructor(private googleOAuthV2Service: GoogleOAuthV2Service) {
-    this.registerProvider("oauth-google-v2", this.googleOAuthV2Service);
+  constructor(private googleV2OAuthService: GoogleV2Service) {
+    this.registerProvider("oauth-google-v2", this.googleV2OAuthService);
   }
 
   private registerProvider(key: string, provider: IOAuth) {
     this.providerMap.set(key, provider);
   }
 
-  public getProvider(key: string): any {
+  public getProvider(key: string): IOAuth {
     const provider = this.providerMap.get(key);
     if (!provider) {
       throw new Error(`Provider not found: ${key}`);

@@ -1,18 +1,18 @@
 import { Module } from "@nestjs/common";
-import { GoogleOAuthV2Service } from "./google/v2/google.oauth.v2.service";
-import { GoogleOAuthV2Config } from "./google/v2/google.v2.config";
-import { EncryptionDecryptionModule } from "src/encryption-decryption/encryption-decryption.module";
 import { HttpModule } from "@nestjs/axios";
+import { EncryptionDecryptionModule } from "~/encryption-decryption/encryption-decryption.module";
+import { GoogleV2Service } from "~/external-auth-integration/auth-providers/oauth2/google/v2/google.v2.service";
+import { GoogleV2Config } from "~/external-auth-integration/auth-providers/oauth2/google/v2/google.v2.config";
+
 @Module({
   imports: [EncryptionDecryptionModule, HttpModule],
   providers: [
-    GoogleOAuthV2Service,
-    GoogleOAuthV2Config,
+    GoogleV2Service,
     {
-      provide: "GoogleOAuthV2Config",
-      useFactory: () => new GoogleOAuthV2Config().oAuth2Config,
+      provide: "GoogleV2Config",
+      useFactory: () => new GoogleV2Config().oAuth2Config,
     },
   ],
-  exports: [GoogleOAuthV2Service],
+  exports: [GoogleV2Service],
 })
 export class OAuth2Module {}

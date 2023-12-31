@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { IOAuth2Config } from "../../@types";
+import { IOAuth2Config } from "~/external-auth-integration/auth-providers/oauth2/@types";
 
 /**
- * Service for configuring Google OAuth2.
+ * Service for configuring Google V2 OAuth2.
  */
 @Injectable()
-export class GoogleOAuthV2Config {
+export class GoogleV2Config {
   public oAuth2Config: IOAuth2Config;
 
   constructor() {
@@ -18,7 +18,7 @@ export class GoogleOAuthV2Config {
       scope: ["https://www.googleapis.com/auth/drive"],
       provider: {
         authorizeUrl: "https://accounts.google.com/o/oauth2/v2/auth",
-        tokenUrl: "https://accounts.google.com/o/oauth2/token ",
+        tokenUrl: "https://accounts.google.com/o/oauth2/token",
         callbackUrl: `${process.env.HOST_CONFIG_URL}/oauth/callback`,
         verifyTokenUrl: "https://oauth2.googleapis.com/tokeninfo",
         refreshTokenUrl: "https://oauth2.googleapis.com/token",

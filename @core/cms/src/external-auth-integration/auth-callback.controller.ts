@@ -7,9 +7,9 @@ import {
   HttpException,
   HttpStatus,
 } from "@nestjs/common";
-import { AuthProviderFactory } from "./auth-provider.factory";
-import { EncryptionDecryptionService } from "src/encryption-decryption/encryption-decryption.service";
-import { decodeBase64UrlToString } from "./utils";
+import { AuthProviderFactory } from "~/external-auth-integration/auth-provider.factory";
+import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
+import { decodeBase64UrlToString } from "~/external-auth-integration/utils";
 
 @Controller("oauth")
 export class AuthCallbackController {
@@ -20,9 +20,9 @@ export class AuthCallbackController {
 
   /**
    * Define the OAuth callback route.
-   * @throws {HttpException} - If the state parameter is missing or invalid.
-   * @param query
-   * @param res
+   * @throws {HttpException} If the state parameter is missing or invalid.
+   * @param query The query parameters from the callback request.
+   * @param res The response object.
    */
   @Get("callback")
   async handleCallback(@Query() query: any, @Res() res: Response) {

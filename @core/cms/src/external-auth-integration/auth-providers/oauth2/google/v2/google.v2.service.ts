@@ -6,29 +6,29 @@ import {
   HttpException,
   HttpStatus,
 } from "@nestjs/common";
-import { IOAuth } from "../../interface/ioauth.interface";
-import { EncryptionDecryptionService } from "src/encryption-decryption/encryption-decryption.service";
 import { HttpService } from "@nestjs/axios";
+import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
+import { IOAuth } from "~/external-auth-integration/auth-providers/oauth2/interface/ioauth.interface";
 import {
   OAuth2StateProcessor,
   exchangeCodeForToken,
   verifyToken,
   refreshToken,
   createOAuth2Url,
-} from "src/external-auth-integration/utils";
+} from "~/external-auth-integration/utils";
 import {
   IOAuth2Config,
   IOAuth2State,
   TokenVerificationResponse,
-} from "../../@types";
+} from "~/external-auth-integration/auth-providers/oauth2/@types";
 
 /**
- * Service to handle Google OAuth V2 authentication.
+ * Service to handle Google V2 OAuth authentication.
  */
 @Injectable()
-export class GoogleOAuthV2Service implements IOAuth {
+export class GoogleV2Service implements IOAuth {
   constructor(
-    @Inject("GoogleOAuthV2Config") private readonly config: IOAuth2Config,
+    @Inject("GoogleV2Config") private readonly config: IOAuth2Config,
     private readonly encryptionDecryptionService: EncryptionDecryptionService,
     private readonly httpService: HttpService
   ) {}
