@@ -7,9 +7,9 @@ import {
   HttpException,
   HttpStatus,
 } from "@nestjs/common";
-import { AuthProviderFactory } from "~/external-auth-integration/auth-provider.factory";
+import { AuthProviderFactory } from "./auth-provider.factory";
 import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
-import { decodeBase64UrlToString } from "~/external-auth-integration/utils";
+import { decodeBase64UrlToString } from "./utils";
 
 @Controller("oauth")
 export class AuthCallbackController {
