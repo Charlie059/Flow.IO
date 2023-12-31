@@ -67,18 +67,35 @@ public class AuthenticationService {
         return buildTokenResponse(loginUser.getLoginEmail(), String.valueOf(System.currentTimeMillis()));
     }
 
+    /**
+     * Authenticate user and return access token and refresh token.
+     * @param request login email and password
+     * @return access token and refresh token
+     */
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getLoginEmail(),
-                        request.getPassword()
-                )
-        );
-        var loginUser = loginUserRepository.findByLoginEmail(request.getLoginEmail())
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getLoginEmail(),
+                            request.getPassword()
+                    )
+            );
+            var loginUser = loginUserRepository.findByLoginEmail(request.getLoginEmail())
                         .orElseThrow();
-        return buildTokenResponse(loginUser.getLoginEmail(), String.valueOf(System.currentTimeMillis()));
+                return buildTokenResponse(loginUser.getLoginEmail(), String.valueOf(System.currentTimeMillis()));
+        } catch (Exception e) {
+            return AuthenticationResponse.builder()
+                    .message("Invalid login email or password.")
+                    .build();
+        }
     }
 
+    /**
+     * Get access token using refresh token.
+     * @param request AuthenticationRequest
+     * @return access token and refresh token
+     * @throws Exception
+     */
     public AuthenticationResponse getAccessTokenUsingRefreshToken(AuthenticationRequest request) throws Exception {
 
         final var refreshToken = request.getRefreshToken();
