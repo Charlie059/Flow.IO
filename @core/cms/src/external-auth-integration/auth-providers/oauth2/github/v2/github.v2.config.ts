@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { IOAuth2Config } from '../../@types';
+import { Injectable } from "@nestjs/common";
+import { IOAuth2Config } from "../../@types";
 
 /**
  * Service for configuring Github OAuth2.
@@ -17,11 +17,11 @@ export class GithubOAuthV2Config {
       },
       scope: [],
       provider: {
-        authorizeUrl: 'https://github.com/login/oauth/authorize',
-        tokenUrl: 'https://github.com/login/oauth/access_token',
-        callbackUrl: 'https://localhost:3000/oauth/callback',
-        verifyTokenUrl: 'https://api.github.com',
-        refreshTokenUrl: 'https://github.com/login/oauth/access_token',
+        authorizeUrl: "https://github.com/login/oauth/authorize",
+        tokenUrl: "https://github.com/login/oauth/access_token",
+        callbackUrl: "https://localhost:3000/oauth/callback",
+        verifyTokenUrl: "https://api.github.com",
+        refreshTokenUrl: "https://github.com/login/oauth/access_token",
         tokenRefreshBuffer: 7776000, // 90 days
       },
     };
