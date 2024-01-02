@@ -19,7 +19,7 @@ export class GithubOAuthV2Config {
       provider: {
         authorizeUrl: "https://github.com/login/oauth/authorize",
         tokenUrl: "https://github.com/login/oauth/access_token",
-        callbackUrl: "https://localhost:3000/oauth/callback",
+        callbackUrl: `${process.env.HOST_CONFIG_URL}/oauth/callback`,
         verifyTokenUrl: "https://api.github.com",
         refreshTokenUrl: "https://github.com/login/oauth/access_token",
         tokenRefreshBuffer: 7776000, // 90 days
