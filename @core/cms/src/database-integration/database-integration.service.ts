@@ -20,7 +20,7 @@ export class DatabaseIntegrationService {
     Logger.log(
       "Received create_credential db request: ",
       createCredentialDto,
-      "AppController"
+      "DatabaseIntegrationService"
     );
     const newCredential = this.credentialRepository.create(createCredentialDto);
     return await this.credentialRepository.save(newCredential);
