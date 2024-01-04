@@ -12,7 +12,7 @@ export class AppController {
   constructor(
     private databaseIntegrationService: DatabaseIntegrationService,
     private encryptionDecryptionService: EncryptionDecryptionService,
-    private externalAuthIntegrationService: ExternalAuthIntegrationService
+    private externalAuthIntegrationService: ExternalAuthIntegrationService,
   ) {}
   // TODO: Add DTO
   @MessagePattern("create_credential")
@@ -33,7 +33,7 @@ export class AppController {
     const credentialId = "123";
     await this.encryptionDecryptionService.storeData(
       credentialId,
-      encrypt_data
+      encrypt_data,
     );
 
     // Retrieve the data from the KV store
@@ -53,6 +53,8 @@ export class AppController {
   @MessagePattern("oauth")
   async handleOAuth(message: any) {
     // TODO: Add JWT and pass params
+    // const url =
+    //   this.externalAuthIntegrationService.authenticate('oauth-github-v2');
     const url =
       this.externalAuthIntegrationService.authenticate("oauth-google-v2");
     return url;
@@ -65,7 +67,7 @@ export class AppController {
     const providerKey = message.providerKey;
     const data = await this.externalAuthIntegrationService.verifyToken(
       providerKey,
-      token
+      token,
     );
     Logger.log(`Received data: ${JSON.stringify(data)}`, "AppController");
     return data;
@@ -78,7 +80,7 @@ export class AppController {
     const providerKey = message.providerKey;
     const data = await this.externalAuthIntegrationService.refreshToken(
       providerKey,
-      refreshToken
+      refreshToken,
     );
     return data;
   }
