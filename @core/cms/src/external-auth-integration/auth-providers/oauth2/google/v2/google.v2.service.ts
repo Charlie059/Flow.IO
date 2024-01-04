@@ -23,12 +23,12 @@ import {
 } from "~/external-auth-integration/auth-providers/oauth2/@types";
 
 /**
- * Service to handle Google V2 OAuth authentication.
+ * Service to handle Google V2 OAuth2 authentication.
  */
 @Injectable()
-export class GoogleV2Service implements IOAuth {
+export class GoogleV2OAuth2Service implements IOAuth {
   constructor(
-    @Inject("GoogleV2Config") private readonly config: IOAuth2Config,
+    @Inject("GoogleV2OAuth2Config") private readonly config: IOAuth2Config,
     private readonly encryptionDecryptionService: EncryptionDecryptionService,
     private readonly httpService: HttpService
   ) {}
@@ -57,7 +57,7 @@ export class GoogleV2Service implements IOAuth {
   async handleCallback(query: any, @Res() res: any) {
     try {
       if (!query || !query.code) {
-        Logger.error("No code received", "GoogleOAuthV2Service");
+        Logger.error("No code received", "GoogleV2OAuth2Service");
         throw new HttpException("No code received", HttpStatus.BAD_REQUEST);
       }
 

@@ -5,15 +5,14 @@ import { IOAuth2Config } from "~/external-auth-integration/auth-providers/oauth2
  * Service for configuring Google V2 OAuth2.
  */
 @Injectable()
-export class GoogleV2Config {
+export class GoogleV2OAuth2Config {
   public oAuth2Config: IOAuth2Config;
 
   constructor() {
-    // Initialize the OAuth2 configuration object
     this.oAuth2Config = {
       credentials: {
-        id: process.env.GOOGLE_OAUTH_V2_CLIENT_ID,
-        secret: process.env.GOOGLE_OAUTH_V2_CLIENT_SECRET,
+        id: process.env.GOOGLE_V2_OAUTH2_CLIENT_ID,
+        secret: process.env.GOOGLE_V2_OAUTH2_CLIENT_SECRET,
       },
       scope: ["https://www.googleapis.com/auth/drive"],
       provider: {

@@ -6,8 +6,8 @@ import {
   HttpException,
   HttpStatus,
 } from "@nestjs/common";
-import { IOAuth } from "../../interface/ioauth.interface";
-import { EncryptionDecryptionService } from "src/encryption-decryption/encryption-decryption.service";
+import { IOAuth } from "~/external-auth-integration/auth-providers/oauth2/interface/ioauth.interface";
+import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
 import { HttpService } from "@nestjs/axios";
 import {
   OAuth2StateProcessor,
@@ -15,20 +15,21 @@ import {
   verifyToken,
   refreshToken,
   createOAuth2Url,
-} from "src/external-auth-integration/utils";
+} from "~/external-auth-integration/utils";
 import {
   IOAuth2Config,
   IOAuth2State,
   TokenVerificationResponse,
-} from "../../@types";
+} from "~/external-auth-integration/auth-providers/oauth2/@types";
 
 /**
- * Service to handle Github OAuth V2 authentication.
+ * Service to handle Github V1 OAuth2 authentication.
+ * Actually GitHub did not speficy the the version of their OAuth2.
  */
 @Injectable()
-export class GithubOAuthV2Service implements IOAuth {
+export class GithubV1OAuth2Service implements IOAuth {
   constructor(
-    @Inject("GithubOAuthV2Config") private readonly config: IOAuth2Config,
+    @Inject("GithubV1OAuth2Config") private readonly config: IOAuth2Config,
     private readonly encryptionDecryptionService: EncryptionDecryptionService,
     private readonly httpService: HttpService,
   ) {}
@@ -57,7 +58,7 @@ export class GithubOAuthV2Service implements IOAuth {
   async handleCallback(query: any, @Res() res: any) {
     try {
       if (!query || !query.code) {
-        Logger.error("No code received", "GithubOAuthV2Service");
+        Logger.error("No code received", "GithubV1OAuth2Service");
         throw new HttpException("No code received", HttpStatus.BAD_REQUEST);
       }
 

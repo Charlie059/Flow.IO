@@ -1,19 +1,18 @@
 import { Injectable } from "@nestjs/common";
-import { GoogleV2Service } from "./auth-providers/oauth2/google/v2/google.v2.service";
 import { IOAuth } from "./auth-providers/oauth2/interface/ioauth.interface";
-import { GoogleOAuthV2Service } from "./auth-providers/oauth2/google/v2/google.v2.service";
-import { GithubOAuthV2Service } from "./auth-providers/oauth2/github/v2/github.v2.service";
+import { GoogleV2OAuth2Service } from "./auth-providers/oauth2/google/v2/google.v2.service";
+import { GithubV1OAuth2Service } from "./auth-providers/oauth2/github/v1/github.v1.service";
 
 @Injectable()
 export class AuthProviderFactory {
   private readonly providerMap = new Map<string, IOAuth>();
 
   constructor(
-    private googleV2OAuthService: GoogleV2Service,
-    private githubOAuthV2Service: GithubV2Service
+    private googleV2OAuth2Service: GoogleV2OAuth2Service,
+    private githubV1OAuth2Service: GithubV1OAuth2Service
   ) {
-    this.registerProvider("oauth-google-v2", this.googleV2OAuthService);
-    this.registerProvider("oauth-github-v2", this.githubV2OAuthService);
+    this.registerProvider("oauth-google-v2", this.googleV2OAuth2Service);
+    this.registerProvider("oauth-github-v1", this.githubV1OAuth2Service);
   }
 
   private registerProvider(key: string, provider: IOAuth) {
