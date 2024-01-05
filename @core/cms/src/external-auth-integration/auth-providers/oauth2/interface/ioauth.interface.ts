@@ -25,5 +25,5 @@ export interface IOAuth {
    * Refreshes the access token using the refresh token.
    * @param refreshToken The refresh token.
    */
-  refreshToken(refreshToken: string): Promise<any>;
+  refreshToken?(refreshToken: string): Promise<any>;
 }

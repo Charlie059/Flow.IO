@@ -1,7 +1,7 @@
 import { Injectable, Inject, Logger, Res, HttpException, HttpStatus } from "@nestjs/common";
-import { HttpService } from "@nestjs/axios";
-import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
 import { IOAuth } from "~/external-auth-integration/auth-providers/oauth2/interface/ioauth.interface";
+import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
+import { HttpService } from "@nestjs/axios";
 import {
   OAuth2StateProcessor,
   exchangeCodeForToken,
@@ -12,25 +12,25 @@ import {
 import { IOAuth2Config, IOAuth2State, TokenVerificationResponse } from "~/external-auth-integration/auth-providers/oauth2/@types";
 
 /**
- * Service to handle Google V2 OAuth2 authentication.
+ * Service to handle Github V1 OAuth2 authentication.
  */
 @Injectable()
-export class GoogleV2OAuth2Service implements IOAuth {
+export class GithubV1OAuth2Service implements IOAuth {
   constructor(
-    @Inject("GoogleV2OAuth2Config") private readonly config: IOAuth2Config,
+    @Inject("GithubV1OAuth2Config") private readonly config: IOAuth2Config,
     private readonly encryptionDecryptionService: EncryptionDecryptionService,
     private readonly httpService: HttpService,
   ) {}
 
   /**
-   * Builds and returns the authentication URL for Google OAuth.
-   * @returns {Promise<string>} The Google OAuth URL.
+   * Builds and returns the authentication URL for Github OAuth.
+   * @returns {Promise<string>} The Github OAuth URL.
    */
   async authenticate(): Promise<string> {
     const encodedState = await this.buildState();
     const url = createOAuth2Url(this.config, { state: encodedState }, "authorize");
 
-    Logger.log(`Redirecting to Google OAuth URL: ${url}`);
+    Logger.log(`Redirecting to Github OAuth URL: ${url}`);
     return url;
   }
 
@@ -42,12 +42,12 @@ export class GoogleV2OAuth2Service implements IOAuth {
   async handleCallback(query: any, @Res() res: any) {
     try {
       if (!query || !query.code) {
-        Logger.error("No code received", "GoogleV2OAuth2Service");
+        Logger.error("No code received", "GithubV1OAuth2Service");
         throw new HttpException("No code received", HttpStatus.BAD_REQUEST);
       }
 
       const tokenResponse = await exchangeCodeForToken(this.httpService, this.config, query.code);
-
+      Logger.log("Token response", tokenResponse);
       res.status(HttpStatus.OK).json(tokenResponse);
     } catch (error) {
       Logger.error("Error exchanging code for token", error);
@@ -91,7 +91,7 @@ export class GoogleV2OAuth2Service implements IOAuth {
     const oAuth2State: IOAuth2State = {
       userId: "aaaa", // TODO: Replace with real user ID
       providerInfo: {
-        provider: "google",
+        provider: "github",
         version: "v2",
       },
     };

@@ -86,7 +86,6 @@ export interface IOAuth2State {
  * @interface TokenVerificationResponse
  * @property {boolean} isValid - Whether the token is valid.
  * @property {number} [expiresIn] - The number of seconds until the token expires.
- * @property {string} [userId] - The user ID.
  * @property {string[]} [scopes] - The list of scopes.
  * @property {{ [key: string]: any }} [key: string] - Optional additional fields as per your application's requirements.
  */
