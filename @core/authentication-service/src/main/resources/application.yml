@@ -1,0 +1,35 @@
+jwt:
+  secretKey: ${SECRET_KEY}
+
+spring:
+  datasource:
+    url: jdbc:postgresql://some-postgres:5432/flowio-authentication
+    username: postgres
+    password: mysecretpassword
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  data:
+    redis:
+      host: redis
+      port: 6379
+      database: 0
+      password:
+      jedis:
+        pool:
+          max-wait: -1
+          max-idle: 10
+          min-idle: 0
+      timeout: 1000
+
+server:
+  port: 8080
+
