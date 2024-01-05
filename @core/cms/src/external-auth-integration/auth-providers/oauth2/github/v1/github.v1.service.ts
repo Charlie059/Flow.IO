@@ -1,11 +1,4 @@
-import {
-  Injectable,
-  Inject,
-  Logger,
-  Res,
-  HttpException,
-  HttpStatus,
-} from "@nestjs/common";
+import { Injectable, Inject, Logger, Res, HttpException, HttpStatus } from "@nestjs/common";
 import { IOAuth } from "~/external-auth-integration/auth-providers/oauth2/interface/ioauth.interface";
 import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
 import { HttpService } from "@nestjs/axios";
@@ -16,15 +9,10 @@ import {
   refreshToken,
   createOAuth2Url,
 } from "~/external-auth-integration/utils";
-import {
-  IOAuth2Config,
-  IOAuth2State,
-  TokenVerificationResponse,
-} from "~/external-auth-integration/auth-providers/oauth2/@types";
+import { IOAuth2Config, IOAuth2State, TokenVerificationResponse } from "~/external-auth-integration/auth-providers/oauth2/@types";
 
 /**
  * Service to handle Github V1 OAuth2 authentication.
- * Actually GitHub did not speficy the the version of their OAuth2.
  */
 @Injectable()
 export class GithubV1OAuth2Service implements IOAuth {
@@ -40,11 +28,7 @@ export class GithubV1OAuth2Service implements IOAuth {
    */
   async authenticate(): Promise<string> {
     const encodedState = await this.buildState();
-    const url = createOAuth2Url(
-      this.config,
-      { state: encodedState },
-      "authorize",
-    );
+    const url = createOAuth2Url(this.config, { state: encodedState }, "authorize");
 
     Logger.log(`Redirecting to Github OAuth URL: ${url}`);
     return url;
@@ -62,19 +46,12 @@ export class GithubV1OAuth2Service implements IOAuth {
         throw new HttpException("No code received", HttpStatus.BAD_REQUEST);
       }
 
-      const tokenResponse = await exchangeCodeForToken(
-        this.httpService,
-        this.config,
-        query.code,
-      );
+      const tokenResponse = await exchangeCodeForToken(this.httpService, this.config, query.code);
       Logger.log("Token response", tokenResponse);
       res.status(HttpStatus.OK).json(tokenResponse);
     } catch (error) {
       Logger.error("Error exchanging code for token", error);
-      throw new HttpException(
-        "Error exchanging code for token",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException("Error exchanging code for token", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -93,11 +70,7 @@ export class GithubV1OAuth2Service implements IOAuth {
    */
   async verifyToken(_accessToken: string): Promise<TokenVerificationResponse> {
     try {
-      const verificationResponse = await verifyToken(
-        this.httpService,
-        this.config,
-        _accessToken,
-      );
+      const verificationResponse = await verifyToken(this.httpService, this.config, _accessToken);
       return {
         isValid: true,
         expiresIn: verificationResponse.expires_in,
@@ -116,17 +89,14 @@ export class GithubV1OAuth2Service implements IOAuth {
    */
   private async buildState(): Promise<string> {
     const oAuth2State: IOAuth2State = {
-      userId: "aaaa", // Replace with real user ID
+      userId: "aaaa", // TODO: Replace with real user ID
       providerInfo: {
         provider: "github",
         version: "v2",
       },
     };
 
-    return new OAuth2StateProcessor(
-      oAuth2State,
-      this.encryptionDecryptionService,
-    )
+    return new OAuth2StateProcessor(oAuth2State, this.encryptionDecryptionService)
       .stringify()
       .then((p) => p.encrypt())
       .then((p) => p.toBase64())
