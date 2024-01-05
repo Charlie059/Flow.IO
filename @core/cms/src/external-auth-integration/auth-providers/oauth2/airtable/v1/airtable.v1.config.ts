@@ -5,14 +5,14 @@ import { IOAuth2Config } from "~/external-auth-integration/auth-providers/oauth2
  * Service for configuring Airtable V1 OAuth2.
  */
 @Injectable()
-export class AirtableV1Config {
+export class AirtableV1OAuth2Config {
   public oAuth2Config: IOAuth2Config;
 
   constructor() {
     this.oAuth2Config = {
       credentials: {
-        id: process.env.AIRTABLE_OAUTH_V1_CLIENT_ID,
-        secret: process.env.AIRTABLE_OAUTH_V1_CLIENT_SECRET,
+        id: process.env.AIRTABLE_V1_OAUTH2_CLIENT_ID,
+        secret: process.env.AIRTABLE_V1_OAUTH2_CLIENT_SECRET,
       },
       scope: [], // TODO: Airtable scopes
       provider: {

@@ -23,12 +23,12 @@ import {
 } from "~/external-auth-integration/auth-providers/oauth2/@types";
 
 /**
- * Service to handle Airtable V1 OAuth authentication.
+ * Service to handle Airtable V1 OAuth2 authentication.
  */
 @Injectable()
-export class AirtableV1Service implements IOAuth {
+export class AirtableV1OAuth2Service implements IOAuth {
   constructor(
-    @Inject("AirtableV1Config") private readonly config: IOAuth2Config,
+    @Inject("AirtableV1OAuth2Config") private readonly config: IOAuth2Config,
     private readonly encryptionDecryptionService: EncryptionDecryptionService,
     private readonly httpService: HttpService
   ) {}
@@ -57,7 +57,7 @@ export class AirtableV1Service implements IOAuth {
   async handleCallback(query: any, @Res() res: any) {
     try {
       if (!query || !query.code) {
-        Logger.error("No code received", "AirtableV1Service");
+        Logger.error("No code received", "AirtableV1OAuth2Service");
         throw new HttpException("No code received", HttpStatus.BAD_REQUEST);
       }
 
