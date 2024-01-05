@@ -13,8 +13,8 @@ The Credential Management System exposes itself as a microservice and provides t
 
 1. NestJS
 2. Node 18
-3. Vault (encryption/decryption, Key-Value store)
-4. PostgreSQL (credential storage)
+3. Vault (encryption/decryption, credential storage)
+4. PostgreSQL (non-sensitive data storage)
 5. Redis (messaging)
 
 ## How to Run
