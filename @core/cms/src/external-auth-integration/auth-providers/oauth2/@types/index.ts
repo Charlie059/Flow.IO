@@ -50,6 +50,7 @@ export interface IOAuth2Config {
   credentials: ICredentials; // The client credentials
   provider: IProviderConfiguration; // The OAuth2 provider's endpoint configuration
 }
+
 /**
  * Represents the parameters to be sent along with the OAuth2 authorization URL.
  * @export
