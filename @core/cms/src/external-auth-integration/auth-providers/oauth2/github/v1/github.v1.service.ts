@@ -92,7 +92,7 @@ export class GithubV1OAuth2Service implements IOAuth {
       userId: "aaaa", // TODO: Replace with real user ID
       providerInfo: {
         provider: "github",
-        version: "v2",
+        version: "v1",
       },
     };
 
