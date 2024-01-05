@@ -11,14 +11,8 @@ describe("DatabaseIntegrationService", () => {
   beforeEach(async () => {
     mockCredentialRepository = {
       create: jest.fn().mockImplementation((dto) => dto),
-      save: jest
-        .fn()
-        .mockImplementation((credential) =>
-          Promise.resolve({ id: 1, ...credential })
-        ),
-      delete: jest
-        .fn()
-        .mockImplementation((id) => Promise.resolve({ affected: 1 })),
+      save: jest.fn().mockImplementation((credential) => Promise.resolve({ id: 1, ...credential })),
+      delete: jest.fn().mockImplementation(() => Promise.resolve({ affected: 1 })),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -31,9 +25,7 @@ describe("DatabaseIntegrationService", () => {
       ],
     }).compile();
 
-    service = module.get<DatabaseIntegrationService>(
-      DatabaseIntegrationService
-    );
+    service = module.get<DatabaseIntegrationService>(DatabaseIntegrationService);
   });
 
   it("should create a new credential", async () => {
@@ -47,12 +39,8 @@ describe("DatabaseIntegrationService", () => {
 
     const result = await service.createCredential(createCredentialDto);
 
-    expect(mockCredentialRepository.create).toHaveBeenCalledWith(
-      createCredentialDto
-    );
-    expect(mockCredentialRepository.save).toHaveBeenCalledWith(
-      createCredentialDto
-    );
+    expect(mockCredentialRepository.create).toHaveBeenCalledWith(createCredentialDto);
+    expect(mockCredentialRepository.save).toHaveBeenCalledWith(createCredentialDto);
     expect(result).toEqual({ id: 1, ...createCredentialDto });
   });
 
