@@ -14,7 +14,7 @@ export class AirtableV1OAuth2Config {
         id: process.env.AIRTABLE_V1_OAUTH2_CLIENT_ID,
         secret: process.env.AIRTABLE_V1_OAUTH2_CLIENT_SECRET,
       },
-      scope: [], // TODO: Airtable scopes
+      scope: ["data.records:read"], // TODO: Use proper scope, https://airtable.com/developers/web/api/scopes
       provider: {
         authorizeUrl: "https://airtable.com/oauth2/v1/authorize",
         tokenUrl: "https://airtable.com/oauth2/v1/token",
