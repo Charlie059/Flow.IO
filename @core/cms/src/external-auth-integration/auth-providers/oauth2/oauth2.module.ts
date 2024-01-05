@@ -11,12 +11,12 @@ import { GithubV1OAuth2Config } from "./github/v1/github.v1.config";
   providers: [
     GoogleV2OAuth2Service,
     {
-      provide: "GoogleV2OAuthV2Config",
+      provide: "GoogleV2OAuth2Config",
       useFactory: () => new GoogleV2OAuth2Config().oAuth2Config,
     },
     GithubV1OAuth2Service,
     {
-      provide: "GithubOAuthV2Config",
+      provide: "GithubV1OAuth2Config",
       useFactory: () => new GithubV1OAuth2Config().oAuth2Config,
     },
   ],
