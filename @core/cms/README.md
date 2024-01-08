@@ -29,28 +29,9 @@ export DB_HOST=db
 
 See docker-compose.yml for what's required.
 
-### 2. Put configurations in a `.env` file in the project root
+### 2. Put configurations in a `.env` file in the CMS folder
 
-Sample:
-
-```
-# REQUIRED
-DB_DATABASE=postgres
-REDIS_HOST=redis
-REDIS_PORT=6379
-VAULT_ADDR=http://host.docker.internal:8200
-VAULT_TOKEN=myroot
-VAULT_TRANSIT_ENCRYPT_PATH=transit/encrypt/key
-VAULT_TRANSIT_DECRYPT_PATH=transit/decrypt/key
-VAULT_KV_PATH=secret
-HOST_CONFIG_URL=https://myhostname
-
-# OAUTH LIST
-# GOOGLE OAUTH_v2
-GOOGLE_OAUTH_V2_CLIENT_ID=abcde
-GOOGLE_OAUTH_V2_CLIENT_SECRET=abcde
-# More external identity provider client config:
-```
+See .env.example for what's required. You can also use it as a template and rename it to `.env` when you're done.
 
 ### 3. Docker Compose Up
 
