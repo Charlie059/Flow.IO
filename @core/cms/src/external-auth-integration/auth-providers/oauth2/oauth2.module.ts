@@ -1,25 +1,25 @@
 import { Module } from "@nestjs/common";
-import { GoogleOAuthV2Service } from "./google/v2/google.oauth.v2.service";
-import { GithubOAuthV2Service } from "./github/v2/github.oauth.v2.service";
-import { GoogleOAuthV2Config } from "./google/v2/google.v2.config";
-import { GithubOAuthV2Config } from "./github/v2/github.v2.config";
-import { EncryptionDecryptionModule } from "src/encryption-decryption/encryption-decryption.module";
 import { HttpModule } from "@nestjs/axios";
+import { EncryptionDecryptionModule } from "~/encryption-decryption/encryption-decryption.module";
+import { GoogleV2OAuth2Service } from "./google/v2/google.v2.service";
+import { GoogleV2OAuth2Config } from "./google/v2/google.v2.config";
+import { GithubV1OAuth2Service } from "./github/v1/github.v1.service";
+import { GithubV1OAuth2Config } from "./github/v1/github.v1.config";
+
 @Module({
   imports: [EncryptionDecryptionModule, HttpModule],
   providers: [
-    GoogleOAuthV2Service,
-    GithubOAuthV2Service,
-    GoogleOAuthV2Config,
+    GoogleV2OAuth2Service,
     {
-      provide: "GoogleOAuthV2Config",
-      useFactory: () => new GoogleOAuthV2Config().oAuth2Config,
+      provide: "GoogleV2OAuth2Config",
+      useFactory: () => new GoogleV2OAuth2Config().oAuth2Config,
     },
+    GithubV1OAuth2Service,
     {
-      provide: "GithubOAuthV2Config",
-      useFactory: () => new GithubOAuthV2Config().oAuth2Config,
+      provide: "GithubV1OAuth2Config",
+      useFactory: () => new GithubV1OAuth2Config().oAuth2Config,
     },
   ],
-  exports: [GoogleOAuthV2Service, GithubOAuthV2Service],
+  exports: [GoogleV2OAuth2Service, GithubV1OAuth2Service],
 })
 export class OAuth2Module {}

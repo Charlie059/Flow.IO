@@ -1,8 +1,8 @@
-import { EncryptionDecryptionService } from "src/encryption-decryption/encryption-decryption.service";
+import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
 import {
   IOAuth2Config,
   OAuth2UrlParams,
-} from "../auth-providers/oauth2/@types";
+} from "~/external-auth-integration/auth-providers/oauth2/@types";
 import { lastValueFrom } from "rxjs";
 import { map } from "rxjs/operators";
 import { HttpService } from "@nestjs/axios";
@@ -125,7 +125,6 @@ export async function exchangeCodeForToken(
  * @param additionalParams Additional parameters to be sent along with the token verification request.
  * @returns {Promise<any>}
  */
-
 export async function verifyToken(
   httpService: HttpService,
   config: IOAuth2Config,
@@ -185,6 +184,7 @@ export async function refreshToken(
   Logger.debug(`Refresh response: ${JSON.stringify(response)}`, "OAuth2Utils");
   return response;
 }
+
 /**
  * Processes the OAuth2 state object by stringifying, encrypting and encoding it.
  */
