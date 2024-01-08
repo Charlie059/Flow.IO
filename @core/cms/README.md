@@ -29,7 +29,7 @@ export DB_HOST=db
 
 See docker-compose.yml for what's required.
 
-### 2. Put configurations in a `.env` file in the CMS folder
+### 2. Put configurations in a `.env` file in the cms folder
 
 See .env.example for what's required. You can also use it as a template and rename it to `.env` when you're done.
 
