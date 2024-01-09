@@ -1,11 +1,4 @@
-import {
-  Injectable,
-  Inject,
-  Logger,
-  Res,
-  HttpException,
-  HttpStatus,
-} from "@nestjs/common";
+import { Injectable, Inject, Logger, Res, HttpException, HttpStatus } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
@@ -18,13 +11,9 @@ import {
   verifyToken,
   refreshToken,
   createOAuth2Url,
-  toSha256Base64UrlSafe
+  toSha256Base64UrlSafe,
 } from "~/external-auth-integration/utils";
-import {
-  IOAuth2Config,
-  IOAuth2State,
-  TokenVerificationResponse,
-} from "~/external-auth-integration/auth-providers/oauth2/@types";
+import { IOAuth2Config, IOAuth2State, TokenVerificationResponse } from "~/external-auth-integration/auth-providers/oauth2/@types";
 
 /**
  * Service to handle Airtable V1 OAuth2 authentication.
@@ -35,7 +24,7 @@ export class AirtableV1OAuth2Service implements IOAuth {
     @Inject("AirtableV1OAuth2Config") private readonly config: IOAuth2Config,
     private readonly encryptionDecryptionService: EncryptionDecryptionService,
     private readonly httpService: HttpService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache // TODO: refactor
+    @Inject(CACHE_MANAGER) private cacheManager: Cache, // TODO: refactor
   ) {}
 
   /**
@@ -44,18 +33,20 @@ export class AirtableV1OAuth2Service implements IOAuth {
    */
   async authenticate(): Promise<string> {
     const encodedState = await this.buildState();
-    const codeVerifier = randomBytes(96).toString('base64url');
+    const codeVerifier = randomBytes(96).toString("base64url");
     // TODO: refactor
-    await this.cacheManager.set('userId-oauth2-airtable-v1', codeVerifier, 300_000); // code verifier ttl: 5 mins
+    await this.cacheManager.set("userId-oauth2-airtable-v1", codeVerifier, 300_000); // code verifier ttl: 5 mins
+
+    Logger.debug(`Generated code verifier: ${codeVerifier}`, "AirtableV1OAuth2Service");
     const codeChallenge = toSha256Base64UrlSafe(codeVerifier);
     const url = createOAuth2Url(
       this.config,
       {
         state: encodedState,
         code_challenge_method: "S256",
-        code_challenge: codeChallenge
+        code_challenge: codeChallenge,
       },
-      "authorize"
+      "authorize",
     );
 
     Logger.log(`Redirecting to Airtable OAuth URL: ${url}`);
@@ -74,22 +65,14 @@ export class AirtableV1OAuth2Service implements IOAuth {
         throw new HttpException("No code received", HttpStatus.BAD_REQUEST);
       }
 
-      const tokenResponse = await exchangeCodeForToken(
-        this.httpService,
-        this.config,
-        query.code,
-        {
-          code_verifier: await this.cacheManager.get('userId-oauth2-airtable-v1') // TODO: refactor
-        }
-      );
+      const tokenResponse = await exchangeCodeForToken(this.httpService, this.config, query.code, {
+        code_verifier: await this.cacheManager.get("userId-oauth2-airtable-v1"), // TODO: refactor
+      });
 
       res.status(HttpStatus.OK).json(tokenResponse);
     } catch (error) {
       Logger.error("Error exchanging code for token", error);
-      throw new HttpException(
-        "Error exchanging code for token",
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
+      throw new HttpException("Error exchanging code for token", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -108,11 +91,7 @@ export class AirtableV1OAuth2Service implements IOAuth {
    */
   async verifyToken(_accessToken: string): Promise<TokenVerificationResponse> {
     try {
-      const verificationResponse = await verifyToken(
-        this.httpService,
-        this.config,
-        _accessToken
-      );
+      const verificationResponse = await verifyToken(this.httpService, this.config, _accessToken);
       return {
         isValid: true,
         expiresIn: verificationResponse.expires_in,
@@ -135,13 +114,10 @@ export class AirtableV1OAuth2Service implements IOAuth {
       providerInfo: {
         provider: "airtable",
         version: "v1",
-      }
+      },
     };
 
-    return new OAuth2StateProcessor(
-      oAuth2State,
-      this.encryptionDecryptionService
-    )
+    return new OAuth2StateProcessor(oAuth2State, this.encryptionDecryptionService)
       .stringify()
       .then((p) => p.encrypt())
       .then((p) => p.toBase64())

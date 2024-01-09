@@ -1,8 +1,5 @@
 import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
-import {
-  IOAuth2Config,
-  OAuth2UrlParams,
-} from "~/external-auth-integration/auth-providers/oauth2/@types";
+import { IOAuth2Config, OAuth2UrlParams } from "~/external-auth-integration/auth-providers/oauth2/@types";
 import { lastValueFrom } from "rxjs";
 import { createHash } from "crypto";
 import { map } from "rxjs/operators";
@@ -15,11 +12,7 @@ import { Logger } from "@nestjs/common";
  * @returns {string} - The Base64 URL safe encoded string.
  */
 export function toBase64UrlSafe(data: string): string {
-  return Buffer.from(data)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+  return Buffer.from(data).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 /**
@@ -28,12 +21,7 @@ export function toBase64UrlSafe(data: string): string {
  * @returns {string} - The SHA256 Base64 URL safe encoded string.
  */
 export function toSha256Base64UrlSafe(data: string) {
-  return createHash("sha256")
-    .update(data)
-    .digest("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+  return createHash("sha256").update(data).digest("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 /**
@@ -61,7 +49,7 @@ export function decodeBase64UrlToString(data: string): string {
 export function createOAuth2Url(
   config: IOAuth2Config,
   params: OAuth2UrlParams,
-  urlType: "authorize" | "verifyToken" | "refreshToken"
+  urlType: "authorize" | "verifyToken" | "refreshToken",
 ): string {
   let baseUrl: string;
 
@@ -90,9 +78,7 @@ export function createOAuth2Url(
   }
 
   if (!baseUrl) {
-    throw new Error(
-      `Invalid OAuth2 configuration - '${urlType}Url' is required`
-    );
+    throw new Error(`Invalid OAuth2 configuration - '${urlType}Url' is required`);
   }
 
   const url = new URL(baseUrl);
@@ -114,25 +100,41 @@ export async function exchangeCodeForToken(
   httpService: HttpService,
   config: IOAuth2Config,
   code: string,
-  extraParams?: { [key: string]: string }
+  extraParams?: { [key: string]: string },
 ) {
   const tokenUrl = config.provider.tokenUrl;
   const GRANT_TYPE = "authorization_code";
 
-  const payload = {
+  const params = new URLSearchParams({
     client_id: config.credentials.id,
     client_secret: config.credentials.secret,
     redirect_uri: config.provider.callbackUrl,
     grant_type: GRANT_TYPE,
     code: code,
-    ...extraParams
-  };
+    ...extraParams,
+  }).toString();
 
-  const response = await lastValueFrom(
-    httpService.post(tokenUrl, payload).pipe(map((resp) => resp.data))
-  );
+  Logger.debug("Params", params, "OAuth2Utils");
+  try {
+    const response = await lastValueFrom(
+      httpService
+        .post(tokenUrl, params, {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        })
+        .pipe(map((resp) => resp.data)),
+    );
 
-  return response;
+    return response;
+  } catch (error) {
+    if (error.response) {
+      Logger.error("HTTP Error Response", JSON.stringify(error.response.data), "OAuth2Utils");
+    } else {
+      Logger.error("HTTP Request Failed", error.message, "OAuth2Utils");
+    }
+    throw error;
+  }
 }
 
 /**
@@ -147,7 +149,7 @@ export async function verifyToken(
   httpService: HttpService,
   config: IOAuth2Config,
   accessToken: string,
-  additionalParams?: { [key: string]: string }
+  additionalParams?: { [key: string]: string },
 ): Promise<any> {
   const verifyUrl = createOAuth2Url(
     config,
@@ -155,12 +157,10 @@ export async function verifyToken(
       access_token: accessToken,
       ...additionalParams,
     },
-    "verifyToken"
+    "verifyToken",
   );
 
-  const info = await lastValueFrom(
-    httpService.get(verifyUrl).pipe(map((resp) => resp.data))
-  );
+  const info = await lastValueFrom(httpService.get(verifyUrl).pipe(map((resp) => resp.data)));
   return info;
 }
 
@@ -176,7 +176,7 @@ export async function refreshToken(
   httpService: HttpService,
   config: IOAuth2Config,
   refreshToken: string,
-  additionalParams?: { [key: string]: string }
+  additionalParams?: { [key: string]: string },
 ): Promise<any> {
   const refreshUrl = createOAuth2Url(
     config,
@@ -184,7 +184,7 @@ export async function refreshToken(
       refresh_token: refreshToken,
       ...additionalParams,
     },
-    "refreshToken"
+    "refreshToken",
   );
 
   Logger.debug(`Refresh URL: ${refreshUrl}`, "OAuth2Utils");
@@ -196,9 +196,7 @@ export async function refreshToken(
     refresh_token: refreshToken,
   };
 
-  const response = await lastValueFrom(
-    httpService.post(refreshUrl, payload).pipe(map((resp) => resp.data))
-  );
+  const response = await lastValueFrom(httpService.post(refreshUrl, payload).pipe(map((resp) => resp.data)));
   Logger.debug(`Refresh response: ${JSON.stringify(response)}`, "OAuth2Utils");
   return response;
 }
@@ -211,7 +209,7 @@ export class OAuth2StateProcessor {
 
   constructor(
     private readonly state: any,
-    private readonly encryptionService: EncryptionDecryptionService
+    private readonly encryptionService: EncryptionDecryptionService,
   ) {
     this.data = state;
   }
@@ -222,12 +220,10 @@ export class OAuth2StateProcessor {
   }
 
   encrypt() {
-    return this.encryptionService
-      .encryptData(this.data)
-      .then((encryptedData) => {
-        this.data = encryptedData;
-        return this;
-      });
+    return this.encryptionService.encryptData(this.data).then((encryptedData) => {
+      this.data = encryptedData;
+      return this;
+    });
   }
 
   toBase64() {
