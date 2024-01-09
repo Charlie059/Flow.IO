@@ -1,5 +1,5 @@
 import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
-import { IOAuth2Config, OAuth2UrlParams } from "~/external-auth-integration/auth-providers/oauth2/@types";
+import { IOAuth2Config, OAuth2RequestOptions, OAuth2UrlParams } from "~/external-auth-integration/auth-providers/oauth2/@types";
 import { lastValueFrom } from "rxjs";
 import { createHash } from "crypto";
 import { map } from "rxjs/operators";
@@ -93,16 +93,14 @@ export function createOAuth2Url(
  * @param httpService  The HttpService instance.
  * @param config  The OAuth2 configuration.
  * @param code  The code to be exchanged for a token.
- * @param extraParams  Additional parameters to be sent along with the token exchange request.
- * @param headers Additional headers to be sent along with the token exchange request.
+ * @param options Additional options of the request.
  * @returns  The ServerResponse.
  */
 export async function exchangeCodeForToken(
   httpService: HttpService,
   config: IOAuth2Config,
   code: string,
-  extraParams?: { [key: string]: string },
-  headers?: { [key: string]: string },
+  options?: OAuth2RequestOptions,
 ) {
   const tokenUrl = config.provider.tokenUrl;
   const GRANT_TYPE = "authorization_code";
@@ -113,7 +111,7 @@ export async function exchangeCodeForToken(
     redirect_uri: config.provider.callbackUrl,
     grant_type: GRANT_TYPE,
     code: code,
-    ...extraParams,
+    ...options?.params || {},
   }).toString();
 
   Logger.debug("Params", params, "OAuth2Utils");
@@ -121,7 +119,7 @@ export async function exchangeCodeForToken(
     const response = await lastValueFrom(
       httpService
         .post(tokenUrl, params, {
-          headers,
+          headers: options?.headers || {},
         })
         .pipe(map((resp) => resp.data)),
     );
@@ -139,23 +137,23 @@ export async function exchangeCodeForToken(
 
 /**
  * Verifies the given OAuth2 token.
- * @param httpService
- * @param config
- * @param accessToken
- * @param additionalParams Additional parameters to be sent along with the token verification request.
+ * @param httpService The HttpService instance.
+ * @param config The OAuth2 configuration.
+ * @param accessToken The access token to be verified.
+ * @param options Additional options of the request.
  * @returns {Promise<any>}
  */
 export async function verifyToken(
   httpService: HttpService,
   config: IOAuth2Config,
   accessToken: string,
-  additionalParams?: { [key: string]: string },
+  options?: OAuth2RequestOptions,
 ): Promise<any> {
   const verifyUrl = createOAuth2Url(
     config,
     {
       access_token: accessToken,
-      ...additionalParams,
+      ...options?.params || {},
     },
     "verifyToken",
   );
@@ -166,23 +164,22 @@ export async function verifyToken(
 
 /**
  * Refreshes the given OAuth2 token.
- * @param httpService
+ * @param httpService The HttpService instance.
  * @param config The OAuth2 configuration.
- * @param refreshToken
- * @param additionalParams Additional parameters to be sent along with the token refresh request.
+ * @param refreshToken The refresh token to be used.
+ * @param options Additional options of the request.
  * @returns Response from the token refresh endpoint.
  */
 export async function refreshToken(
   httpService: HttpService,
   config: IOAuth2Config,
   refreshToken: string,
-  additionalParams?: { [key: string]: string },
+  options?: OAuth2RequestOptions,
 ): Promise<any> {
   const refreshUrl = createOAuth2Url(
     config,
     {
       refresh_token: refreshToken,
-      ...additionalParams,
     },
     "refreshToken",
   );
@@ -194,9 +191,12 @@ export async function refreshToken(
     client_secret: config.credentials.secret,
     grant_type: "refresh_token",
     refresh_token: refreshToken,
+    ...options?.params || {},
   };
 
-  const response = await lastValueFrom(httpService.post(refreshUrl, payload).pipe(map((resp) => resp.data)));
+  const response = await lastValueFrom(httpService.post(refreshUrl, payload, {
+    headers: options?.headers || {},
+  }).pipe(map((resp) => resp.data)));
   Logger.debug(`Refresh response: ${JSON.stringify(response)}`, "OAuth2Utils");
   return response;
 }

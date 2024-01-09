@@ -67,10 +67,13 @@ export class AirtableV1OAuth2Service implements IOAuth {
 
       const encodedCredentials = Buffer.from(`${this.config.credentials.id}:${this.config.credentials.secret}`).toString("base64")
       const tokenResponse = await exchangeCodeForToken(this.httpService, this.config, query.code, {
-        code_verifier: await this.cacheManager.get("userId-oauth2-airtable-v1"), // TODO: refactor
-      }, {
-        Authorization: `Basic ${encodedCredentials}`,
-        "Content-Type": "application/x-www-form-urlencoded",
+        params: {
+          code_verifier: await this.cacheManager.get("userId-oauth2-airtable-v1"), // TODO: refactor
+        },
+        headers: {
+          Authorization: `Basic ${encodedCredentials}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        }
       });
 
       res.status(HttpStatus.OK).json(tokenResponse);
@@ -84,8 +87,21 @@ export class AirtableV1OAuth2Service implements IOAuth {
    * Refreshes the access token using the refresh token.
    * @param _refreshToken - The refresh token.
    */
-  refreshToken(_refreshToken: string): Promise<any> {
-    return refreshToken(this.httpService, this.config, _refreshToken);
+  async refreshToken(_refreshToken: string): Promise<any> {
+    try {
+      const encodedCredentials = Buffer.from(`${this.config.credentials.id}:${this.config.credentials.secret}`).toString("base64")
+      const response = await refreshToken(this.httpService, this.config, _refreshToken, {
+        headers: {
+          Authorization: `Basic ${encodedCredentials}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        }
+      });
+      Logger.log("Refresh token response", response);
+      return response;
+    } catch (error) {
+      Logger.error("Error refreshing token", error);
+      throw new HttpException("Error refreshing token", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   /**
