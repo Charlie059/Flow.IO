@@ -20,7 +20,7 @@ export function toBase64UrlSafe(data: string): string {
  * @param {string} data - The string to be encoded.
  * @returns {string} - The SHA256 Base64 URL safe encoded string.
  */
-export function toSha256Base64UrlSafe(data: string) {
+export function toSha256Base64UrlSafe(data: string): string {
   return createHash("sha256").update(data).digest("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
