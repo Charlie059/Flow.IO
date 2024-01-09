@@ -69,10 +69,12 @@ export interface OAuth2UrlParams {
  * @interface OAuth2RequestOptions
  * @property {{ [key: string]: string }} [params] - Optional additional parameters to be sent along with the OAuth2 request.
  * @property {{ [key: string]: string }} [headers] - Optional additional headers to be sent along with the OAuth2 request.
+ * @property {{ [key: string]: string }} [payloads] - Optional additional body to be sent along with the OAuth2 request.
  */
 export interface OAuth2RequestOptions {
   params?: { [key: string]: string };
   headers?: { [key: string]: string };
+  payloads?: { [key: string]: string };
 }
 
 /**

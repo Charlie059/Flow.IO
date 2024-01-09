@@ -180,6 +180,7 @@ export async function refreshToken(
     config,
     {
       refresh_token: refreshToken,
+      ...options?.params || {},
     },
     "refreshToken",
   );
@@ -191,7 +192,7 @@ export async function refreshToken(
     client_secret: config.credentials.secret,
     grant_type: "refresh_token",
     refresh_token: refreshToken,
-    ...options?.params || {},
+    ...options?.payloads || {},
   };
 
   const response = await lastValueFrom(httpService.post(refreshUrl, payload, {
