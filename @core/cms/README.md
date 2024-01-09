@@ -1,73 +1,98 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Credential Management System
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+The Credential Management System exposes itself as a microservice and provides the ability to retrieve, encrypt, and store user credentials of external identity providers (e.g. access and refresh tokens), verify the validity of the credentials, and keep certain credentials up-to-date (e.g. getting a new access token via the refresh token before the current one expires).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+### Features:
 
-## Description
+1. Encryption/decryption
+2. CRUD operations on credentials
+3. Extensible identity provider integration
+4. Various credential types and auth modes/flows (OAuth, JWT, API Keys, ...)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Tech Stack:
 
-## Installation
+1. NestJS
+2. Node 18
+3. Vault (encryption/decryption, credential storage)
+4. PostgreSQL (general data storage)
+5. Redis (messaging)
+
+## How to Run
+
+### 1. Set up environment variables
+
+e.g.
 
 ```bash
-$ npm install
+export DB_HOST=db
 ```
 
-## Running the app
+See docker-compose.yml for what's required.
+
+### 2. Put configurations in a `.env` file in the cms folder
+
+See .env.example for what's required. You can also use it as a template and rename it to `.env` when you're done.
+
+### 3. Docker Compose Up
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker-compose up
 ```
 
-## Test
+## API
 
-```bash
-# unit tests
-$ npm run test
+### 1. Create Credential
 
-# e2e tests
-$ npm run test:e2e
+Upsert a crendential in the database.
 
-# test coverage
-$ npm run test:cov
-```
+- channel: "create_credential"
+- message:
+  ```TypeScript
+  {
+    userId: number,
+    serviceName: string,
+    nodeAccessIds: number[],
+    credentialType: string,
+    encryptedCredential: string,
+  }
+  ```
 
-## Support
+### 2. Generate OAuth URL
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Generate an OAuth link of the specified provider.
 
-## Stay in touch
+- channel: "oauth"
+- message:
+  ```TypeScript
+  TBD
+  ```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### 3. Verify Token
 
-## License
+Check the validity and expiration time of a token.
 
-Nest is [MIT licensed](LICENSE).
+- channel: "oauth_verify_token"
+- message:
+  ```TypeScript
+  {
+    providerKey: string,
+    token: string,
+  }
+  ```
+
+### 4. Refresh Token
+
+Refresh an access token via a refresh token.
+
+- channel: "oauth_refresh_token"
+- message:
+  ```TypeScript
+  {
+    providerKey: string,
+    refreshToken: string,
+  }
+  ```
+
+## Security Notes
+
+Make sure that your application secrets and database credentials are securely managed and not hard-coded or exposed in your code or Docker configuration. Use environment variables or secure secret management solutions.
