@@ -48,8 +48,6 @@ export class AppController {
   @MessagePattern("oauth")
   async handleOAuth(message: any) {
     // TODO: Add JWT and pass params
-    // const url =
-    //   this.externalAuthIntegrationService.authenticate('oauth-github-v2');
     const url = this.externalAuthIntegrationService.authenticate("oauth-airtable-v1");
     return url;
   }
