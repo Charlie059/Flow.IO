@@ -15,12 +15,14 @@ import {
   verifyToken,
   refreshToken,
   createOAuth2Url,
+  toSha256Base64UrlSafe
 } from "~/external-auth-integration/utils";
 import {
   IOAuth2Config,
   IOAuth2State,
   TokenVerificationResponse,
 } from "~/external-auth-integration/auth-providers/oauth2/@types";
+import { randomBytes } from "crypto";
 
 /**
  * Service to handle Airtable V1 OAuth2 authentication.
@@ -39,9 +41,15 @@ export class AirtableV1OAuth2Service implements IOAuth {
    */
   async authenticate(): Promise<string> {
     const encodedState = await this.buildState();
+    const codeVerifier = randomBytes(96).toString('base64url'); // TODO: this needs to be stored and used again to retrieve the access token
+    const codeChallenge = toSha256Base64UrlSafe(codeVerifier);
     const url = createOAuth2Url(
       this.config,
-      { state: encodedState },
+      {
+        state: encodedState,
+        code_challenge_method: "S256",
+        code_challenge: codeChallenge
+      },
       "authorize"
     );
 
@@ -64,7 +72,10 @@ export class AirtableV1OAuth2Service implements IOAuth {
       const tokenResponse = await exchangeCodeForToken(
         this.httpService,
         this.config,
-        query.code
+        query.code,
+        {
+          code_verifier: "" // TODO: get the code verifier
+        }
       );
 
       res.status(HttpStatus.OK).json(tokenResponse);
@@ -119,7 +130,7 @@ export class AirtableV1OAuth2Service implements IOAuth {
       providerInfo: {
         provider: "airtable",
         version: "v1",
-      },
+      }
     };
 
     return new OAuth2StateProcessor(

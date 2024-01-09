@@ -4,6 +4,7 @@ import {
   OAuth2UrlParams,
 } from "~/external-auth-integration/auth-providers/oauth2/@types";
 import { lastValueFrom } from "rxjs";
+import { createHash } from "crypto";
 import { map } from "rxjs/operators";
 import { HttpService } from "@nestjs/axios";
 import { Logger } from "@nestjs/common";
@@ -16,6 +17,20 @@ import { Logger } from "@nestjs/common";
 export function toBase64UrlSafe(data: string): string {
   return Buffer.from(data)
     .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+/**
+ * Converts a given string to a SHA256 Base64 URL safe encoded string.
+ * @param {string} data - The string to be encoded.
+ * @returns {string} - The SHA256 Base64 URL safe encoded string.
+ */
+export function toSha256Base64UrlSafe(data: string) {
+  return createHash("sha256")
+    .update(data)
+    .digest("base64")
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
     .replace(/=+$/, "");
@@ -92,12 +107,14 @@ export function createOAuth2Url(
  * @param httpService  The HttpService instance.
  * @param config  The OAuth2 configuration.
  * @param code  The code to be exchanged for a token.
+ * @param extraParams  Additional parameters to be sent along with the token exchange request.
  * @returns  The ServerResponse.
  */
 export async function exchangeCodeForToken(
   httpService: HttpService,
   config: IOAuth2Config,
-  code: string
+  code: string,
+  extraParams?: { [key: string]: string }
 ) {
   const tokenUrl = config.provider.tokenUrl;
   const GRANT_TYPE = "authorization_code";
@@ -108,6 +125,7 @@ export async function exchangeCodeForToken(
     redirect_uri: config.provider.callbackUrl,
     grant_type: GRANT_TYPE,
     code: code,
+    ...extraParams
   };
 
   const response = await lastValueFrom(
