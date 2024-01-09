@@ -7,6 +7,9 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
+import { randomBytes } from "crypto";
 import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
 import { IOAuth } from "~/external-auth-integration/auth-providers/oauth2/interface/ioauth.interface";
 import {
@@ -22,7 +25,6 @@ import {
   IOAuth2State,
   TokenVerificationResponse,
 } from "~/external-auth-integration/auth-providers/oauth2/@types";
-import { randomBytes } from "crypto";
 
 /**
  * Service to handle Airtable V1 OAuth2 authentication.
@@ -32,7 +34,8 @@ export class AirtableV1OAuth2Service implements IOAuth {
   constructor(
     @Inject("AirtableV1OAuth2Config") private readonly config: IOAuth2Config,
     private readonly encryptionDecryptionService: EncryptionDecryptionService,
-    private readonly httpService: HttpService
+    private readonly httpService: HttpService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache // TODO: refactor
   ) {}
 
   /**
@@ -41,7 +44,9 @@ export class AirtableV1OAuth2Service implements IOAuth {
    */
   async authenticate(): Promise<string> {
     const encodedState = await this.buildState();
-    const codeVerifier = randomBytes(96).toString('base64url'); // TODO: this needs to be stored and used again to retrieve the access token
+    const codeVerifier = randomBytes(96).toString('base64url');
+    // TODO: refactor
+    await this.cacheManager.set('userId-oauth2-airtable-v1', codeVerifier, 300_000); // code verifier ttl: 5 mins
     const codeChallenge = toSha256Base64UrlSafe(codeVerifier);
     const url = createOAuth2Url(
       this.config,
@@ -74,7 +79,7 @@ export class AirtableV1OAuth2Service implements IOAuth {
         this.config,
         query.code,
         {
-          code_verifier: "" // TODO: get the code verifier
+          code_verifier: await this.cacheManager.get('userId-oauth2-airtable-v1') // TODO: refactor
         }
       );
 
