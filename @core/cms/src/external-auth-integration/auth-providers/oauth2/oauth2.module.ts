@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { HttpModule } from "@nestjs/axios";
+import { CacheModule } from "@nestjs/cache-manager";
 import { EncryptionDecryptionModule } from "~/encryption-decryption/encryption-decryption.module";
 import { GoogleV2OAuth2Service } from "./google/v2/google.v2.service";
 import { GoogleV2OAuth2Config } from "./google/v2/google.v2.config";
@@ -9,7 +10,7 @@ import { AirtableV1OAuth2Service } from "./airtable/v1/airtable.v1.service";
 import { AirtableV1OAuth2Config } from "./airtable/v1/airtable.v1.config";
 
 @Module({
-  imports: [EncryptionDecryptionModule, HttpModule],
+  imports: [EncryptionDecryptionModule, HttpModule, CacheModule.register()],
   providers: [
     GoogleV2OAuth2Service,
     {
