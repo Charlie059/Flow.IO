@@ -94,6 +94,7 @@ export function createOAuth2Url(
  * @param config  The OAuth2 configuration.
  * @param code  The code to be exchanged for a token.
  * @param extraParams  Additional parameters to be sent along with the token exchange request.
+ * @param headers Additional headers to be sent along with the token exchange request.
  * @returns  The ServerResponse.
  */
 export async function exchangeCodeForToken(
@@ -101,6 +102,7 @@ export async function exchangeCodeForToken(
   config: IOAuth2Config,
   code: string,
   extraParams?: { [key: string]: string },
+  headers?: { [key: string]: string },
 ) {
   const tokenUrl = config.provider.tokenUrl;
   const GRANT_TYPE = "authorization_code";
@@ -119,9 +121,7 @@ export async function exchangeCodeForToken(
     const response = await lastValueFrom(
       httpService
         .post(tokenUrl, params, {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
+          headers,
         })
         .pipe(map((resp) => resp.data)),
     );

@@ -167,3 +167,5 @@ ormconfig.json
 ###################
 .local.env
 .local.env.*
+
+.idea

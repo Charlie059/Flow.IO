@@ -65,8 +65,12 @@ export class AirtableV1OAuth2Service implements IOAuth {
         throw new HttpException("No code received", HttpStatus.BAD_REQUEST);
       }
 
+      const encodedCredentials = Buffer.from(`${this.config.credentials.id}:${this.config.credentials.secret}`).toString("base64")
       const tokenResponse = await exchangeCodeForToken(this.httpService, this.config, query.code, {
         code_verifier: await this.cacheManager.get("userId-oauth2-airtable-v1"), // TODO: refactor
+      }, {
+        Authorization: `Basic ${encodedCredentials}`,
+        "Content-Type": "application/x-www-form-urlencoded",
       });
 
       res.status(HttpStatus.OK).json(tokenResponse);
