@@ -1,18 +1,33 @@
-import { of, tap } from "rxjs";
+import { of } from "rxjs";
 
 /**
  * Mocked HttpService for testing purposes.
  */
 export const mockHttpService = {
-  get: jest.fn((url: string, config?: any) =>
-    of({
-      data: `Mocked response for GET request to ${url}`,
-      status: 200,
-      statusText: "OK",
-      headers: {},
-      config,
-    }),
-  ),
+  get: jest.fn((url: string, config?: any) => {
+    return of(
+      url.includes("https://oauth2.googleapis.com/tokeninfo")
+        ? {
+            data: {
+              scope: "https://www.googleapis.com/auth/userinfo.email",
+              expires_in: 3599,
+              token_type: "Bearer",
+            },
+            status: 200,
+            statusText: "OK",
+            headers: {},
+            config,
+          }
+        : {
+            data: `Mocked response for GET request to ${url}`,
+            status: 200,
+            statusText: "OK",
+            headers: {},
+            config,
+          },
+    );
+  }),
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   post: jest.fn((url, data, config) =>
     of({

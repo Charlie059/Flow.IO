@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { HttpService } from "@nestjs/axios";
 import { GoogleV2OAuth2Service } from "../google.v2.service";
 import { Test, TestingModule } from "@nestjs/testing";
@@ -5,7 +6,6 @@ import { mockEncryptionDecryptionService, mockHttpService } from "./mocks";
 import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
 import { GoogleV2OAuth2Config } from "../google.v2.config";
 import * as dotenv from "dotenv";
-import e from "express";
 
 dotenv.config({ path: `.env` });
 
@@ -83,10 +83,26 @@ describe("GoogleV2OAuth2Service", () => {
     });
   });
 
-  // describe("validateToken", () => {
-  //   it("should return a valid token verification response", async () => {
-  //     const res = await service.verifyToken("mock_access_token");
-  //     console.log(res);
-  //   });
-  // });
+  describe("validateToken", () => {
+    it("should return a valid token verification response", async () => {
+      const res = await service.verifyToken("mock_access_token");
+      expect(res).toEqual({
+        isValid: true,
+        expiresIn: 3599,
+        scopes: ["https://www.googleapis.com/auth/userinfo.email"],
+      });
+    });
+  });
+
+  describe("refreshToken", () => {
+    it("should return a valid token response", async () => {
+      const res = await service.refreshToken("mock_refresh_token");
+      expect(res).toEqual({
+        access_token: "mock_access_token",
+        refresh_token: "mock_refresh_token",
+        expires_in: 3600,
+        token_type: "Bearer",
+      });
+    });
+  });
 });
