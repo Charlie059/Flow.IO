@@ -1,4 +1,4 @@
-import { of } from "rxjs";
+import { of, tap } from "rxjs";
 
 /**
  * Mocked HttpService for testing purposes.
@@ -11,6 +11,22 @@ export const mockHttpService = {
       statusText: "OK",
       headers: {},
       config,
+    }),
+  ),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  post: jest.fn((url, data, config) =>
+    of({
+      data: {
+        access_token: "mock_access_token",
+        refresh_token: "mock_refresh_token",
+        expires_in: 3600,
+        token_type: "Bearer",
+      },
+
+      status: 200,
+      statusText: "OK",
+      headers: {},
+      config: config || {},
     }),
   ),
 };
