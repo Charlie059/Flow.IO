@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // app.controller.ts
 import { Controller, Logger, UsePipes } from "@nestjs/common";
 import { MessagePattern } from "@nestjs/microservices";
@@ -25,24 +26,18 @@ export class AppController {
   // TODO: Add DTO
   @MessagePattern("encrypt_data")
   async handleEncryptData(message: any) {
-    const encrypt_data =
-      await this.encryptionDecryptionService.encryptData("data");
+    const encrypt_data = await this.encryptionDecryptionService.encryptData("data");
     console.log("encrypt_data", encrypt_data);
 
     // Store the data to the KV store
     const credentialId = "123";
-    await this.encryptionDecryptionService.storeData(
-      credentialId,
-      encrypt_data,
-    );
+    await this.encryptionDecryptionService.storeData(credentialId, encrypt_data);
 
     // Retrieve the data from the KV store
-    const data =
-      await this.encryptionDecryptionService.retrieveData(credentialId);
+    const data = await this.encryptionDecryptionService.retrieveData(credentialId);
 
     // Decrypt the data
-    const decrypt_data =
-      await this.encryptionDecryptionService.decryptData(data);
+    const decrypt_data = await this.encryptionDecryptionService.decryptData(data);
 
     console.log("decrypt_data", decrypt_data);
 
@@ -53,10 +48,7 @@ export class AppController {
   @MessagePattern("oauth")
   async handleOAuth(message: any) {
     // TODO: Add JWT and pass params
-    // const url =
-    //   this.externalAuthIntegrationService.authenticate('oauth-github-v2');
-    const url =
-      this.externalAuthIntegrationService.authenticate("oauth-google-v2");
+    const url = this.externalAuthIntegrationService.authenticate("oauth-airtable-v1");
     return url;
   }
 
@@ -65,10 +57,7 @@ export class AppController {
   async handleOAuthVerifyToken(message: any) {
     const token = message.token;
     const providerKey = message.providerKey;
-    const data = await this.externalAuthIntegrationService.verifyToken(
-      providerKey,
-      token,
-    );
+    const data = await this.externalAuthIntegrationService.verifyToken(providerKey, token);
     Logger.log(`Received data: ${JSON.stringify(data)}`, "AppController");
     return data;
   }
@@ -78,10 +67,7 @@ export class AppController {
   async handleOAuthRefreshToken(message: any) {
     const refreshToken = message.refreshToken;
     const providerKey = message.providerKey;
-    const data = await this.externalAuthIntegrationService.refreshToken(
-      providerKey,
-      refreshToken,
-    );
+    const data = await this.externalAuthIntegrationService.refreshToken(providerKey, refreshToken);
     return data;
   }
 }
