@@ -1,0 +1,22 @@
+name: core cms tests
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./@core/cms/
+
+    - name: Run tests
+      run: npm test
+      working-directory: ./@core/cms/
