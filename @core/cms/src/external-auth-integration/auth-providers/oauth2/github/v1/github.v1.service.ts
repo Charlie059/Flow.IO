@@ -47,8 +47,14 @@ export class GithubV1OAuth2Service implements IOAuth {
       }
 
       const tokenResponse = await exchangeCodeForToken(this.httpService, this.config, query.code);
-      Logger.log("Token response", tokenResponse);
-      res.status(HttpStatus.OK).json(tokenResponse);
+
+      const params = new URLSearchParams(tokenResponse);
+      const data = {};
+      for (const [key, value] of params) {
+        data[key] = value;
+      }
+
+      res.status(HttpStatus.OK).json(data);
     } catch (error) {
       Logger.error("Error exchanging code for token", error);
       throw new HttpException("Error exchanging code for token", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -92,7 +98,7 @@ export class GithubV1OAuth2Service implements IOAuth {
       userId: "aaaa", // TODO: Replace with real user ID
       providerInfo: {
         provider: "github",
-        version: "v2",
+        version: "v1",
       },
     };
 
