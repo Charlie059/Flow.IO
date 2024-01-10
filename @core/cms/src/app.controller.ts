@@ -15,11 +15,14 @@ export class AppController {
     private encryptionDecryptionService: EncryptionDecryptionService,
     private externalAuthIntegrationService: ExternalAuthIntegrationService,
   ) {}
+
+  private readonly logger = new Logger(AppController.name);
+
   // TODO: Add DTO
   @MessagePattern("create_credential")
   @UsePipes(new ValidateCredentialPipe())
   async handleCreateCredential(message: CreateCredentialDto) {
-    Logger.log("Received data:", message, "AppController");
+    this.logger.log(`Received data: ${message}`);
     return this.databaseIntegrationService.createCredential(message);
   }
 
@@ -59,7 +62,7 @@ export class AppController {
     const token = message.token;
     const providerKey = message.providerKey;
     const data = await this.externalAuthIntegrationService.verifyToken(providerKey, token);
-    Logger.log(`Received data: ${JSON.stringify(data)}`, "AppController");
+    this.logger.log(`Received data: ${JSON.stringify(data)}`);
     return data;
   }
 
@@ -70,5 +73,12 @@ export class AppController {
     const providerKey = message.providerKey;
     const data = await this.externalAuthIntegrationService.refreshToken(providerKey, refreshToken);
     return data;
+  }
+
+  // TODO: Add DTO
+  @MessagePattern("basic_auth")
+  async handleBasicAuth(message: any) {
+    // TODO: Add JWT and pass params
+    // return this.externalAuthIntegrationService.authenticate("oauth-google-v2");
   }
 }
