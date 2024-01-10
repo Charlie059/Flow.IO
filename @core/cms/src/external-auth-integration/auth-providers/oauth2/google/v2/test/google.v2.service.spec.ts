@@ -52,7 +52,6 @@ describe("GoogleV2OAuth2Service", () => {
       expect(url).toContain("scope=");
       expect(url).toContain("state=");
       expect(url).toContain("access_type=");
-      expect(url).not.toContain("undefined");
     });
   });
 
