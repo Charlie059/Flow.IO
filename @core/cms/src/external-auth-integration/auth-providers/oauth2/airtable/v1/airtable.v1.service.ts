@@ -1,36 +1,55 @@
 import { Injectable, Inject, Logger, Res, HttpException, HttpStatus } from "@nestjs/common";
-import { IOAuth } from "~/external-auth-integration/auth-providers/oauth2/interface/ioauth.interface";
-import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
 import { HttpService } from "@nestjs/axios";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
+import { randomBytes } from "crypto";
+import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
+import { IOAuth } from "~/external-auth-integration/auth-providers/oauth2/interface/ioauth.interface";
 import {
   OAuth2StateProcessor,
   exchangeCodeForToken,
   verifyToken,
   refreshToken,
   createOAuth2Url,
+  toSha256Base64UrlSafe,
 } from "~/external-auth-integration/utils";
 import { IOAuth2Config, IOAuth2State, TokenVerificationResponse } from "~/external-auth-integration/auth-providers/oauth2/@types";
 
 /**
- * Service to handle Github V1 OAuth2 authentication.
+ * Service to handle Airtable V1 OAuth2 authentication.
  */
 @Injectable()
-export class GithubV1OAuth2Service implements IOAuth {
+export class AirtableV1OAuth2Service implements IOAuth {
   constructor(
-    @Inject("GithubV1OAuth2Config") private readonly config: IOAuth2Config,
+    @Inject("AirtableV1OAuth2Config") private readonly config: IOAuth2Config,
     private readonly encryptionDecryptionService: EncryptionDecryptionService,
     private readonly httpService: HttpService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache, // TODO: refactor
   ) {}
 
   /**
-   * Builds and returns the authentication URL for Github OAuth.
-   * @returns {Promise<string>} The Github OAuth URL.
+   * Builds and returns the authentication URL for Airtable OAuth.
+   * @returns {Promise<string>} The Airtable OAuth URL.
    */
   async authenticate(): Promise<string> {
     const encodedState = await this.buildState();
-    const url = createOAuth2Url(this.config, { state: encodedState }, "authorize");
+    const codeVerifier = randomBytes(96).toString("base64url");
+    // TODO: refactor
+    await this.cacheManager.set("userId-oauth2-airtable-v1", codeVerifier, 300_000); // code verifier ttl: 5 mins
 
-    Logger.log(`Redirecting to Github OAuth URL: ${url}`);
+    Logger.debug(`Generated code verifier: ${codeVerifier}`, "AirtableV1OAuth2Service");
+    const codeChallenge = toSha256Base64UrlSafe(codeVerifier);
+    const url = createOAuth2Url(
+      this.config,
+      {
+        state: encodedState,
+        code_challenge_method: "S256",
+        code_challenge: codeChallenge,
+      },
+      "authorize",
+    );
+
+    Logger.log(`Redirecting to Airtable OAuth URL: ${url}`);
     return url;
   }
 
@@ -42,12 +61,18 @@ export class GithubV1OAuth2Service implements IOAuth {
   async handleCallback(query: any, @Res() res: any) {
     try {
       if (!query || !query.code) {
-        Logger.error("No code received", "GithubV1OAuth2Service");
+        Logger.error("No code received", "AirtableV1OAuth2Service");
         throw new HttpException("No code received", HttpStatus.BAD_REQUEST);
       }
 
-      const tokenResponse = await exchangeCodeForToken(this.httpService, this.config, query.code);
-      Logger.log("Token response", tokenResponse);
+      const encodedCredentials = Buffer.from(`${this.config.credentials.id}:${this.config.credentials.secret}`).toString("base64")
+      const tokenResponse = await exchangeCodeForToken(this.httpService, this.config, query.code, {
+        code_verifier: await this.cacheManager.get("userId-oauth2-airtable-v1"), // TODO: refactor
+      }, {
+        Authorization: `Basic ${encodedCredentials}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      });
+
       res.status(HttpStatus.OK).json(tokenResponse);
     } catch (error) {
       Logger.error("Error exchanging code for token", error);
@@ -91,7 +116,7 @@ export class GithubV1OAuth2Service implements IOAuth {
     const oAuth2State: IOAuth2State = {
       userId: "aaaa", // TODO: Replace with real user ID
       providerInfo: {
-        provider: "github",
+        provider: "airtable",
         version: "v1",
       },
     };
