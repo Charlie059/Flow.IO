@@ -1,4 +1,4 @@
-import { Injectable, Inject, Logger, Res, HttpException, HttpStatus } from "@nestjs/common";
+import { Injectable, Inject, Logger } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
 import { lastValueFrom } from "rxjs";
