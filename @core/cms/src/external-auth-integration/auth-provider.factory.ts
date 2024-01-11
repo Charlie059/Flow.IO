@@ -34,7 +34,7 @@ export class AuthProviderFactory {
   public getProvider(key: AuthString): AuthService {
     const provider = this.providerMap.get(key);
     if (!provider) {
-      throw new Error(`Provider not found: ${key}`);
+      throw new Error(`Authentication provider not found for key: ${key}`);
     }
     return provider;
   }
