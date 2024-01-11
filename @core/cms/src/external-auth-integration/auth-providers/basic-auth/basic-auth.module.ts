@@ -1,16 +1,18 @@
 import { Module } from "@nestjs/common";
 import { HttpModule } from "@nestjs/axios";
 import { EncryptionDecryptionModule } from "~/encryption-decryption/encryption-decryption.module";
+import { MixpanelV1BasicAuthService } from "./mixpanel/v1/mixpanel.v1.service";
+import { MixpanelV1BasicAuthConfig } from "./mixpanel/v1/mixpanel.v1.config";
 
 @Module({
-  imports: [EncryptionDecryptionModule, HttpModule],
+  imports: [HttpModule, EncryptionDecryptionModule],
   providers: [
-    // GoogleV2OAuth2Service,
-    // {
-    //   provide: "GoogleV2OAuth2Config",
-    //   useFactory: () => new GoogleV2OAuth2Config().oAuth2Config,
-    // },
+    MixpanelV1BasicAuthService,
+    {
+      provide: "MixpanelV1BasicAuthConfig",
+      useFactory: () => new MixpanelV1BasicAuthConfig().basicAuthConfig,
+    },
   ],
-  // exports: [GoogleV2OAuth2Service],
+  exports: [MixpanelV1BasicAuthService],
 })
 export class BasicAuthModule {}

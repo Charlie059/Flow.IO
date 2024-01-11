@@ -78,7 +78,18 @@ export class AppController {
   // TODO: Add DTO
   @MessagePattern("basic_auth")
   async handleBasicAuth(message: any) {
-    // TODO: Add JWT and pass params
-    // return this.externalAuthIntegrationService.authenticate("oauth-google-v2");
+    // TODO: Add JWT
+
+    const providerKey = message.providerKey;
+    return await this.externalAuthIntegrationService.authenticate(providerKey);
+  }
+
+  // TODO: Add DTO
+  @MessagePattern("basic_auth_verify")
+  async handleBasicAuthVerify(message: any) {
+    // TODO: Add JWT
+
+    const providerKey = message.providerKey;
+    return await this.externalAuthIntegrationService.verifyBasic(providerKey);
   }
 }
