@@ -42,8 +42,6 @@ export interface IProviderConfiguration {
  * @property {string[]} scope - The list of OAuth2 scopes requested.
  * @property {ICredentials} credentials - The client credentials.
  * @property {IProviderConfiguration} provider - The OAuth2 provider's endpoint configuration.
- * @property {string} callbackUri - The URI for the OAuth2 callback after authentication.
- * @property {{ [key: string]: string }} [callbackUriParams] - Optional additional parameters for the callback URI.
  */
 export interface IOAuth2Config {
   scope: string[]; // The list of OAuth2 scopes requested
@@ -57,12 +55,26 @@ export interface IOAuth2Config {
  * @interface OAuth2UrlParams
  * @property {string} [response_type] - The response type parameter to be sent along with the OAuth2 authorization URL. Defaults to 'code'.
  * @property {string} [access_type] - The access type parameter to be sent along with the OAuth2 authorization URL. Defaults to 'offline'.
- * @property {{ [key: string]: string }} [key: string] - Optional additional parameters to be sent along with the OAuth2 authorization URL.
+ * @property {{ [key: string]: string }} [key:string] - Optional additional parameters to be sent along with the OAuth2 authorization URL.
  */
 export interface OAuth2UrlParams {
   response_type?: string; // Optional, with default values provided in function
   access_type?: string; // Optional, with default values provided in function
   [key: string]: string | undefined; // Allow additional string parameters
+}
+
+/**
+ * Represents the options of OAuth2 requests.
+ * @export
+ * @interface OAuth2RequestOptions
+ * @property {{ [key: string]: string }} [params] - Optional additional parameters to be sent along with the OAuth2 request.
+ * @property {{ [key: string]: string }} [headers] - Optional additional headers to be sent along with the OAuth2 request.
+ * @property {{ [key: string]: string }} [payloads] - Optional additional body to be sent along with the OAuth2 request.
+ */
+export interface OAuth2RequestOptions {
+  params?: { [key: string]: string };
+  headers?: { [key: string]: string };
+  payloads?: { [key: string]: string };
 }
 
 /**
