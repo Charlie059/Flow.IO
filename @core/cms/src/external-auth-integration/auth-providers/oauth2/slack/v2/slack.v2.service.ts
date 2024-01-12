@@ -48,10 +48,6 @@ export class SlackV2OAuth2Service implements IOAuth {
 
       const tokenResponse = await exchangeCodeForToken(this.httpService, this.config, query.code);
 
-      // TODO: Slack needs two steps to get a long-lived token
-      // First, use the code to exchange for a short-lived token
-      // Then, use the short-lived token to exchange for a long-lived token
-
       res.status(HttpStatus.OK).json(tokenResponse);
     } catch (error) {
       Logger.error("Error exchanging code for token", error);
