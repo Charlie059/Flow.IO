@@ -1,11 +1,11 @@
 /**
  * Represents the client credentials for OAuth2 authentication.
  * @export
- * @interface ICredentials
+ * @interface IClientCredentials
  * @property {string} id - The client identifier.
  * @property {string} secret - The client secret.
  */
-export interface ICredentials {
+export interface IClientCredentials {
   id: string; // The client identifier
   secret: string; // The client secret
 }
@@ -40,12 +40,12 @@ export interface IProviderConfiguration {
  * @export
  * @interface IOAuth2Config
  * @property {string[]} scope - The list of OAuth2 scopes requested.
- * @property {ICredentials} credentials - The client credentials.
+ * @property {IClientCredentials} credentials - The client credentials.
  * @property {IProviderConfiguration} provider - The OAuth2 provider's endpoint configuration.
  */
 export interface IOAuth2Config {
   scope: string[]; // The list of OAuth2 scopes requested
-  credentials: ICredentials; // The client credentials
+  credentials: IClientCredentials; // The client credentials
   provider: IProviderConfiguration; // The OAuth2 provider's endpoint configuration
 }
 
