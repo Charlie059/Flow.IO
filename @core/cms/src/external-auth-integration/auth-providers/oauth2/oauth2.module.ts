@@ -35,6 +35,6 @@ import { SlackV2OAuth2Config } from "./slack/v2/slack.v2.config";
       useFactory: () => new SlackV2OAuth2Config().oAuth2Config,
     },
   ],
-  exports: [GoogleV2OAuth2Service, GithubV1OAuth2Service, AirtableV1OAuth2Service],
+  exports: [GoogleV2OAuth2Service, GithubV1OAuth2Service, AirtableV1OAuth2Service, SlackV2OAuth2Service],
 })
 export class OAuth2Module {}
