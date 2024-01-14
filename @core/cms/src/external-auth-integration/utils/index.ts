@@ -81,8 +81,6 @@ export function createOAuth2Url(
     throw new Error(`Invalid OAuth2 configuration - '${urlType}Url' is required`);
   }
 
-  // remove the params with undefined values
-  Object.keys(params).forEach(key => params[key] === undefined && delete params[key])
   Logger.debug("Params", params, "OAuth2Utils");
   const url = new URL(baseUrl);
   const searchParams = new URLSearchParams(params);
