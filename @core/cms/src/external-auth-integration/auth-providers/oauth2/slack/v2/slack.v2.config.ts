@@ -14,7 +14,7 @@ export class SlackV2OAuth2Config {
         id: process.env.SLACK_V2_OAUTH2_CLIENT_ID,
         secret: process.env.SLACK_V2_OAUTH2_CLIENT_SECRET,
       },
-      scope: [],
+      scope: ["openid", "email", "profile"],
       provider: {
         authorizeUrl: "https://slack.com/oauth/v2/authorize",
         tokenUrl: "https://slack.com/api/oauth.v2.access",
@@ -23,7 +23,6 @@ export class SlackV2OAuth2Config {
         refreshTokenUrl: "https://slack.com/api/oauth.v2.access",
         tokenRefreshBuffer: 43200, // 12 hours
         callbackUrlParams: {
-          user_scope: "openid,email,profile", // We are requesting user token, so we need to pass scopes to user_scope
           response_type: "code",
           access_type: "offline",
         },

@@ -24,14 +24,15 @@ export class SlackV2OAuth2Service implements IOAuth {
 
   /**
    * Builds and returns the authentication URL for Google OAuth.
-   * @returns {Promise<string>} The Google OAuth URL.
+   * @returns {Promise<string>} The Slack OAuth URL.
    */
   async authenticate(): Promise<string> {
     const encodedState = await this.buildState();
     // we are requesting user token, so we need to pass scopes to user_scope
     const url = createOAuth2Url(this.config, {
       state: encodedState,
-      scope: undefined
+      scope: "",
+      user_scope: this.config.scope.join(","),
     }, "authorize");
 
     Logger.log(`Redirecting to Slack OAuth URL: ${url}`);
