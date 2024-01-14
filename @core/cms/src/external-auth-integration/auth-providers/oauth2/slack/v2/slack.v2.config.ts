@@ -22,10 +22,6 @@ export class SlackV2OAuth2Config {
         verifyTokenUrl: "https://slack.com/api/auth.test",
         refreshTokenUrl: "https://slack.com/api/oauth.v2.access",
         tokenRefreshBuffer: 43200, // 12 hours
-        callbackUrlParams: {
-          response_type: "code",
-          access_type: "offline",
-        },
       },
     };
   }
