@@ -167,3 +167,7 @@ ormconfig.json
 ###################
 .local.env
 .local.env.*
+
+# Spring Boot #
+###############
+@core/Auth/target/*
