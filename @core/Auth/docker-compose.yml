@@ -27,5 +27,22 @@ services:
     environment:
       - SECRET_KEY=${SECRET_KEY}
 
+  keycloak:
+    image: jboss/keycloak:latest
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: db
+      DB_DATABASE: flowio-authentication
+      DB_USER: postgres
+      DB_PASSWORD: mysecretpassword
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    ports:
+      - 8081:8080
+    networks:
+      - flowio-auth-net
+    depends_on:
+      - db
+
 networks:
   flowio-auth-net:
