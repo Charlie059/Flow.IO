@@ -1,13 +1,13 @@
-package cloud.sparkflows.tenant;
+ package cloud.sparkflows.tenant;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+ import org.junit.jupiter.api.Test;
+ import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class TenantApplicationTests {
+ @SpringBootTest
+ class TenantApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+ @Test
+ void contextLoads() {
+ }
 
-}
+ }
