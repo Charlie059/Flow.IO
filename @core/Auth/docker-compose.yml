@@ -8,6 +8,8 @@ services:
       POSTGRES_DB: flowio-authentication
     ports:
       - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - flowio-auth-net
 
@@ -28,7 +30,7 @@ services:
       - SECRET_KEY=${SECRET_KEY}
 
   keycloak:
-    image: jboss/keycloak:latest
+    image: jboss/keycloak:16.1.1
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: db
@@ -46,3 +48,6 @@ services:
 
 networks:
   flowio-auth-net:
+
+volumes:
+  postgres_data:
