@@ -81,6 +81,7 @@ export function createOAuth2Url(
     throw new Error(`Invalid OAuth2 configuration - '${urlType}Url' is required`);
   }
 
+  Logger.debug("Params", params, "OAuth2Utils");
   const url = new URL(baseUrl);
   const searchParams = new URLSearchParams(params);
   url.search = searchParams.toString();
