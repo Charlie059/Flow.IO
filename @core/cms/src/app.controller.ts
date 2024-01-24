@@ -8,6 +8,9 @@ import { CreateCredentialDto } from "./database-integration/dto/create-credentia
 import { ValidateCredentialPipe } from "./common/pipes/validate-credential.pipe";
 import { ExternalAuthIntegrationService } from "./external-auth-integration/external-auth-integration.service";
 
+import { BasicAuthDto } from "./dto/basic-auth.dto";
+import { BasicAuthVerifyDto } from "./dto/basic-auth-verify.dto";
+
 @Controller()
 export class AppController {
   constructor(
@@ -76,7 +79,7 @@ export class AppController {
 
   // TODO: Add DTO
   @MessagePattern("basic_auth")
-  async handleBasicAuth(message: any) {
+  async handleBasicAuth(message: BasicAuthDto) {
     // TODO: Add JWT
 
     const providerKey = message.providerKey;
@@ -85,7 +88,7 @@ export class AppController {
 
   // TODO: Add DTO
   @MessagePattern("basic_auth_verify")
-  async handleBasicAuthVerify(message: any) {
+  async handleBasicAuthVerify(message: BasicAuthVerifyDto) {
     // TODO: Add JWT
 
     const providerKey = message.providerKey;
