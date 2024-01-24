@@ -36,6 +36,7 @@ export class AuthCallbackController {
       // TODO: Verify user JWT
 
       const key: OAuthString = `oauth-${state.providerInfo.provider}-${state.providerInfo.version}`;
+      Logger.log(`Calling oauth callback for provider ${state.providerInfo.provider} ${state.providerInfo.version}`);
       const providerService = this.providerFactory.getProvider(key);
       await providerService.handleCallback(query, res);
     } catch (error) {

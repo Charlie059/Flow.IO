@@ -51,8 +51,7 @@ export class AppController {
   @MessagePattern("oauth")
   async handleOAuth(message: any) {
     // TODO: Add JWT and pass params
-    // const url = this.externalAuthIntegrationService.authenticate("oauth-github-v1");
-    const url = this.externalAuthIntegrationService.authenticate("oauth-google-v2");
+    const url = this.externalAuthIntegrationService.authenticate(message);
     return url;
   }
 
