@@ -77,7 +77,6 @@ export class AppController {
     return data;
   }
 
-  // TODO: Add DTO
   @MessagePattern("basic_auth")
   async handleBasicAuth(message: BasicAuthDto) {
     // TODO: Add JWT
@@ -86,7 +85,6 @@ export class AppController {
     return await this.externalAuthIntegrationService.authenticate(providerKey);
   }
 
-  // TODO: Add DTO
   @MessagePattern("basic_auth_verify")
   async handleBasicAuthVerify(message: BasicAuthVerifyDto) {
     // TODO: Add JWT
