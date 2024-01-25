@@ -14,7 +14,6 @@ export class MixpanelV1BasicAuthConfig {
         authenticateUrl: "https://mixpanel.com/api/app/me",
         verifyUrl: "https://mixpanel.com/api/app/organizations/{organizationId}/service-accounts",
       },
-      credential: { username: process.env.MIXPANEL_V1_BASIC_USERNAME, password: process.env.MIXPANEL_V1_BASIC_PASSWORD },
     };
   }
 }

@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { AuthProviderFactory } from "./auth-provider.factory";
-import { AuthString } from "./@types";
-import { OAuthString } from "./auth-providers/oauth2/@types";
-import { BasicAuthString } from "./auth-providers/basic-auth/@types";
+import type { AuthString } from "./@types";
+import type { OAuthString } from "./auth-providers/oauth2/@types";
+import type { BasicAuthString } from "./auth-providers/basic-auth/@types";
 
 @Injectable()
 export class ExternalAuthIntegrationService {

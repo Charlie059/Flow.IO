@@ -2,7 +2,7 @@ import { Controller, Get, Logger, Query, Res, HttpException, HttpStatus } from "
 import { AuthProviderFactory } from "./auth-provider.factory";
 import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
 import { decodeBase64UrlToString } from "./utils";
-import { OAuthString } from "./auth-providers/oauth2/@types";
+import { type OAuthString } from "./auth-providers/oauth2/@types";
 
 @Controller("oauth")
 export class AuthCallbackController {

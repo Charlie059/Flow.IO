@@ -1,5 +1,5 @@
-import { OAuthString } from "../auth-providers/oauth2/@types";
-import { BasicAuthString } from "../auth-providers/basic-auth/@types";
+import { type OAuthString } from "../auth-providers/oauth2/@types";
+import { type BasicAuthString } from "../auth-providers/basic-auth/@types";
 import { IOAuth } from "../auth-providers/oauth2/interface/ioauth.interface";
 import { IBasicAuth } from "../auth-providers/basic-auth/interface/basic-auth.interface";
 

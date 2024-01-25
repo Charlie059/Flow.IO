@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { AuthString, AuthService } from "./@types";
+import type { AuthString, AuthService } from "./@types";
 import { GoogleV2OAuth2Service } from "./auth-providers/oauth2/google/v2/google.v2.service";
 import { GithubV1OAuth2Service } from "./auth-providers/oauth2/github/v1/github.v1.service";
 import { AirtableV1OAuth2Service } from "./auth-providers/oauth2/airtable/v1/airtable.v1.service";
 import { SlackV2OAuth2Service } from "./auth-providers/oauth2/slack/v2/slack.v2.service";
 import { MixpanelV1BasicAuthService } from "./auth-providers/basic-auth/mixpanel/v1/mixpanel.v1.service";
-import { OAuthString } from "./auth-providers/oauth2/@types";
+import { type OAuthString } from "./auth-providers/oauth2/@types";
 import { IOAuth } from "./auth-providers/oauth2/interface/ioauth.interface";
-import { BasicAuthString } from "./auth-providers/basic-auth/@types";
+import { type BasicAuthString } from "./auth-providers/basic-auth/@types";
 import { IBasicAuth } from "./auth-providers/basic-auth/interface/basic-auth.interface";
 
 @Injectable()

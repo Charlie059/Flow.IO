@@ -1,4 +1,4 @@
-import { BasicAuthString } from "~/external-auth-integration/auth-providers/basic-auth/@types";
+import { type BasicAuthString } from "~/external-auth-integration/auth-providers/basic-auth/@types";
 
 export class BasicAuthVerifyDto {
   providerKey: BasicAuthString;

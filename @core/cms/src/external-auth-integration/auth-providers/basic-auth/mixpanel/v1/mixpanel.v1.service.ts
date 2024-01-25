@@ -20,15 +20,11 @@ export class MixpanelV1BasicAuthService implements IBasicAuth {
 
   private readonly logger = new Logger(MixpanelV1BasicAuthService.name);
 
-  /**
-   * Builds and returns the authentication URL for Mixpanel OAuth.
-   * @returns {Promise<string>} The Mixpanel OAuth URL.
-   */
-  async authenticate(): Promise<object> {
+  async authenticate(username: string, password: string): Promise<object> {
     try {
       const { authenticateUrl } = this.config.provider;
       const data = await lastValueFrom(
-        this.httpService.get(authenticateUrl, { auth: this.config.credential }).pipe(map((resp) => resp.data)),
+        this.httpService.get(authenticateUrl, { auth: { username, password } }).pipe(map((resp) => resp.data)),
       );
 
       return {
@@ -42,14 +38,9 @@ export class MixpanelV1BasicAuthService implements IBasicAuth {
     }
   }
 
-  /**
-   * Verifies the access token.
-   * @param _accessToken
-   * @returns {Promise<any>} The response from the token verification endpoint.
-   */
-  async verify(): Promise<BasicAuthVerificationResponse> {
+  async verify(username: string, password: string): Promise<BasicAuthVerificationResponse> {
     try {
-      const authenticationResponse = await this.authenticate();
+      const authenticationResponse = await this.authenticate(username, password);
       if (!authenticationResponse["organizationId"]) {
         throw new Error("Authentication failed");
       }
@@ -61,7 +52,7 @@ export class MixpanelV1BasicAuthService implements IBasicAuth {
 
       verifyUrl = verifyUrl.replace("{organizationId}", authenticationResponse["organizationId"]);
       const data = await lastValueFrom(
-        this.httpService.get(verifyUrl, { auth: this.config.credential }).pipe(map((resp) => resp.data)),
+        this.httpService.get(verifyUrl, { auth: { username, password } }).pipe(map((resp) => resp.data)),
       );
 
       return {
