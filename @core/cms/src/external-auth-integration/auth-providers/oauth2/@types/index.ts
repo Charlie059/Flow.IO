@@ -1,3 +1,5 @@
+export type OAuthString = `oauth-${string}`;
+
 /**
  * Represents the client credentials for OAuth2 authentication.
  * @export

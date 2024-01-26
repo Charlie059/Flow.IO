@@ -8,6 +8,9 @@ import { CreateCredentialDto } from "./database-integration/dto/create-credentia
 import { ValidateCredentialPipe } from "./common/pipes/validate-credential.pipe";
 import { ExternalAuthIntegrationService } from "./external-auth-integration/external-auth-integration.service";
 
+import { BasicAuthDto } from "./dto/basic-auth.dto";
+import { BasicAuthVerifyDto } from "./dto/basic-auth-verify.dto";
+
 @Controller()
 export class AppController {
   constructor(
@@ -15,11 +18,14 @@ export class AppController {
     private encryptionDecryptionService: EncryptionDecryptionService,
     private externalAuthIntegrationService: ExternalAuthIntegrationService,
   ) {}
+
+  private readonly logger = new Logger(AppController.name);
+
   // TODO: Add DTO
   @MessagePattern("create_credential")
   @UsePipes(new ValidateCredentialPipe())
   async handleCreateCredential(message: CreateCredentialDto) {
-    Logger.log("Received data:", message, "AppController");
+    this.logger.log(`Received data: ${message}`);
     return this.databaseIntegrationService.createCredential(message);
   }
 
@@ -58,7 +64,7 @@ export class AppController {
     const token = message.token;
     const providerKey = message.providerKey;
     const data = await this.externalAuthIntegrationService.verifyToken(providerKey, token);
-    Logger.log(`Received data: ${JSON.stringify(data)}`, "AppController");
+    this.logger.log(`Received data: ${JSON.stringify(data)}`);
     return data;
   }
 
@@ -69,5 +75,21 @@ export class AppController {
     const providerKey = message.providerKey;
     const data = await this.externalAuthIntegrationService.refreshToken(providerKey, refreshToken);
     return data;
+  }
+
+  @MessagePattern("basic_auth")
+  async handleBasicAuth(message: BasicAuthDto) {
+    // TODO: Add JWT
+
+    const providerKey = message.providerKey;
+    return await this.externalAuthIntegrationService.authenticate(providerKey);
+  }
+
+  @MessagePattern("basic_auth_verify")
+  async handleBasicAuthVerify(message: BasicAuthVerifyDto) {
+    // TODO: Add JWT
+
+    const providerKey = message.providerKey;
+    return await this.externalAuthIntegrationService.verifyBasic(providerKey);
   }
 }

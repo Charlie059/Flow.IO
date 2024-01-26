@@ -1,40 +1,46 @@
 import { Injectable } from "@nestjs/common";
 import { AuthProviderFactory } from "./auth-provider.factory";
+import type { AuthString } from "./@types";
+import type { OAuthString } from "./auth-providers/oauth2/@types";
+import type { BasicAuthString } from "./auth-providers/basic-auth/@types";
 
 @Injectable()
 export class ExternalAuthIntegrationService {
   constructor(private readonly authProviderFactory: AuthProviderFactory) {}
 
-  async authenticate(providerKey: string): Promise<string> {
-    const authProvider = this.authProviderFactory.getProvider(providerKey);
-    if (!authProvider) {
-      throw new Error(
-        `Authentication provider not found for key: ${providerKey}`
-      );
+  async authenticate(providerKey: AuthString): Promise<any> {
+    try {
+      const authProvider = this.authProviderFactory.getProvider(providerKey);
+      return await authProvider.authenticate();
+    } catch (error) {
+      return { error: error.message };
     }
-
-    return await authProvider.authenticate();
   }
 
-  async verifyToken(providerKey: string, token: string): Promise<any> {
+  async verifyToken(providerKey: OAuthString, token: string): Promise<any> {
     const authProvider = this.authProviderFactory.getProvider(providerKey);
     if (!authProvider) {
-      throw new Error(
-        `Authentication provider not found for key: ${providerKey}`
-      );
+      throw new Error(`Authentication provider not found for key: ${providerKey}`);
     }
 
     return await authProvider.verifyToken(token);
   }
 
-  async refreshToken(providerKey: string, refreshToken: string): Promise<any> {
+  async refreshToken(providerKey: OAuthString, refreshToken: string): Promise<any> {
     const authProvider = this.authProviderFactory.getProvider(providerKey);
     if (!authProvider) {
-      throw new Error(
-        `Authentication provider not found for key: ${providerKey}`
-      );
+      throw new Error(`Authentication provider not found for key: ${providerKey}`);
     }
 
     return await authProvider.refreshToken(refreshToken);
+  }
+
+  async verifyBasic(providerKey: BasicAuthString): Promise<any> {
+    try {
+      const authProvider = this.authProviderFactory.getProvider(providerKey);
+      return await authProvider.verify();
+    } catch (error) {
+      return { error: error.message };
+    }
   }
 }
