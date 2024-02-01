@@ -1,4 +1,4 @@
-package org.flowui.tenant.dto.request;
+package org.flowio.tenant.dto.request;
 
 public record TenantUpdateRequest(
     String tenantName,

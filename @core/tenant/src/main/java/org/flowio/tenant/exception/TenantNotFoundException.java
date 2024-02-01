@@ -1,4 +1,4 @@
-package org.flowui.tenant.exception;
+package org.flowio.tenant.exception;
 
 public class TenantNotFoundException extends RuntimeException {
     public TenantNotFoundException(Long id) {

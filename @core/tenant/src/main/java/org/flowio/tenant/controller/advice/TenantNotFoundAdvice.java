@@ -1,6 +1,6 @@
-package org.flowui.tenant.controller.advice;
+package org.flowio.tenant.controller.advice;
 
-import org.flowui.tenant.exception.TenantNotFoundException;
+import org.flowio.tenant.exception.TenantNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -1,11 +1,11 @@
-package org.flowui.tenant.controller;
+package org.flowio.tenant.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.flowui.tenant.dto.request.TenantCreateRequest;
-import org.flowui.tenant.dto.response.TenantCreateResponse;
-import org.flowui.tenant.entity.TenantEntity;
-import org.flowui.tenant.exception.TenantNotFoundException;
-import org.flowui.tenant.repository.TenantRepository;
+import org.flowio.tenant.dto.request.TenantCreateRequest;
+import org.flowio.tenant.dto.response.TenantCreateResponse;
+import org.flowio.tenant.entity.TenantEntity;
+import org.flowio.tenant.exception.TenantNotFoundException;
+import org.flowio.tenant.repository.TenantRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

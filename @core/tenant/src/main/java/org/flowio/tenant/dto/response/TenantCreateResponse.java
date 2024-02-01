@@ -1,4 +1,4 @@
-package org.flowui.tenant.dto.response;
+package org.flowio.tenant.dto.response;
 
 import lombok.Builder;
 
