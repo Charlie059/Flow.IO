@@ -1,6 +1,6 @@
 import { HttpException, HttpServer, HttpStatus, Inject, Injectable, Logger, Res } from "@nestjs/common";
-import { IOAuth } from "../interface/ioauth.interface";
-import { IOAuth2Config, IOAuth2State, TokenVerificationResponse } from "../@types";
+import { IOAuth } from "../../interface/ioauth.interface";
+import { IOAuth2Config, IOAuth2State, TokenVerificationResponse } from "../../@types";
 import { EncryptionDecryptionService } from "~/encryption-decryption/encryption-decryption.service";
 import { OAuth2StateProcessor, createOAuth2Url, exchangeCodeForToken, refreshToken, verifyToken } from "~/external-auth-integration/utils";
 import { HttpService } from "@nestjs/axios";

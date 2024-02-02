@@ -10,8 +10,8 @@ import { AirtableV1OAuth2Service } from "./airtable/v1/airtable.v1.service";
 import { AirtableV1OAuth2Config } from "./airtable/v1/airtable.v1.config";
 import { SlackV2OAuth2Service } from "./slack/v2/slack.v2.service";
 import { SlackV2OAuth2Config } from "./slack/v2/slack.v2.config";
-import { StripeOauth2Service } from "./stripe/stripe.service";
-import { StripeV2OAuth2Config } from "./stripe/stripe.config";
+import { StripeOauth2Service } from "./stripe/v1/stripe.service";
+import { StripeV2OAuth2Config } from "./stripe/v1/stripe.config";
 
 @Module({
   imports: [EncryptionDecryptionModule, HttpModule, CacheModule.register()],
