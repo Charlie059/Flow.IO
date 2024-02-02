@@ -4,7 +4,7 @@ import { GoogleV2OAuth2Service } from "./auth-providers/oauth2/google/v2/google.
 import { GithubV1OAuth2Service } from "./auth-providers/oauth2/github/v1/github.v1.service";
 import { AirtableV1OAuth2Service } from "./auth-providers/oauth2/airtable/v1/airtable.v1.service";
 import { SlackV2OAuth2Service } from "./auth-providers/oauth2/slack/v2/slack.v2.service";
-import { StripeOauth2Service } from "./auth-providers/oauth2/stripe/stripe.service";
+import { StripeOauth2Service } from "./auth-providers/oauth2/stripe/v1/stripe.service";
 
 @Injectable()
 export class AuthProviderFactory {
