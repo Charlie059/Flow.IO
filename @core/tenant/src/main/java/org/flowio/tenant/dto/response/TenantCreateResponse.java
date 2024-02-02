@@ -4,7 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record TenantCreateResponse(
-    Long tenantId,
-    String message
+    Long tenantId
 ) {
 }
