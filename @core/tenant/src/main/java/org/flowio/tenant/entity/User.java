@@ -12,12 +12,13 @@ import java.sql.Timestamp;
 @Data
 @Builder
 @AllArgsConstructor
-@TableName("tenants")
-public class Tenant {
+@TableName("users")
+public class User {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
-    private String name;
-    private BusinessType businessType;
+    private String email;
+    private String password;
+    private Tenant tenant;
     private Timestamp createTime;
     private Timestamp updateTime;
 }

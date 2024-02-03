@@ -7,6 +7,7 @@ import org.flowio.tenant.dto.response.TenantCreateResponse;
 import org.flowio.tenant.entity.BusinessType;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.entity.Tenant;
+import org.flowio.tenant.error.ResponseErrors;
 import org.flowio.tenant.service.IBusinessTypeService;
 import org.flowio.tenant.service.ITenantService;
 import org.springframework.http.HttpStatus;
@@ -30,19 +31,13 @@ class TenantController {
         // check whether business type exists
         BusinessType businessType = businessTypeService.getById(dto.businessTypeId());
         if (businessType == null) {
-            return new ResponseEntity<>(
-                Response.error(2000, "Business type not found"),
-                HttpStatus.FORBIDDEN
-            );
+            return new ResponseEntity<>(ResponseErrors.BUSINESS_TYPE_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         // check whether tenant name already exists
         Tenant existingTenant = tenantService.getByName(dto.tenantName());
         if (existingTenant != null) {
-            return new ResponseEntity<>(
-                Response.error(1001, "Tenant name already exists"),
-                HttpStatus.FORBIDDEN
-            );
+            return new ResponseEntity<>(ResponseErrors.TENANT_NAME_ALREADY_EXISTS, HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         // create new tenant
@@ -73,10 +68,7 @@ class TenantController {
         if (tenant != null) {
             return ResponseEntity.ok(Response.success(tenant));
         } else {
-            return new ResponseEntity<>(
-                Response.error(1000, "Tenant not found"),
-                HttpStatus.NOT_FOUND
-            );
+            return new ResponseEntity<>(ResponseErrors.TENANT_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
     }
 }
