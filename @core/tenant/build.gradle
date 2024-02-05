@@ -1,87 +1,49 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    ext {
+        springBootVersion = '3.1.8'
+        mybatisPlusVersion = '3.5.5'
+        springBootGrpcVersion = '2.15.0.RELEASE'
+        grpcVersion = '1.58.0'
+        protobufVersion = '3.24.0'
+        protobufPluginVersion = '0.9.4'
+    }
+}
+
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.1.8'
+    id 'org.springframework.boot' version "${springBootVersion}" apply false
     id 'io.spring.dependency-management' version '1.1.4'
-    id 'com.google.protobuf' version '0.9.4'
+    id 'com.google.protobuf' version "${protobufPluginVersion}"
 }
 
-group = 'org.flowio'
-version = '0.0.1-SNAPSHOT'
-def grpcVersion = '1.57.2'
-def protobufVersion = '3.24.0'
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: "io.spring.dependency-management"
 
-java {
-    sourceCompatibility = '17'
-}
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
+    compileJava {
+        sourceCompatibility = '17'
+        options.encoding = 'UTF-8'
     }
-}
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    // spring boot
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    // mybatis plus
-    implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.5'
-    // grpc
-    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
-    implementation "io.grpc:grpc-services:${grpcVersion}"
-    implementation "io.grpc:grpc-stub:${grpcVersion}"
-    implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
-    implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
-    // dotenv
-    implementation "me.paulschwarz:spring-dotenv:4.0.0"
-
-    // lombok
-    compileOnly 'org.projectlombok:lombok'
-
-    // postgresql
-    runtimeOnly 'org.postgresql:postgresql'
-    // grpc
-    runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
-
-    // lombok
-    annotationProcessor 'org.projectlombok:lombok'
-
-    // spring boot
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    // mybatis plus
-    testImplementation 'com.baomidou:mybatis-plus-boot-starter-test:3.5.5'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+    repositories {
+        mavenLocal()
+        mavenCentral()
     }
-    plugins {
-        grpc {
-            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+
+    buildscript {
+        repositories {
+            mavenLocal()
+            mavenCentral()
         }
-    }
-    generateProtoTasks {
-        all().each { task ->
-            task.plugins {
-                grpc {}
+        dependencyManagement {
+            imports {
+                mavenBom "io.grpc:grpc-bom:${grpcVersion}"
             }
-        }
-    }
-}
-
-sourceSets {
-    main {
-        java {
-            srcDirs 'src/main/java'
-            srcDirs 'src/main/proto'
         }
     }
 }

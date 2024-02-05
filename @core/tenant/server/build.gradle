@@ -1,0 +1,33 @@
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    // spring boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // mybatis plus
+    implementation "com.baomidou:mybatis-plus-boot-starter:${mybatisPlusVersion}"
+    // grpc
+    implementation "net.devh:grpc-server-spring-boot-starter:${springBootGrpcVersion}"
+    implementation project(':grpc-lib')
+    // dotenv
+    implementation "me.paulschwarz:spring-dotenv:4.0.0"
+
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
+
+    // postgresql
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // lombok
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // spring boot
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // mybatis plus
+    testImplementation 'com.baomidou:mybatis-plus-boot-starter-test:3.5.5'
+}
+
+buildscript {
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}

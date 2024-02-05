@@ -5,6 +5,10 @@ spring:
   profiles:
     active: dev
 
+logging:
+  level:
+    org.springframework.boot.autoconfigure: INFO
+
 mybatis-plus:
   global-config:
     db-config:
