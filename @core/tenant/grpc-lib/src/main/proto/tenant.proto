@@ -1,21 +1,42 @@
 syntax = "proto3";
 
+package org.flowio.tenant.proto;
+
 option java_multiple_files = true;
-option java_package = "org.flowio.tenant.proto";
 option java_outer_classname = "TenantServiceProto";
 
 service TenantService {
-  rpc CreateTenant (CreateTenantRequest) returns (CreateTenantResponse) {
-  }
-
+  rpc create (TenantCreateRequest) returns (TenantCreateResponse) ;
 }
 
-message CreateTenantRequest {
-  string tenantName = 1;
-  int32 businessType = 2;
-  string adminEmail = 3;
+// create
+message TenantCreateRequest {
+  string name = 1;
+  string adminEmail = 2;
+  int32 businessTypeId = 3;
 }
 
-message CreateTenantResponse {
-  int64 tenantId = 1;
+message TenantCreateResponse {
+  int64 id = 1;
+}
+
+// get
+message TenantGetRequest {
+  int64 id = 1;
+}
+message TenantGetResponse {
+  int64 id = 1;
+  string name = 2;
+  string adminUserId = 3;
+  int32 businessTypeId = 4;
+}
+
+// update
+message TenantUpdateRequest {
+  string name = 1;
+  int32 businessTypeId = 2;
+}
+
+message TenantUpdateResponse {
+  int64 id = 1;
 }

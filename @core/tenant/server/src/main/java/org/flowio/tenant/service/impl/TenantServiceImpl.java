@@ -2,6 +2,7 @@ package org.flowio.tenant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.flowio.tenant.entity.BusinessType;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.mapper.TenantMapper;
 import org.flowio.tenant.service.ITenantService;
@@ -16,5 +17,15 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
             new LambdaQueryWrapper<Tenant>()
                 .eq(Tenant::getName, name)
         );
+    }
+
+    @Override
+    public Tenant create(String name, BusinessType businessType) {
+        Tenant tenant = Tenant.builder()
+            .name(name)
+            .businessType(businessType)
+            .build();
+        save(tenant);
+        return tenant;
     }
 }

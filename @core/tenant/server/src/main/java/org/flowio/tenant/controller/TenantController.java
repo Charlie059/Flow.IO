@@ -1,13 +1,12 @@
 package org.flowio.tenant.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
-import org.flowio.tenant.dto.request.TenantCreateRequest;
-import org.flowio.tenant.dto.response.TenantCreateResponse;
 import org.flowio.tenant.entity.BusinessType;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.error.ResponseErrors;
+import org.flowio.tenant.proto.TenantCreateRequest;
+import org.flowio.tenant.proto.TenantCreateResponse;
 import org.flowio.tenant.service.IBusinessTypeService;
 import org.flowio.tenant.service.ITenantService;
 import org.springframework.http.HttpStatus;
@@ -27,36 +26,29 @@ class TenantController {
     private final IBusinessTypeService businessTypeService;
 
     @PostMapping("")
-    ResponseEntity<Response<TenantCreateResponse>> newTenant(@RequestBody TenantCreateRequest dto) {
+    ResponseEntity<Response<TenantCreateResponse>> newTenant(@RequestBody TenantCreateRequest request) {
         // check whether business type exists
-        BusinessType businessType = businessTypeService.getById(dto.businessTypeId());
+        BusinessType businessType = businessTypeService.getById(request.getBusinessTypeId());
         if (businessType == null) {
-            return new ResponseEntity<>(ResponseErrors.BUSINESS_TYPE_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(ResponseErrors.BUSINESS_TYPE_NOT_FOUND.toResponse(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         // check whether tenant name already exists
-        Tenant existingTenant = tenantService.getByName(dto.tenantName());
+        Tenant existingTenant = tenantService.getByName(request.getName());
         if (existingTenant != null) {
-            return new ResponseEntity<>(ResponseErrors.TENANT_NAME_ALREADY_EXISTS, HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(ResponseErrors.TENANT_NAME_ALREADY_EXISTS.toResponse(), HttpStatus.CONFLICT);
         }
 
         // create new tenant
-        Tenant newTenant = Tenant.builder()
-            .name(dto.tenantName())
+        Tenant tenant = Tenant.builder()
+            .name(request.getName())
             .businessType(businessType)
             .build();
 
-        tenantService.save(newTenant);
-
-        // get the created tenant
-        Tenant tenant = tenantService.getOne(
-            new LambdaQueryWrapper<Tenant>()
-                .select(Tenant::getId)
-                .eq(Tenant::getName, dto.tenantName())
-        );
+        tenantService.save(tenant);
 
         return new ResponseEntity<>(
-            Response.success(new TenantCreateResponse(tenant.getId())),
+            Response.success(TenantCreateResponse.newBuilder().setId(tenant.getId()).build()),
             HttpStatus.CREATED
         );
     }
@@ -68,7 +60,7 @@ class TenantController {
         if (tenant != null) {
             return ResponseEntity.ok(Response.success(tenant));
         } else {
-            return new ResponseEntity<>(ResponseErrors.TENANT_NOT_FOUND, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(ResponseErrors.TENANT_NOT_FOUND.toResponse(), HttpStatus.NOT_FOUND);
         }
     }
 }

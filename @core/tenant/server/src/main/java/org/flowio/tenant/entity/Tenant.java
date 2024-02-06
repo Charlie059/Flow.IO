@@ -20,4 +20,20 @@ public class Tenant {
     private BusinessType businessType;
     private Timestamp createTime;
     private Timestamp updateTime;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Tenant other)) {
+            return false;
+        }
+        return this.id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
