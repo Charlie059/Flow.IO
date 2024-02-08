@@ -10,6 +10,8 @@ dependencies {
     implementation project(':grpc-lib')
     // dotenv
     implementation "me.paulschwarz:spring-dotenv:4.0.0"
+    // flyway
+    implementation 'org.flywaydb:flyway-core'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
@@ -30,4 +32,8 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }

@@ -23,7 +23,7 @@ public class UserController {
     private final IUserService userService;
 
     @PostMapping("")
-    ResponseEntity<Response<UserCreateResponse>> newUser(@RequestBody UserCreateRequest request) {
+    ResponseEntity<Response<UserCreateResponse>> newUser(UserCreateRequest request) {
         Tenant tenant = tenantService.getById(request.getTenantId());
         if (tenant == null) {
             return new ResponseEntity<>(ResponseErrors.TENANT_NOT_FOUND.toResponse(), HttpStatus.UNPROCESSABLE_ENTITY);

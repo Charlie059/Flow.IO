@@ -10,6 +10,7 @@ import org.flowio.tenant.proto.TenantCreateResponse;
 import org.flowio.tenant.service.IBusinessTypeService;
 import org.flowio.tenant.service.ITenantService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,7 @@ class TenantController {
     private final IBusinessTypeService businessTypeService;
 
     @PostMapping("")
-    ResponseEntity<Response<TenantCreateResponse>> newTenant(@RequestBody TenantCreateRequest request) {
+    ResponseEntity<Response<TenantCreateResponse>> newTenant(TenantCreateRequest request) {
         // check whether business type exists
         BusinessType businessType = businessTypeService.getById(request.getBusinessTypeId());
         if (businessType == null) {

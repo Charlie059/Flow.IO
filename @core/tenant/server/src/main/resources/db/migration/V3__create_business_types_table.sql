@@ -4,3 +4,5 @@ CREATE TABLE IF NOT EXISTS business_types (
   create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE business_types OWNER TO postgres;
