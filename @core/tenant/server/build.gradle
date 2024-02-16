@@ -25,7 +25,7 @@ dependencies {
     // spring boot
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // mybatis plus
-    testImplementation 'com.baomidou:mybatis-plus-boot-starter-test:3.5.5'
+    testImplementation "com.baomidou:mybatis-plus-boot-starter-test:${mybatisPlusVersion}"
 }
 
 buildscript {
