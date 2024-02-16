@@ -7,6 +7,9 @@ option java_outer_classname = "TenantServiceProto";
 
 service TenantService {
   rpc create (TenantCreateRequest) returns (TenantCreateResponse) ;
+  rpc get (TenantGetRequest) returns (TenantGetResponse) ;
+  rpc update (TenantUpdateRequest) returns (TenantUpdateResponse) ;
+  rpc listUsers (TenantListUsersRequest) returns (TenantListUsersResponse) ;
 }
 
 // create
@@ -39,4 +42,16 @@ message TenantUpdateRequest {
 
 message TenantUpdateResponse {
   int64 id = 1;
+}
+
+// list users
+message UserResp {
+  int64 id = 1;
+  string email = 2;
+}
+message TenantListUsersRequest {
+  int64 id = 1;
+}
+message TenantListUsersResponse {
+  repeated UserResp users = 1;
 }
