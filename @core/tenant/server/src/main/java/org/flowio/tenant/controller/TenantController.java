@@ -9,13 +9,12 @@ import org.flowio.tenant.proto.TenantCreateRequest;
 import org.flowio.tenant.proto.TenantCreateResponse;
 import org.flowio.tenant.service.IBusinessTypeService;
 import org.flowio.tenant.service.ITenantService;
+import org.flowio.tenant.service.IUserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 class TenantController {
     private final ITenantService tenantService;
     private final IBusinessTypeService businessTypeService;
+    private final IUserService userService;
 
     @PostMapping("")
     ResponseEntity<Response<TenantCreateResponse>> newTenant(TenantCreateRequest request) {
@@ -41,12 +41,7 @@ class TenantController {
         }
 
         // create new tenant
-        Tenant tenant = Tenant.builder()
-            .name(request.getName())
-            .businessType(businessType)
-            .build();
-
-        tenantService.save(tenant);
+        Tenant tenant = tenantService.create(request.getName(), businessType);
 
         return new ResponseEntity<>(
             Response.success(TenantCreateResponse.newBuilder().setId(tenant.getId()).build()),
