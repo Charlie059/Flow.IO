@@ -1,7 +1,7 @@
 FROM gradle:8.6.0-jdk17 AS build
 COPY --chown=gradle:gradle . /usr/src/app
 WORKDIR /usr/src/app
-RUN gradle :grpc-lib:generateProto :server:build --no-daemon
+RUN gradle :grpc-lib:generateProto :server:build --no-daemon -x :server:test
 
 FROM openjdk:17
 
@@ -10,6 +10,6 @@ EXPOSE 9090
 
 RUN mkdir /app
 
-COPY --from=build /use/src/app/server/build/libs/*.jar /app/app.jar
+COPY --from=build /usr/src/app/server/build/libs/server.jar app.jar
 
-ENTRYPOINT ["java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -19,7 +19,7 @@ services:
       - "9090:9090"
     environment:
       NODE_ENV: development
-      DATABASE_URL: jdbc:postgresql://localhost:5432/${DATABASE_NAME}
+      DATABASE_URL: jdbc:postgresql://db/${DATABASE_NAME}
       DATABASE_USERNAME: ${DATABASE_USERNAME}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
