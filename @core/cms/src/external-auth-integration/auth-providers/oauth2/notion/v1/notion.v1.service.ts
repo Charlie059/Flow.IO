@@ -63,33 +63,6 @@ export class NotionV1OAuth2Service implements IOAuth {
     }
   }
 
-  // /**
-  //  * Refreshes the access token using the refresh token.
-  //  * @param _refreshToken - The refresh token.
-  //  */
-  // refreshToken(_refreshToken: string): Promise<any> {
-  //   return refreshToken(this.httpService, this.config, _refreshToken);
-  // }
-
-  // /**
-  //  * Verifies the access token.
-  //  * @param _accessToken
-  //  * @returns {Promise<any>} The response from the token verification endpoint.
-  //  */
-  // async verifyToken(_accessToken: string): Promise<TokenVerificationResponse> {
-  //   try {
-  //     const verificationResponse = await verifyToken(this.httpService, this.config, _accessToken);
-  //     return {
-  //       isValid: true,
-  //       expiresIn: verificationResponse.expires_in,
-  //       scopes: verificationResponse.scope.split(" "),
-  //     } as TokenVerificationResponse;
-  //   } catch (error) {
-  //     Logger.error("Token verification failed", error);
-  //     return { isValid: false };
-  //   }
-  // }
-
   /**
    * Builds the state parameter for OAuth authentication.
    * @private
