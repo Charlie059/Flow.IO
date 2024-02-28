@@ -19,6 +19,7 @@ export class NotionV1OAuth2Config {
         authorizeUrl: "https://api.notion.com/v1/oauth/authorize",
         tokenUrl: "https://api.notion.com/v1/oauth/token",
         callbackUrl: `${process.env.HOST_CONFIG_URL}/oauth/callback`,
+        callbackUrlParams: {response_type: "code", owner: "user"},
       },
     };
   }

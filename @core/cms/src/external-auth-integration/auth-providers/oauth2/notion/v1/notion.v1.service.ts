@@ -31,9 +31,6 @@ export class NotionV1OAuth2Service implements IOAuth {
     // we are requesting user token, so we need to pass scopes to user_scope
     const url = createOAuth2Url(this.config, {
       state: encodedState,
-      response_type: "code",
-      owner: "user",
-      // scope: "",
       scope: this.config.scope.join(","),
     }, "authorize");
 
