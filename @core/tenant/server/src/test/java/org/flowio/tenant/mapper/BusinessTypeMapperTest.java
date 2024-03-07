@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import org.flowio.tenant.entity.BusinessType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @MybatisPlusTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class BusinessTypeMapperTest {
     @Autowired
     private BusinessTypeMapper businessTypeMapper;
@@ -24,5 +24,6 @@ class BusinessTypeMapperTest {
         businessTypeMapper.insert(businessType);
 
         assertNotNull(businessType.getId());
+        assertEquals(businessTypeName, businessType.getName());
     }
 }

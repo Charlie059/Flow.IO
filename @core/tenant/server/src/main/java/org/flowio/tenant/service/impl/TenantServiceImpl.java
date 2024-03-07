@@ -5,11 +5,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.flowio.tenant.entity.BusinessType;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.mapper.TenantMapper;
-import org.flowio.tenant.service.ITenantService;
+import org.flowio.tenant.service.TenantService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> implements ITenantService {
+public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> implements TenantService {
 
     @Override
     public Tenant getByName(String name) {
@@ -23,7 +23,7 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
     public Tenant create(String name, BusinessType businessType) {
         Tenant tenant = Tenant.builder()
             .name(name)
-            .businessType(businessType)
+            .businessTypeId(businessType.getId())
             .build();
         save(tenant);
         return tenant;

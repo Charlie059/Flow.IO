@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.entity.User;
 
-public interface IUserService extends IService<User> {
+public interface UserService extends IService<User> {
     User getByEmail(String email);
 
     User getByEmailAndTenant(String email, Tenant tenant);

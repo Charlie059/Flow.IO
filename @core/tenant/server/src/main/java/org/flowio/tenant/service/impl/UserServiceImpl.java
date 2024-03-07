@@ -5,11 +5,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.entity.User;
 import org.flowio.tenant.mapper.UserMapper;
-import org.flowio.tenant.service.IUserService;
+import org.flowio.tenant.service.UserService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Override
     public User getByEmail(String email) {
@@ -24,7 +24,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return getOne(
             new LambdaQueryWrapper<User>()
                 .eq(User::getEmail, email)
-                .eq(User::getTenant, tenant)
+                .eq(User::getTenantId, tenant.getId())
         );
     }
 
@@ -33,7 +33,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User user = User.builder()
             .email(email)
             .password(password)
-            .tenant(tenant)
+            .tenantId(tenant.getId())
             .build();
         save(user);
         return user;

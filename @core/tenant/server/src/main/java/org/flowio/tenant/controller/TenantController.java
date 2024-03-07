@@ -7,9 +7,9 @@ import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.error.ResponseErrors;
 import org.flowio.tenant.proto.TenantCreateRequest;
 import org.flowio.tenant.proto.TenantCreateResponse;
-import org.flowio.tenant.service.IBusinessTypeService;
-import org.flowio.tenant.service.ITenantService;
-import org.flowio.tenant.service.IUserService;
+import org.flowio.tenant.service.BusinessTypeService;
+import org.flowio.tenant.service.TenantService;
+import org.flowio.tenant.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/tenants")
 @RequiredArgsConstructor
 class TenantController {
-    private final ITenantService tenantService;
-    private final IBusinessTypeService businessTypeService;
-    private final IUserService userService;
+    private final TenantService tenantService;
+    private final BusinessTypeService businessTypeService;
+    private final UserService userService;
 
     @PostMapping("")
     ResponseEntity<Response<TenantCreateResponse>> newTenant(TenantCreateRequest request) {

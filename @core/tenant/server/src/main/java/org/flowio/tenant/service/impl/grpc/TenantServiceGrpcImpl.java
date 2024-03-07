@@ -12,14 +12,14 @@ import org.flowio.tenant.error.ResponseErrors;
 import org.flowio.tenant.proto.TenantCreateRequest;
 import org.flowio.tenant.proto.TenantCreateResponse;
 import org.flowio.tenant.proto.TenantServiceGrpc;
-import org.flowio.tenant.service.IBusinessTypeService;
-import org.flowio.tenant.service.ITenantService;
+import org.flowio.tenant.service.BusinessTypeService;
+import org.flowio.tenant.service.TenantService;
 
 @GrpcService
 @AllArgsConstructor
 public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBase {
-    private final ITenantService tenantService;
-    private final IBusinessTypeService businessTypeService;
+    private final TenantService tenantService;
+    private final BusinessTypeService businessTypeService;
 
     @Override
     public void create(TenantCreateRequest request, StreamObserver<TenantCreateResponse> responseObserver) {

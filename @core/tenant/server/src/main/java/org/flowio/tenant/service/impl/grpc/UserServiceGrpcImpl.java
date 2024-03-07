@@ -12,14 +12,14 @@ import org.flowio.tenant.error.ResponseErrors;
 import org.flowio.tenant.proto.UserCreateRequest;
 import org.flowio.tenant.proto.UserCreateResponse;
 import org.flowio.tenant.proto.UserServiceGrpc;
-import org.flowio.tenant.service.ITenantService;
-import org.flowio.tenant.service.IUserService;
+import org.flowio.tenant.service.TenantService;
+import org.flowio.tenant.service.UserService;
 
 @GrpcService
 @AllArgsConstructor
 public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase {
-    private final ITenantService tenantService;
-    private final IUserService userService;
+    private final TenantService tenantService;
+    private final UserService userService;
 
     @Override
     public void create(UserCreateRequest request, StreamObserver<UserCreateResponse> responseObserver) {

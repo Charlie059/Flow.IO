@@ -4,7 +4,7 @@ buildscript {
     }
 
     ext {
-        springBootVersion = '3.1.8'
+        springBootVersion = '3.1.9'
         mybatisPlusVersion = '3.5.5'
         springBootGrpcVersion = '2.15.0.RELEASE'
         grpcVersion = '1.58.0'

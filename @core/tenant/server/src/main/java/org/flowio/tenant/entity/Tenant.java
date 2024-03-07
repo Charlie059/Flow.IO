@@ -1,6 +1,8 @@
 package org.flowio.tenant.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -17,8 +19,11 @@ public class Tenant {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     private String name;
-    private BusinessType businessType;
+    @TableField(value = "business_type_id")
+    private Integer businessTypeId;
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
     private Timestamp createTime;
+    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
     private Timestamp updateTime;
 
     @Override
