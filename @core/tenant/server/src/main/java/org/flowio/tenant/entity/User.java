@@ -22,8 +22,8 @@ public class User {
     private String password;
     @TableField(value = "tenant_id")
     private Long tenantId;
-    @TableField(value = "create_time", fill = FieldFill.INSERT)
-    private Timestamp createTime;
-    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
-    private Timestamp updateTime;
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
+    private Timestamp createdAt;
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
+    private Timestamp updatedAt;
 }

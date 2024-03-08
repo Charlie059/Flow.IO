@@ -5,7 +5,7 @@ import org.flowio.tenant.dto.request.TenantCreateRequest;
 import org.flowio.tenant.dto.response.TenantCreateResponse;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.entity.Tenant;
-import org.flowio.tenant.error.ResponseErrors;
+import org.flowio.tenant.exception.TenantNotFoundException;
 import org.flowio.tenant.service.TenantService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +34,8 @@ class TenantController {
 
     @GetMapping("/{tenantId}")
     ResponseEntity<Response<Tenant>> getTenant(@PathVariable("tenantId") Long tenantId) {
-        Tenant tenant = tenantService.getById(tenantId);
+        Tenant tenant = tenantService.getByIdOrThrow(tenantId);
 
-        if (tenant != null) {
-            return ResponseEntity.ok(Response.success(tenant));
-        } else {
-            return new ResponseEntity<>(ResponseErrors.TENANT_NOT_FOUND.toResponse(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok(Response.success(tenant));
     }
 }

@@ -1,8 +1,10 @@
 package org.flowio.tenant.exception;
 
 import com.google.rpc.Code;
+import com.google.rpc.Status;
 import lombok.Getter;
 import org.flowio.tenant.entity.Response;
+import org.flowio.tenant.error.ResponseError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -16,6 +18,13 @@ public abstract class BaseException extends RuntimeException {
         super(message);
         this.status = status;
         this.code = code;
+        this.grpcCode = getGrpcCodeFromHttpStatus(status).getNumber();
+    }
+
+    protected BaseException(HttpStatus status, ResponseError responseError) {
+        super(responseError.getMessage());
+        this.status = status;
+        this.code = responseError.getCode();
         this.grpcCode = getGrpcCodeFromHttpStatus(status).getNumber();
     }
 
@@ -33,5 +42,12 @@ public abstract class BaseException extends RuntimeException {
 
     public ResponseEntity<Response> toResponseEntity() {
         return new ResponseEntity<>(toResponse(), status);
+    }
+
+    public Status toRpcStatus() {
+        return Status.newBuilder()
+            .setCode(grpcCode)
+            .setMessage(getMessage())
+            .build();
     }
 }

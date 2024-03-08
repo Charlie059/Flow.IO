@@ -21,10 +21,10 @@ public class Tenant {
     private String name;
     @TableField(value = "business_type_id")
     private Integer businessTypeId;
-    @TableField(value = "create_time", fill = FieldFill.INSERT)
-    private Timestamp createTime;
-    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
-    private Timestamp updateTime;
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
+    private Timestamp createdAt;
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
+    private Timestamp updatedAt;
 
     @Override
     public boolean equals(Object o) {

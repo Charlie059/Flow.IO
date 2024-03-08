@@ -8,8 +8,10 @@ import lombok.AllArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.flowio.tenant.entity.BusinessType;
 import org.flowio.tenant.entity.Tenant;
-import org.flowio.tenant.error.ResponseErrors;
+import org.flowio.tenant.error.ResponseError;
+import org.flowio.tenant.exception.BaseException;
 import org.flowio.tenant.exception.BusinessTypeNotFoundException;
+import org.flowio.tenant.exception.TenantExistException;
 import org.flowio.tenant.proto.TenantCreateRequest;
 import org.flowio.tenant.proto.TenantCreateResponse;
 import org.flowio.tenant.proto.TenantServiceGrpc;
@@ -24,22 +26,14 @@ public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBa
 
     @Override
     public void create(TenantCreateRequest request, StreamObserver<TenantCreateResponse> responseObserver) {
-        BusinessType businessType = businessTypeService.getById(request.getBusinessTypeId());
-        if (businessType == null) {
-            Status status = Status.newBuilder().setCode(Code.NOT_FOUND.getNumber())
-                .setMessage(ResponseErrors.BUSINESS_TYPE_NOT_FOUND.getMessage())
-                .build();
-            responseObserver.onError(StatusProto.toStatusRuntimeException(status));
-            return;
-        }
-
-        Tenant existingTenant = tenantService.getByName(request.getName());
-        if (existingTenant != null) {
-            Status status = Status.newBuilder().setCode(Code.ALREADY_EXISTS.getNumber())
-                .setMessage(ResponseErrors.TENANT_NAME_ALREADY_EXISTS.getMessage())
-                .build();
-            responseObserver.onError(StatusProto.toStatusRuntimeException(status));
-            return;
+        try {
+            businessTypeService.getByIdOrThrow(request.getBusinessTypeId());
+            Tenant existingTenant = tenantService.getByName(request.getName());
+            if (existingTenant != null) {
+                throw new TenantExistException();
+            }
+        } catch (BaseException ex) {
+            responseObserver.onError(StatusProto.toStatusRuntimeException(ex.toRpcStatus()));
         }
 
         try {
@@ -53,11 +47,8 @@ public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBa
                 .build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
-        } catch (BusinessTypeNotFoundException ex) {
-            Status status = Status.newBuilder().setCode(Code.NOT_FOUND.getNumber())
-                .setMessage(ResponseErrors.BUSINESS_TYPE_NOT_FOUND.getMessage())
-                .build();
-            responseObserver.onError(StatusProto.toStatusRuntimeException(status));
+        } catch (BaseException ex) {
+            responseObserver.onError(StatusProto.toStatusRuntimeException(ex.toRpcStatus()));
         }
     }
 }
