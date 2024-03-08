@@ -1,5 +1,6 @@
 package org.flowio.tenant.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.flowio.tenant.dto.request.TenantCreateRequest;
 import org.flowio.tenant.dto.response.TenantCreateResponse;
@@ -23,7 +24,7 @@ class TenantController {
     private final TenantService tenantService;
 
     @PostMapping("")
-    ResponseEntity<Response<TenantCreateResponse>> newTenant(@RequestBody TenantCreateRequest request) {
+    ResponseEntity<Response<TenantCreateResponse>> createTenant(@Valid @RequestBody TenantCreateRequest request) {
         Tenant tenant = tenantService.create(request);
 
         return new ResponseEntity<>(

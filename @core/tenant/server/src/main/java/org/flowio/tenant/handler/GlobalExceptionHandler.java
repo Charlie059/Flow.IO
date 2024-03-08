@@ -6,6 +6,7 @@ import org.flowio.tenant.exception.BaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -23,8 +24,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class})
-    protected ResponseEntity<Object> handleBadRequest(HttpServletRequest request, Exception ex) {
+    protected ResponseEntity<Response> handleBadRequest(HttpServletRequest request, Exception ex) {
         return new ResponseEntity<>(Response.error(400, "Bad request"), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    protected ResponseEntity<Response> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        return new ResponseEntity<>(Response.error(400, ex.getBindingResult().getFieldError().getDefaultMessage()), HttpStatus.BAD_REQUEST);
     }
 
 // TODO: this exception only exists on spring boot 3.2+
