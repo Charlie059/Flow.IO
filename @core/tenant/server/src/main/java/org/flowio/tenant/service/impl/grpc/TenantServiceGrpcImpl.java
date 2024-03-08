@@ -9,6 +9,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.flowio.tenant.entity.BusinessType;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.error.ResponseErrors;
+import org.flowio.tenant.exception.BusinessTypeNotFoundException;
 import org.flowio.tenant.proto.TenantCreateRequest;
 import org.flowio.tenant.proto.TenantCreateResponse;
 import org.flowio.tenant.proto.TenantServiceGrpc;
@@ -41,12 +42,22 @@ public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBa
             return;
         }
 
-        Tenant tenant = tenantService.create(request.getName(), businessType);
+        try {
+            org.flowio.tenant.dto.request.TenantCreateRequest internalRequest = new org.flowio.tenant.dto.request.TenantCreateRequest(
+                request.getName(), request.getAdminEmail(), request.getBusinessTypeId()
+            );
+            Tenant tenant = tenantService.create(internalRequest);
 
-        TenantCreateResponse response = TenantCreateResponse.newBuilder()
-            .setId(tenant.getId())
-            .build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+            TenantCreateResponse response = TenantCreateResponse.newBuilder()
+                .setId(tenant.getId())
+                .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (BusinessTypeNotFoundException ex) {
+            Status status = Status.newBuilder().setCode(Code.NOT_FOUND.getNumber())
+                .setMessage(ResponseErrors.BUSINESS_TYPE_NOT_FOUND.getMessage())
+                .build();
+            responseObserver.onError(StatusProto.toStatusRuntimeException(status));
+        }
     }
 }

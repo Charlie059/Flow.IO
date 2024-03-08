@@ -2,14 +2,20 @@ package org.flowio.tenant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
+import org.flowio.tenant.dto.request.TenantCreateRequest;
 import org.flowio.tenant.entity.BusinessType;
 import org.flowio.tenant.entity.Tenant;
+import org.flowio.tenant.exception.BusinessTypeNotFoundException;
 import org.flowio.tenant.mapper.TenantMapper;
+import org.flowio.tenant.service.BusinessTypeService;
 import org.flowio.tenant.service.TenantService;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> implements TenantService {
+    private final BusinessTypeService businessTypeService;
 
     @Override
     public Tenant getByName(String name) {
@@ -20,9 +26,21 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
     }
 
     @Override
-    public Tenant create(String name, BusinessType businessType) {
+    public Tenant create(TenantCreateRequest request) {
+        // check if business type exists
+        BusinessType businessType = businessTypeService.getById(request.getBusinessTypeId());
+        if (businessType == null) {
+            throw new BusinessTypeNotFoundException("Business type with id '" + request.getBusinessTypeId() + "' not found");
+        }
+
+        // check if tenant name exists
+        Tenant existingTenant = getByName(request.getName());
+        if (existingTenant != null) {
+            throw new IllegalArgumentException("Tenant name already exists");
+        }
+
         Tenant tenant = Tenant.builder()
-            .name(name)
+            .name(request.getName())
             .businessTypeId(businessType.getId())
             .build();
         save(tenant);

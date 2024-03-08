@@ -1,12 +1,12 @@
 package org.flowio.tenant.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.flowio.tenant.dto.request.UserCreateRequest;
+import org.flowio.tenant.dto.response.UserCreateResponse;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.entity.User;
 import org.flowio.tenant.error.ResponseErrors;
-import org.flowio.tenant.proto.UserCreateRequest;
-import org.flowio.tenant.proto.UserCreateResponse;
 import org.flowio.tenant.service.TenantService;
 import org.flowio.tenant.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -24,15 +24,10 @@ public class UserController {
 
     @PostMapping("")
     ResponseEntity<Response<UserCreateResponse>> newUser(UserCreateRequest request) {
-        Tenant tenant = tenantService.getById(request.getTenantId());
-        if (tenant == null) {
-            return new ResponseEntity<>(ResponseErrors.TENANT_NOT_FOUND.toResponse(), HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-
-        User user = userService.create(request.getEmail(), request.getPassword(), tenant);
+        User user = userService.create(request);
 
         return new ResponseEntity<>(
-            Response.success(UserCreateResponse.newBuilder().setId(user.getId()).build()),
+            Response.success(UserCreateResponse.builder().id(user.getId()).build()),
             HttpStatus.CREATED
         );
     }

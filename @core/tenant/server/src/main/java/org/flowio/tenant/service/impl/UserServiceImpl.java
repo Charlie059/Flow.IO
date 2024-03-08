@@ -2,6 +2,7 @@ package org.flowio.tenant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.flowio.tenant.dto.request.UserCreateRequest;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.entity.User;
 import org.flowio.tenant.mapper.UserMapper;
@@ -29,11 +30,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public User create(String email, String password, Tenant tenant) {
+    public User create(UserCreateRequest request) {
         User user = User.builder()
-            .email(email)
-            .password(password)
-            .tenantId(tenant.getId())
+            .email(request.getEmail())
+            .password(request.getPassword())
+            .tenantId(request.getTenantId())
             .build();
         save(user);
         return user;

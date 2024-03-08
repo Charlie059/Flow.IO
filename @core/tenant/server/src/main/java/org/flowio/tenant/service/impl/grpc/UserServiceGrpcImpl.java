@@ -41,7 +41,9 @@ public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase {
             return;
         }
 
-        User user = userService.create(request.getEmail(), request.getPassword(), tenant);
+        User user = userService.create(new org.flowio.tenant.dto.request.UserCreateRequest(
+            request.getEmail(), request.getPassword(), request.getTenantId()
+        ));
         UserCreateResponse response = UserCreateResponse.newBuilder()
             .setId(user.getId())
             .build();

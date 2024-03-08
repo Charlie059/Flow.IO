@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @MybatisPlusTest
-public class UserMapperTest {
+class UserMapperTest {
     @Autowired
     private UserMapper userMapper;
 }

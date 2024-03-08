@@ -14,7 +14,7 @@ service UserService {
 message UserCreateRequest {
   string email = 1;
   string password = 2;
-  int32 tenantId = 3;
+  int64 tenantId = 3;
 }
 
 message UserCreateResponse {

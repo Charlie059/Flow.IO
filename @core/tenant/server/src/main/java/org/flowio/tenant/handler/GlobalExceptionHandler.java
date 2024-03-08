@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
     @ExceptionHandler({BaseException.class})
     public ResponseEntity<Response> handleUserNotFound(HttpServletRequest request, Exception ex) {
-        BaseException exception = (BaseException) ex;
-        return new ResponseEntity<>(Response.error(exception.getCode(), exception.getMessage()), exception.getStatus());
+        return ((BaseException) ex).toResponseEntity();
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class})
