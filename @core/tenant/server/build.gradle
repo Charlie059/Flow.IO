@@ -5,7 +5,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     // mybatis plus
-    implementation "com.baomidou:mybatis-plus-boot-starter:${mybatisPlusVersion}"
+    implementation "com.baomidou:mybatis-plus-spring-boot3-starter:${mybatisPlusVersion}"
     // grpc
     implementation "net.devh:grpc-server-spring-boot-starter:${springBootGrpcVersion}"
     implementation project(':grpc-lib')
@@ -31,7 +31,7 @@ dependencies {
     // spring boot
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // mybatis plus
-    testImplementation "com.baomidou:mybatis-plus-boot-starter-test:${mybatisPlusVersion}"
+    testImplementation "com.baomidou:mybatis-plus-spring-boot3-starter-test:${mybatisPlusVersion}"
 }
 
 buildscript {
@@ -40,6 +40,6 @@ buildscript {
     }
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
 }
