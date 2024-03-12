@@ -5,6 +5,9 @@ import org.flowio.tenant.entity.BusinessType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -15,10 +18,13 @@ class BusinessTypeMapperTest {
 
     @Test
     void testInsert() {
-        String businessTypeName = "Business";
+        final String businessTypeName = "Business";
+        final Timestamp now = Timestamp.valueOf(LocalDateTime.now());
 
-        BusinessType businessType = BusinessType.builder()
+        final BusinessType businessType = BusinessType.builder()
             .name(businessTypeName)
+            .createdAt(now) // dont know why CustomMetaObjectHandler is not triggered while testing
+            .updatedAt(now)
             .build();
 
         businessTypeMapper.insert(businessType);

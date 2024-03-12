@@ -5,6 +5,9 @@ import org.flowio.tenant.entity.Tenant;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @MybatisPlusTest
@@ -14,8 +17,13 @@ class TenantMapperTest {
 
     @Test
     void testInsert() {
-        Tenant tenant = Tenant.builder()
+        final Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+
+        final Tenant tenant = Tenant.builder()
             .name("Tenant")
+            .businessTypeId(1)
+            .createdAt(now)
+            .updatedAt(now)
             .build();
 
         tenantMapper.insert(tenant);
