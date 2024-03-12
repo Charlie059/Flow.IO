@@ -9,7 +9,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -33,10 +33,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(Response.error(400, ex.getBindingResult().getFieldError().getDefaultMessage()), HttpStatus.BAD_REQUEST);
     }
 
-// TODO: this exception only exists on spring boot 3.2+
-//    @ExceptionHandler({NoResourceFoundException.class})
-//    protected ResponseEntity<Object> handleNotFound(HttpServletRequest request, Exception ex) {
-//        return new ResponseEntity<>(Response.error(404, "Route not found"), HttpStatus.NOT_FOUND);
-//    }
+    @ExceptionHandler({NoResourceFoundException.class})
+    protected ResponseEntity<Object> handleNotFound(HttpServletRequest request, Exception ex) {
+        return new ResponseEntity<>(Response.error(404, "Route not found"), HttpStatus.NOT_FOUND);
+    }
 }
 
