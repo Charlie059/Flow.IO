@@ -3,6 +3,7 @@ apply plugin: 'org.springframework.boot'
 dependencies {
     // spring boot
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     // mybatis plus
     implementation "com.baomidou:mybatis-plus-spring-boot3-starter:${mybatisPlusVersion}"
@@ -13,6 +14,8 @@ dependencies {
     implementation "me.paulschwarz:spring-dotenv:4.0.0"
     // flyway
     implementation 'org.flywaydb:flyway-core'
+    // jwt
+    implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
 
     // spring boot devtools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -24,6 +27,9 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     // h2
     runtimeOnly 'com.h2database:h2'
+    // jjwt
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
 
     // lombok
     annotationProcessor 'org.projectlombok:lombok'
@@ -42,4 +48,13 @@ buildscript {
 
 test {
     useJUnitPlatform()
+    doLast {
+        exec {
+            file('.env').readLines().each() {
+                def (key, value) = it.tokenize('=')
+                environment key, value
+            }
+            commandLine 'fooScript.sh'
+        }
+    }
 }

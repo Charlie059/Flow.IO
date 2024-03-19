@@ -1,4 +1,4 @@
-package org.flowio.tenant.service.impl.grpc;
+package org.flowio.tenant.grpc.service.impl;
 
 import com.google.rpc.Code;
 import com.google.rpc.Status;

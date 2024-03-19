@@ -1,4 +1,4 @@
-package org.flowio.tenant.service.grpc;
+package org.flowio.tenant.grpc.service;
 
 public interface ITenantServiceGrpc {
 }

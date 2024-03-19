@@ -13,6 +13,7 @@ public enum ResponseError {
     TENANT_ALREADY_EXISTS(1001, "Tenant already exists"),
     USER_NOT_FOUND(2000, "User not found"),
     USER_ALREADY_EXISTS(2001, "User already exists"),
+    INVALID_TOKEN(2002, "Invalid token"),
     BUSINESS_TYPE_NOT_FOUND(3000, "Business type not found"),
     BUSINESS_TYPE_ALREADY_EXISTS(3001, "Business type already exists");
 

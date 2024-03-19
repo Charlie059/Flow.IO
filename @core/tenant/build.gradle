@@ -6,6 +6,7 @@ buildscript {
     ext {
         springBootVersion = '3.2.3'
         mybatisPlusVersion = '3.5.5'
+        jjwtVersion = '0.12.5'
         springBootGrpcVersion = '2.15.0.RELEASE'
         grpcVersion = '1.58.0'
         protobufVersion = '3.24.0'

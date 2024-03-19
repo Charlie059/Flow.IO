@@ -1,7 +1,7 @@
 package org.flowio.tenant.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.flowio.tenant.entity.BusinessType;
+import org.flowio.tenant.dto.BusinessTypeDto;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.service.BusinessTypeService;
 import org.springframework.http.HttpStatus;
@@ -19,9 +19,14 @@ class BusinessTypeController {
     private final BusinessTypeService businessTypeService;
 
     @GetMapping("")
-    ResponseEntity<Response<List<BusinessType>>> list() {
-        // check whether business type exists
-        var businessTypes = businessTypeService.list();
+    ResponseEntity<Response<List<BusinessTypeDto>>> list() {
+        var businessTypes = businessTypeService.list().stream()
+            .map(businessType -> BusinessTypeDto.builder()
+                .id(businessType.getId())
+                .name(businessType.getName())
+                .build()
+            )
+            .toList();
         return new ResponseEntity<>(Response.success(businessTypes), HttpStatus.OK);
     }
 }

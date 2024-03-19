@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreateRequest {
+public class UserLoginRequest {
     @NotNull(message = "Email is required")
     private String email;
     @NotNull(message = "Password is required")
