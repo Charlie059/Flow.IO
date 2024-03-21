@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.flowio.tenant.dto.TokenDto;
 import org.flowio.tenant.entity.enums.TokenType;
 
 import java.sql.Timestamp;
@@ -32,4 +33,12 @@ public class Token {
     @TableField(value = "expires_at")
     private Timestamp expiresAt;
     private boolean revoked;
+
+    public TokenDto toDto() {
+        return TokenDto.builder()
+            .token(token)
+            .type(type.getValue())
+            .expiresAt(expiresAt.toLocalDateTime().toString())
+            .build();
+    }
 }
