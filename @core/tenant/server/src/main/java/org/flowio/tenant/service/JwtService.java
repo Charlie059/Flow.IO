@@ -2,6 +2,8 @@ package org.flowio.tenant.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Map;
+
 /**
  * This service is responsible for generating and validating JWTs.
  * For token storage and management, see {@link TokenService}.
@@ -17,6 +19,8 @@ public interface JwtService {
      */
     String generateToken(UserDetails user);
 
+    String generateToken(UserDetails user, Map<String, Object> claims);
+
     /**
      * Generate a refresh token for the user
      *
@@ -24,6 +28,8 @@ public interface JwtService {
      * @return The generated token
      */
     String generateRefreshToken(UserDetails user);
+
+    String generateRefreshToken(UserDetails user, Map<String, Object> claims);
 
     /**
      * Extract the username from the token

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,11 @@ public class RefreshTokenServiceImpl extends ServiceImpl<RefreshTokenMapper, Ref
 
     @Override
     public RefreshToken createToken(User user) {
-        String jwt = jwtService.generateToken(user);
+        Map<String, Object> claims = Map.of(
+            "email", user.getEmail()
+        );
+
+        String jwt = jwtService.generateRefreshToken(user, claims);
 
         RefreshToken token = RefreshToken.builder()
             .token(jwt)

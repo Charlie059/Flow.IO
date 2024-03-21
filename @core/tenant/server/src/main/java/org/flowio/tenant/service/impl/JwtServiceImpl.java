@@ -23,12 +23,22 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateToken(UserDetails user) {
-        return generateToken(user, Map.of(), jwtConfig.getExpiration());
+        return generateToken(user, Map.of());
+    }
+
+    @Override
+    public String generateToken(UserDetails user, Map<String, Object> claims) {
+        return generateToken(user, claims, jwtConfig.getExpiration());
     }
 
     @Override
     public String generateRefreshToken(UserDetails user) {
-        return generateToken(user, Map.of(), jwtConfig.getRefreshExpiration());
+        return generateToken(user, Map.of());
+    }
+
+    @Override
+    public String generateRefreshToken(UserDetails user, Map<String, Object> claims) {
+        return generateToken(user, claims, jwtConfig.getRefreshExpiration());
     }
 
     @Override

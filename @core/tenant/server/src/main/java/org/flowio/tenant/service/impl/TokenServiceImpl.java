@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,11 @@ public class TokenServiceImpl extends ServiceImpl<TokenMapper, Token> implements
 
     @Override
     public Token createToken(User user) {
-        String jwt = jwtService.generateToken(user);
+        Map<String, Object> claims = Map.of(
+            "email", user.getEmail()
+        );
+
+        String jwt = jwtService.generateToken(user, claims);
 
         Token token = Token.builder()
             .token(jwt)
