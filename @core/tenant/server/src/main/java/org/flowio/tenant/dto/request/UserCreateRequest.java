@@ -12,9 +12,14 @@ import lombok.NoArgsConstructor;
 public class UserCreateRequest {
     @NotNull(message = "Email is required")
     private String email;
+
     @NotNull(message = "Password is required")
     private String password;
+
+    @NotNull(message = "Name is required")
+    private String name;
+
     @NotNull(message = "Tenant id is required")
-    @Min(value = 1, message = "Tenant not found")
+    @Min(value = 1, message = "Tenant id is required")
     private Long tenantId;
 }

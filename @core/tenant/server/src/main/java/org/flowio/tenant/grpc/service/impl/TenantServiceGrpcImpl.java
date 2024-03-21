@@ -1,16 +1,11 @@
 package org.flowio.tenant.grpc.service.impl;
 
-import com.google.rpc.Code;
-import com.google.rpc.Status;
 import io.grpc.protobuf.StatusProto;
 import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.flowio.tenant.entity.BusinessType;
 import org.flowio.tenant.entity.Tenant;
-import org.flowio.tenant.error.ResponseError;
 import org.flowio.tenant.exception.BaseException;
-import org.flowio.tenant.exception.BusinessTypeNotFoundException;
 import org.flowio.tenant.exception.TenantExistException;
 import org.flowio.tenant.proto.TenantCreateRequest;
 import org.flowio.tenant.proto.TenantCreateResponse;

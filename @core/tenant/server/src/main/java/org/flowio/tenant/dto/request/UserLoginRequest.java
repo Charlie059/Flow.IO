@@ -12,9 +12,11 @@ import lombok.NoArgsConstructor;
 public class UserLoginRequest {
     @NotNull(message = "Email is required")
     private String email;
+
     @NotNull(message = "Password is required")
     private String password;
+
     @NotNull(message = "Tenant id is required")
-    @Min(value = 1, message = "Tenant not found")
+    @Min(value = 1, message = "Tenant id is required")
     private Long tenantId;
 }

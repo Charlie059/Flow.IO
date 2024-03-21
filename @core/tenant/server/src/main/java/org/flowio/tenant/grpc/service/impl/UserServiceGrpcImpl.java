@@ -1,13 +1,8 @@
 package org.flowio.tenant.grpc.service.impl;
 
-import com.google.rpc.Code;
-import com.google.rpc.Status;
-import io.grpc.protobuf.StatusProto;
 import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.flowio.tenant.entity.Tenant;
-import org.flowio.tenant.entity.User;
 import org.flowio.tenant.proto.UserCreateRequest;
 import org.flowio.tenant.proto.UserCreateResponse;
 import org.flowio.tenant.proto.UserServiceGrpc;

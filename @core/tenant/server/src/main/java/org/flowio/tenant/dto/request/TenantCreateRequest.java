@@ -12,9 +12,11 @@ import lombok.NoArgsConstructor;
 public class TenantCreateRequest {
     @NotNull(message = "Name is required")
     private String name;
+
     @NotNull(message = "Admin email is required")
     private String adminEmail;
-    @NotNull(message = "Business type not found")
-    @Min(value = 1, message = "Business type not found")
+
+    @NotNull(message = "Business type is required")
+    @Min(value = 1, message = "Business type is required")
     private Integer businessTypeId;
 }
