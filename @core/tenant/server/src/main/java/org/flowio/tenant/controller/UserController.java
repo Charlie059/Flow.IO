@@ -3,10 +3,15 @@ package org.flowio.tenant.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.flowio.tenant.dto.request.UserCreateRequest;
+import org.flowio.tenant.dto.request.UserLoginRequest;
 import org.flowio.tenant.dto.response.UserCreateResponse;
+import org.flowio.tenant.dto.response.UserLoginResponse;
+import org.flowio.tenant.entity.RefreshToken;
 import org.flowio.tenant.entity.Response;
+import org.flowio.tenant.entity.Token;
 import org.flowio.tenant.entity.User;
-import org.flowio.tenant.service.TenantService;
+import org.flowio.tenant.service.RefreshTokenService;
+import org.flowio.tenant.service.TokenService;
 import org.flowio.tenant.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +24,46 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final TenantService tenantService;
     private final UserService userService;
+    private final TokenService tokenService;
+    private final RefreshTokenService refreshTokenService;
 
+    /**
+     * Create a new user.
+     *
+     * @param request {@link UserCreateRequest}
+     * @return {@link Response} of the created user id.
+     */
     @PostMapping("")
-    ResponseEntity<Response<UserCreateResponse>> newUser(@Valid @RequestBody UserCreateRequest request) {
+    ResponseEntity<Response<UserCreateResponse>> createUser(@Valid @RequestBody UserCreateRequest request) {
         User user = userService.create(request);
 
         return new ResponseEntity<>(
             Response.success(UserCreateResponse.builder().id(user.getId()).build()),
             HttpStatus.CREATED
+        );
+    }
+
+    @PostMapping("/login")
+    ResponseEntity<Response<UserLoginResponse>> login(@Valid @RequestBody UserLoginRequest request) {
+        // get logged in User
+        User user = userService.login(request);
+
+        // generate token
+        Token accessToken = tokenService.createToken(user);
+
+        // generate refresh token
+        RefreshToken refreshToken = refreshTokenService.createToken(user);
+
+        return new ResponseEntity<>(
+            Response.success(UserLoginResponse.builder()
+                .id(user.getId())
+                .tenantId(user.getTenantId())
+                .accessToken(accessToken.toDto())
+                .refreshToken(refreshToken.toDto())
+                .build()
+            ),
+            HttpStatus.OK
         );
     }
 }

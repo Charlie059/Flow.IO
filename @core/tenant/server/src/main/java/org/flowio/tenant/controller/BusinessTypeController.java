@@ -18,6 +18,11 @@ import java.util.List;
 class BusinessTypeController {
     private final BusinessTypeService businessTypeService;
 
+    /**
+     * List all business types.
+     *
+     * @return {@link Response} of the list of business types (id and name).
+     */
     @GetMapping("")
     ResponseEntity<Response<List<BusinessTypeDto>>> list() {
         var businessTypes = businessTypeService.list().stream()
