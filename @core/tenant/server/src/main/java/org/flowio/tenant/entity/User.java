@@ -23,6 +23,7 @@ public class User implements UserDetails {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     private String email;
+    private String name;
     private String password;
     @TableField(value = "tenant_id")
     private Long tenantId;
@@ -38,7 +39,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return tenantId + ":" + id;
     }
 
     @Override

@@ -42,7 +42,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public GrpcAuthenticationReader grpcAuthenticationReader(){
+    public GrpcAuthenticationReader grpcAuthenticationReader() {
         return new BasicGrpcAuthenticationReader();
     }
 }

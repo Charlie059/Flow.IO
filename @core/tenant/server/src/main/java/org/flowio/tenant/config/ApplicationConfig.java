@@ -3,8 +3,9 @@ package org.flowio.tenant.config;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.flowio.tenant.entity.User;
-import org.flowio.tenant.exception.UserNotFoundException;
 import org.flowio.tenant.mapper.UserMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,16 +19,29 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
+
     private final UserMapper userMapper;
 
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            var user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
-            if (user == null) {
-                throw new UserNotFoundException();
+            String[] parts = username.split(":");
+            if (parts.length != 2) {
+                return null;
             }
-            return user;
+            // no part checking here, just assume it's valid
+            Long tenantId = Long.parseLong(parts[0]);
+            Long userId = Long.parseLong(parts[1]);
+            try {
+                return userMapper.selectOne(new LambdaQueryWrapper<User>()
+                    .eq(User::getId, userId)
+                    .eq(User::getTenantId, tenantId)
+                );
+            } catch (Exception ex) {
+                logger.error("unexpected exception while retrieving UserDetails", ex);
+                return null;
+            }
         };
     }
 
