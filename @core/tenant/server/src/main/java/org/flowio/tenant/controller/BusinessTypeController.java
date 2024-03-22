@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flowio.tenant.dto.BusinessTypeDto;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.service.BusinessTypeService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +31,6 @@ class BusinessTypeController {
                 .build()
             )
             .toList();
-        return new ResponseEntity<>(Response.success(businessTypes), HttpStatus.OK);
+        return ResponseEntity.ok(Response.success(businessTypes));
     }
 }

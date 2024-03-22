@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-public class UserController {
+class UserController {
     private final UserService userService;
     private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService;
@@ -55,15 +55,13 @@ public class UserController {
         // generate refresh token
         RefreshToken refreshToken = refreshTokenService.createToken(user);
 
-        return new ResponseEntity<>(
-            Response.success(UserLoginResponse.builder()
+        return ResponseEntity.ok(Response.success(
+            UserLoginResponse.builder()
                 .id(user.getId())
                 .tenantId(user.getTenantId())
                 .accessToken(accessToken.toDto())
                 .refreshToken(refreshToken.toDto())
                 .build()
-            ),
-            HttpStatus.OK
-        );
+        ));
     }
 }

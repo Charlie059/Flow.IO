@@ -6,7 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.flowio.tenant.config.JwtConfig;
-import org.flowio.tenant.exception.InvalidJwtException;
+import org.flowio.tenant.exception.InvalidTokenException;
 import org.flowio.tenant.service.JwtService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -71,7 +71,7 @@ public class JwtServiceImpl implements JwtService {
                 .parseSignedClaims(token)
                 .getPayload();
         } catch (IllegalArgumentException | JwtException ex) {
-            throw new InvalidJwtException();
+            throw new InvalidTokenException();
         }
     }
 
