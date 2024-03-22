@@ -23,9 +23,6 @@ public class RefreshToken {
     @TableId(type = IdType.AUTO)
     private Long id;
     private String token;
-    @EnumValue
-    @Builder.Default
-    private TokenType type = TokenType.BEARER;
     @TableField(value = "user_id")
     private Long userId;
     @TableField(value = "created_at")
@@ -36,7 +33,6 @@ public class RefreshToken {
     public TokenDto toDto() {
         return TokenDto.builder()
             .token(token)
-            .type(type.getValue())
             .expiresAt(expiresAt.toLocalDateTime().toString())
             .build();
     }
