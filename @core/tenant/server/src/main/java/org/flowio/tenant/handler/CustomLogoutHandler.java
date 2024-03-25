@@ -3,7 +3,7 @@ package org.flowio.tenant.handler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.flowio.tenant.service.TokenService;
+import org.flowio.tenant.service.AccessTokenService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class CustomLogoutHandler implements LogoutHandler {
-    private final TokenService tokenService;
+    private final AccessTokenService accessTokenService;
 
     @Override
     public void logout(
@@ -26,10 +26,10 @@ public class CustomLogoutHandler implements LogoutHandler {
             return;
         }
         jwt = authHeader.substring(7);
-        var token = tokenService.findByToken(jwt);
+        var token = accessTokenService.findByToken(jwt);
         if (token != null) {
             token.setRevoked(true);
-            tokenService.save(token);
+            accessTokenService.save(token);
             SecurityContextHolder.clearContext();
         }
     }

@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.flowio.tenant.service.JwtService;
-import org.flowio.tenant.service.TokenService;
+import org.flowio.tenant.service.AccessTokenService;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +22,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final TokenService tokenService;
+    private final AccessTokenService accessTokenService;
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -40,8 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String username = jwtService.extractUsername(jwt);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            var token = tokenService.findByToken(jwt);
-            if (token == null || !tokenService.isTokenValid(token) || !jwtService.isTokenValid(jwt, userDetails)) {
+            var token = accessTokenService.findByToken(jwt);
+            if (token == null || !accessTokenService.isTokenValid(token) || !jwtService.isTokenValid(jwt, userDetails)) {
                 filterChain.doFilter(request, response);
                 return;
             }

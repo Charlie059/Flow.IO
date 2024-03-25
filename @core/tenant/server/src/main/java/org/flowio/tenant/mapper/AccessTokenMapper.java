@@ -2,8 +2,8 @@ package org.flowio.tenant.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.flowio.tenant.entity.Token;
+import org.flowio.tenant.entity.AccessToken;
 
 @Mapper
-public interface TokenMapper extends BaseMapper<Token> {
+public interface AccessTokenMapper extends BaseMapper<AccessToken> {
 }

@@ -6,7 +6,7 @@ import org.flowio.tenant.dto.request.TokenValidateRequest;
 import org.flowio.tenant.dto.response.TokenValidateResponse;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.exception.InvalidTokenException;
-import org.flowio.tenant.service.TokenService;
+import org.flowio.tenant.service.AccessTokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 class AuthController {
-    private final TokenService tokenService;
+    private final AccessTokenService accessTokenService;
 
     /**
      * Validate an access token.
@@ -27,12 +27,12 @@ class AuthController {
      */
     @PostMapping("/validate")
     ResponseEntity<Response<TokenValidateResponse>> validateAccessToken(@Valid @RequestBody TokenValidateRequest request) {
-        var token = tokenService.findByToken(request.getToken());
+        var token = accessTokenService.findByToken(request.getToken());
         if (token == null) {
             throw new InvalidTokenException();
         }
 
-        if (!tokenService.isTokenValid(token)) {
+        if (!accessTokenService.isTokenValid(token)) {
             throw new InvalidTokenException();
         }
 

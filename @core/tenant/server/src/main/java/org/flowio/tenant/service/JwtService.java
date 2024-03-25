@@ -6,9 +6,9 @@ import java.util.Map;
 
 /**
  * This service is responsible for generating and validating JWTs.
- * For token storage and management, see {@link TokenService}.
+ * For token storage and management, see {@link AccessTokenService}.
  *
- * @see TokenService
+ * @see AccessTokenService
  */
 public interface JwtService {
     /**

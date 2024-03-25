@@ -19,7 +19,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("tokens")
-public class Token {
+public class AccessToken {
     @TableId(type = IdType.AUTO)
     private Long id;
     private String token;

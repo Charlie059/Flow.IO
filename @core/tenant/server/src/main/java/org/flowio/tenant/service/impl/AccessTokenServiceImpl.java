@@ -3,11 +3,11 @@ package org.flowio.tenant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.flowio.tenant.entity.Token;
+import org.flowio.tenant.entity.AccessToken;
 import org.flowio.tenant.entity.User;
-import org.flowio.tenant.mapper.TokenMapper;
+import org.flowio.tenant.mapper.AccessTokenMapper;
 import org.flowio.tenant.service.JwtService;
-import org.flowio.tenant.service.TokenService;
+import org.flowio.tenant.service.AccessTokenService;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -16,18 +16,18 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class TokenServiceImpl extends ServiceImpl<TokenMapper, Token> implements TokenService {
+public class AccessTokenServiceImpl extends ServiceImpl<AccessTokenMapper, AccessToken> implements AccessTokenService {
     private final JwtService jwtService;
 
     @Override
-    public Token createToken(User user) {
+    public AccessToken createToken(User user) {
         Map<String, Object> claims = Map.of(
             "email", user.getEmail()
         );
 
         String jwt = jwtService.generateToken(user, claims);
 
-        Token token = Token.builder()
+        AccessToken token = AccessToken.builder()
             .token(jwt)
             .userId(user.getId())
             .createdAt(new Timestamp(jwtService.extractCreatedAt(jwt)))
@@ -38,13 +38,13 @@ public class TokenServiceImpl extends ServiceImpl<TokenMapper, Token> implements
     }
 
     @Override
-    public Token findByToken(String token) {
-        return getOne(new LambdaQueryWrapper<Token>()
-            .eq(Token::getToken, token));
+    public AccessToken findByToken(String token) {
+        return getOne(new LambdaQueryWrapper<AccessToken>()
+            .eq(AccessToken::getToken, token));
     }
 
     @Override
-    public boolean isTokenValid(Token token) {
+    public boolean isTokenValid(AccessToken token) {
         if (token == null) {
             return false;
         }

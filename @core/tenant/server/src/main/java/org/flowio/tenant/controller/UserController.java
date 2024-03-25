@@ -8,10 +8,10 @@ import org.flowio.tenant.dto.response.UserCreateResponse;
 import org.flowio.tenant.dto.response.UserLoginResponse;
 import org.flowio.tenant.entity.RefreshToken;
 import org.flowio.tenant.entity.Response;
-import org.flowio.tenant.entity.Token;
+import org.flowio.tenant.entity.AccessToken;
 import org.flowio.tenant.entity.User;
 import org.flowio.tenant.service.RefreshTokenService;
-import org.flowio.tenant.service.TokenService;
+import org.flowio.tenant.service.AccessTokenService;
 import org.flowio.tenant.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 class UserController {
     private final UserService userService;
-    private final TokenService tokenService;
+    private final AccessTokenService accessTokenService;
     private final RefreshTokenService refreshTokenService;
 
     /**
@@ -50,7 +50,7 @@ class UserController {
         User user = userService.login(request);
 
         // generate token
-        Token accessToken = tokenService.createToken(user);
+        AccessToken accessToken = accessTokenService.createToken(user);
 
         // generate refresh token
         RefreshToken refreshToken = refreshTokenService.createToken(user);
