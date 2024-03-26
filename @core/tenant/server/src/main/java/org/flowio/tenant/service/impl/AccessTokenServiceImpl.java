@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.flowio.tenant.entity.AccessToken;
 import org.flowio.tenant.entity.User;
 import org.flowio.tenant.mapper.AccessTokenMapper;
-import org.flowio.tenant.service.JwtService;
 import org.flowio.tenant.service.AccessTokenService;
+import org.flowio.tenant.service.JwtService;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;

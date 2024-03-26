@@ -1,6 +1,5 @@
 package org.flowio.tenant.entity;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -10,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.flowio.tenant.dto.TokenDto;
-import org.flowio.tenant.entity.enums.TokenType;
 
 import java.sql.Timestamp;
 
