@@ -12,9 +12,12 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.token.SecureRandomFactoryBean;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+
+import java.security.SecureRandom;
 
 @Configuration
 @RequiredArgsConstructor
@@ -44,5 +47,17 @@ public class SecurityConfig {
     @Bean
     public GrpcAuthenticationReader grpcAuthenticationReader() {
         return new BasicGrpcAuthenticationReader();
+    }
+
+    @Bean
+    public SecureRandomFactoryBean secureRandomFactoryBean() {
+        var factory = new SecureRandomFactoryBean();
+        factory.setAlgorithm("SHA1PRNG");
+        return factory;
+    }
+
+    @Bean
+    public SecureRandom secureRandom() throws Exception {
+        return secureRandomFactoryBean().getObject();
     }
 }

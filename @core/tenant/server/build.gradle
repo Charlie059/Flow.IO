@@ -16,6 +16,8 @@ dependencies {
     implementation 'org.flywaydb:flyway-core'
     // jwt
     implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+    // commons codec
+    implementation 'commons-codec:commons-codec:1.16.1'
 
     // spring boot devtools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -48,13 +50,13 @@ buildscript {
 
 test {
     useJUnitPlatform()
-    doLast {
-        exec {
-            file('.env').readLines().each() {
-                def (key, value) = it.tokenize('=')
-                environment key, value
-            }
-            commandLine 'fooScript.sh'
-        }
-    }
+//    doLast {
+//        exec {
+//            file('.env').readLines().each() {
+//                def (key, value) = it.tokenize('=')
+//                environment key, value
+//            }
+//            commandLine 'fooScript.sh'
+//        }
+//    }
 }
