@@ -9,6 +9,8 @@ import org.flowio.tenant.exception.BaseException;
 import org.flowio.tenant.exception.TenantExistException;
 import org.flowio.tenant.proto.TenantCreateRequest;
 import org.flowio.tenant.proto.TenantCreateResponse;
+import org.flowio.tenant.proto.TenantGetRequest;
+import org.flowio.tenant.proto.TenantGetResponse;
 import org.flowio.tenant.proto.TenantServiceGrpc;
 import org.flowio.tenant.service.BusinessTypeService;
 import org.flowio.tenant.service.TenantService;
@@ -27,11 +29,7 @@ public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBa
             if (existingTenant != null) {
                 throw new TenantExistException();
             }
-        } catch (BaseException ex) {
-            responseObserver.onError(StatusProto.toStatusRuntimeException(ex.toRpcStatus()));
-        }
 
-        try {
             org.flowio.tenant.dto.request.TenantCreateRequest internalRequest = new org.flowio.tenant.dto.request.TenantCreateRequest(
                 request.getName(), request.getAdminEmail(), request.getBusinessTypeId()
             );
@@ -40,6 +38,24 @@ public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBa
             TenantCreateResponse response = TenantCreateResponse.newBuilder()
                 .setId(tenant.getId())
                 .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (BaseException ex) {
+            responseObserver.onError(StatusProto.toStatusRuntimeException(ex.toRpcStatus()));
+        }
+    }
+
+    @Override
+    public void get(TenantGetRequest request, StreamObserver<TenantGetResponse> responseObserver) {
+        try {
+            Tenant tenant = tenantService.getById(request.getId());
+
+            TenantGetResponse response = TenantGetResponse.newBuilder()
+                .setId(tenant.getId())
+                .setName(tenant.getName())
+                .setBusinessTypeId(tenant.getBusinessTypeId())
+                .build();
+
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         } catch (BaseException ex) {
