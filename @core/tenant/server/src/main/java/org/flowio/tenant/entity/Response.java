@@ -13,11 +13,11 @@ public class Response<T> {
     private T data;
 
     public static <T> Response<T> success(T data) {
-        return Response.<T>builder().code(200).message("Success!").data(data).build();
+        return Response.<T>builder().code(0).message("OK").data(data).build();
     }
 
     public static Response success() {
-        return Response.builder().code(200).message("Success!").build();
+        return Response.builder().code(0).message("OK").build();
     }
 
     public static Response error(Integer code, String message) {
