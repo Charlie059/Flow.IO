@@ -1,5 +1,7 @@
 package org.flowio.tenant.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.flowio.tenant.dto.request.TenantCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,19 +13,27 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
-class BusinessTypeControllerTest {
+class TenantControllerTest {
     @Autowired
     private MockMvc mvc;
+    @Autowired
+    private ObjectMapper mapper;
 
     @Test
-    void testGet() throws Exception {
+    void testCreate() throws Exception {
+        TenantCreateRequest request = TenantCreateRequest.builder()
+            .name("test")
+            .adminEmail("example@test.com")
+            .businessTypeId(1)
+            .build();
         mvc.perform(
-                MockMvcRequestBuilders.get("/api/v1/business-types")
+                MockMvcRequestBuilders.post("/api/v1/tenants")
+                    .content(mapper.writeValueAsString(request))
                     .contentType(MediaType.APPLICATION_JSON)
             )
-            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.status().isCreated())
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(0))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data").isArray());
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data").isMap());
     }
 }
