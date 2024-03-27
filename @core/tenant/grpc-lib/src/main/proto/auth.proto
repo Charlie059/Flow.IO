@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package org.flowio.tenant.proto;
+
+option java_multiple_files = true;
+option java_outer_classname = "AuthServiceProto";
+
+service AuthService {
+  rpc validateToken (ValidateTokenRequest) returns (ValidateTokenResponse) ;
+}
+
+// validate token
+message ValidateTokenRequest {
+  string token = 1;
+}
+message ValidateTokenResponse {
+  bool isValid = 1;
+  int64 userId = 2;
+}

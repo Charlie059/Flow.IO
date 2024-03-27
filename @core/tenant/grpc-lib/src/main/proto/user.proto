@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package org.flowio.tenant.proto;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "UserServiceProto";
+
+service UserService {
+  rpc create (UserCreateRequest) returns (UserCreateResponse) ;
+  rpc login (UserLoginRequest) returns (UserLoginResponse) ;
+}
+
+// create
+message UserCreateRequest {
+  string email = 1;
+  string password = 2;
+  string name = 3;
+  int64 tenantId = 4;
+}
+
+message UserCreateResponse {
+  int64 id = 1;
+}
+
+// login
+message UserLoginRequest {
+  string email = 1;
+  string password = 2;
+  int64 tenatnId = 3;
+}
+
+message UserLoginResponse {
+  int64 id = 1;
+  int64 tenantId = 2;
+  TokenResp accessToken = 3;
+  TokenResp refreshToken = 4;
+}
+
+message TokenResp {
+  string token = 1;
+  string type = 2;
+  google.protobuf.Timestamp expireAt = 3;
+}

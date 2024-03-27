@@ -1,0 +1,62 @@
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    // spring boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // mybatis plus
+    implementation "com.baomidou:mybatis-plus-spring-boot3-starter:${mybatisPlusVersion}"
+    // grpc
+    implementation "net.devh:grpc-server-spring-boot-starter:${springBootGrpcVersion}"
+    implementation project(':grpc-lib')
+    // dotenv
+    implementation "me.paulschwarz:spring-dotenv:4.0.0"
+    // flyway
+    implementation 'org.flywaydb:flyway-core'
+    // jwt
+    implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+    // commons codec
+    implementation 'commons-codec:commons-codec:1.16.1'
+
+    // spring boot devtools
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
+
+    // postgresql
+    runtimeOnly 'org.postgresql:postgresql'
+    // h2
+    runtimeOnly 'com.h2database:h2'
+    // jjwt
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
+
+    // lombok
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // spring boot
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // mybatis plus
+    testImplementation "com.baomidou:mybatis-plus-spring-boot3-starter-test:${mybatisPlusVersion}"
+}
+
+buildscript {
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+test {
+    useJUnitPlatform()
+//    doLast {
+//        exec {
+//            file('.env').readLines().each() {
+//                def (key, value) = it.tokenize('=')
+//                environment key, value
+//            }
+//            commandLine 'fooScript.sh'
+//        }
+//    }
+}
