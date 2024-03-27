@@ -21,6 +21,13 @@ message TenantCreateRequest {
 
 message TenantCreateResponse {
   int64 id = 1;
+  AdminUserResp adminUser = 2;
+}
+
+message AdminUserResp {
+  int64 id = 1;
+  string email = 2;
+  string password = 3;
 }
 
 // get
@@ -30,8 +37,7 @@ message TenantGetRequest {
 message TenantGetResponse {
   int64 id = 1;
   string name = 2;
-  string adminUserId = 3;
-  int32 businessTypeId = 4;
+  int32 businessTypeId = 3;
 }
 
 // update

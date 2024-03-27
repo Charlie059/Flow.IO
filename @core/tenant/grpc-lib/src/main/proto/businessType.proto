@@ -2,17 +2,20 @@ syntax = "proto3";
 
 package org.flowio.tenant.proto;
 
+import "google/protobuf/empty.proto";
+
 option java_multiple_files = true;
 option java_outer_classname = "BusinessTypeServiceProto";
 
 service BusinessTypeService {
-  rpc create (BusinessTypeCreateRequest) returns (BusinessTypeCreateResponse) ;
+  rpc list (google.protobuf.Empty) returns (BusinessTypeListResponse) ;
 }
 
-message BusinessTypeCreateRequest {
-  string name = 1;
+message BusinessTypeResp {
+  string id = 1;
+  string name = 2;
 }
 
-message BusinessTypeCreateResponse {
-  int64 id = 1;
+message BusinessTypeListResponse {
+  repeated BusinessTypeResp businessTypes = 1;
 }
