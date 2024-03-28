@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.flowio.tenant.dto.request.TenantCreateRequest;
 import org.flowio.tenant.entity.BusinessType;
 import org.flowio.tenant.entity.Tenant;
+import org.flowio.tenant.entity.User;
 import org.flowio.tenant.exception.BusinessTypeNotFoundException;
 import org.flowio.tenant.exception.TenantExistException;
 import org.flowio.tenant.exception.TenantNotFoundException;

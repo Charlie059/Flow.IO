@@ -40,13 +40,7 @@ class TenantController {
 
         // create admin user
         var adminPassword = rngService.randomPassword(16);
-        User adminUser = userService.create(UserCreateRequest.builder()
-            .tenantId(tenant.getId())
-            .email(request.getAdminEmail())
-            .name(tenant.getName() + " admin")
-            .password(adminPassword)
-            .role("ADMIN")
-            .build());
+        var adminUser = userService.createAdmin(tenant, request.getAdminEmail(), adminPassword);
 
         var response = TenantCreateResponse.builder()
             .id(tenant.getId())
