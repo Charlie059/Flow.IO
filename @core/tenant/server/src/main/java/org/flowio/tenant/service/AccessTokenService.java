@@ -15,6 +15,7 @@ public interface AccessTokenService extends IService<AccessToken> {
 
     /**
      * Find {@link AccessToken} by token string
+     *
      * @param token The token string
      * @return The {@link AccessToken}
      */
@@ -22,6 +23,7 @@ public interface AccessTokenService extends IService<AccessToken> {
 
     /**
      * Check if the {@link AccessToken} is valid
+     *
      * @param token The {@link AccessToken} to check
      * @return Whether the {@link AccessToken} is valid
      */

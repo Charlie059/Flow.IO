@@ -11,6 +11,7 @@ import java.util.List;
 public interface UserService extends IService<User> {
     /**
      * Get the list of {@link User} by email. The email may be used in multiple tenants.
+     *
      * @param email The email of {@link User}
      * @return The list of {@link User} with the given email
      */
@@ -18,7 +19,8 @@ public interface UserService extends IService<User> {
 
     /**
      * Get {@link User} by email and tenant
-     * @param email The email of {@link User}
+     *
+     * @param email  The email of {@link User}
      * @param tenant The tenant of {@link User}
      * @return The {@link User} with the given email and tenant
      */
@@ -26,6 +28,7 @@ public interface UserService extends IService<User> {
 
     /**
      * Create a new {@link User}
+     *
      * @param request The {@link UserCreateRequest}
      * @return The created {@link User}
      */
@@ -33,6 +36,7 @@ public interface UserService extends IService<User> {
 
     /**
      * Login with email and password
+     *
      * @param request The {@link UserLoginRequest}
      * @return The {@link User} if login success, otherwise null
      */
