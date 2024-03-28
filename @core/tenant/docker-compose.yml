@@ -18,7 +18,6 @@ services:
       - "8080:8080"
       - "9090:9090"
     environment:
-      NODE_ENV: development
       DATABASE_URL: jdbc:postgresql://db/${DATABASE_NAME}
       DATABASE_USERNAME: ${DATABASE_USERNAME}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
