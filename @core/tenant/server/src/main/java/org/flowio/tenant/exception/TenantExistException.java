@@ -3,6 +3,8 @@ package org.flowio.tenant.exception;
 import org.flowio.tenant.error.ResponseError;
 import org.springframework.http.HttpStatus;
 
+import java.io.Serializable;
+
 public class TenantExistException extends BaseException {
     public TenantExistException() {
         super(HttpStatus.FORBIDDEN, ResponseError.TENANT_ALREADY_EXISTS);
@@ -12,6 +14,6 @@ public class TenantExistException extends BaseException {
         super(HttpStatus.FORBIDDEN, ResponseError.TENANT_ALREADY_EXISTS, new ResponseData(tenantId));
     }
 
-    private record ResponseData(Long tenantId) {
+    private record ResponseData(Long tenantId) implements Serializable {
     }
 }
