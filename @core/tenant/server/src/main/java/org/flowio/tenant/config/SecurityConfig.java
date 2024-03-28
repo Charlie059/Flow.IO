@@ -3,7 +3,7 @@ package org.flowio.tenant.config;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.security.authentication.BasicGrpcAuthenticationReader;
 import net.devh.boot.grpc.server.security.authentication.GrpcAuthenticationReader;
-import org.flowio.tenant.filter.JwtAuthenticationFilter;
+import org.flowio.tenant.filter.TokenAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,18 +12,15 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.token.SecureRandomFactoryBean;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-
-import java.security.SecureRandom;
 
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
-    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final LogoutHandler logoutHandler;
 
     @Bean
@@ -35,7 +32,7 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .logout(logout -> logout
                 .logoutUrl("/api/v1/auth/logout")
                 .addLogoutHandler(logoutHandler)
@@ -47,17 +44,5 @@ public class SecurityConfig {
     @Bean
     public GrpcAuthenticationReader grpcAuthenticationReader() {
         return new BasicGrpcAuthenticationReader();
-    }
-
-    @Bean
-    public SecureRandomFactoryBean secureRandomFactoryBean() {
-        var factory = new SecureRandomFactoryBean();
-        factory.setAlgorithm("SHA1PRNG");
-        return factory;
-    }
-
-    @Bean
-    public SecureRandom secureRandom() throws Exception {
-        return secureRandomFactoryBean().getObject();
     }
 }

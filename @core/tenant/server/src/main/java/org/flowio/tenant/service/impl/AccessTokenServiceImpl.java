@@ -3,42 +3,39 @@ package org.flowio.tenant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.flowio.tenant.config.TokenConfig;
 import org.flowio.tenant.entity.AccessToken;
 import org.flowio.tenant.entity.User;
 import org.flowio.tenant.mapper.AccessTokenMapper;
 import org.flowio.tenant.service.AccessTokenService;
-import org.flowio.tenant.service.JwtService;
+import org.flowio.tenant.service.TokenService;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class AccessTokenServiceImpl extends ServiceImpl<AccessTokenMapper, AccessToken> implements AccessTokenService {
-    private final JwtService jwtService;
+    private final TokenConfig tokenConfig;
+    private final TokenService tokenService;
 
     @Override
     public AccessToken createToken(User user) {
-        Map<String, Object> claims = Map.of(
-            "email", user.getEmail()
-        );
+        String token = tokenService.generateToken();
 
-        String jwt = jwtService.generateToken(user, claims);
-
-        AccessToken token = AccessToken.builder()
-            .token(jwt)
+        AccessToken accessToken = AccessToken.builder()
+            .token(token)
             .userId(user.getId())
-            .createdAt(new Timestamp(jwtService.extractCreatedAt(jwt)))
-            .expiresAt(new Timestamp(jwtService.extractExpiresAt(jwt)))
+            .createdAt(new Timestamp(System.currentTimeMillis()))
+            .expiresAt(new Timestamp(System.currentTimeMillis() + tokenConfig.getAccessTokenExpiresIn()))
             .build();
-        save(token);
-        return token;
+        save(accessToken);
+        return accessToken;
     }
 
     @Override
-    public AccessToken findByToken(String token) {
+    public AccessToken getByToken(String token) {
         return getOne(new LambdaQueryWrapper<AccessToken>()
             .eq(AccessToken::getToken, token));
     }
@@ -46,6 +43,9 @@ public class AccessTokenServiceImpl extends ServiceImpl<AccessTokenMapper, Acces
     @Override
     public boolean isTokenValid(AccessToken token) {
         if (token == null) {
+            return false;
+        }
+        if (token.getCreatedAt().after(new Date())) {
             return false;
         }
         if (token.getExpiresAt().before(new Date())) {

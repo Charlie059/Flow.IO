@@ -7,7 +7,7 @@ import org.flowio.tenant.entity.User;
 public interface RefreshTokenService extends IService<RefreshToken> {
     RefreshToken createToken(User user);
 
-    RefreshToken findByToken(String token);
+    RefreshToken getByToken(String token);
 
     boolean isTokenValid(RefreshToken token);
 }

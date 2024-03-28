@@ -21,15 +21,15 @@ public class CustomLogoutHandler implements LogoutHandler {
         Authentication authentication
     ) {
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
+        final String token;
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
-        jwt = authHeader.substring(7);
-        var token = accessTokenService.findByToken(jwt);
-        if (token != null) {
-            token.setRevoked(true);
-            accessTokenService.save(token);
+        token = authHeader.substring(7);
+        var accessToken = accessTokenService.getByToken(token);
+        if (accessToken != null) {
+            accessToken.setRevoked(true);
+            accessTokenService.save(accessToken);
             SecurityContextHolder.clearContext();
         }
     }

@@ -3,42 +3,39 @@ package org.flowio.tenant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.flowio.tenant.config.TokenConfig;
 import org.flowio.tenant.entity.RefreshToken;
 import org.flowio.tenant.entity.User;
 import org.flowio.tenant.mapper.RefreshTokenMapper;
-import org.flowio.tenant.service.JwtService;
 import org.flowio.tenant.service.RefreshTokenService;
+import org.flowio.tenant.service.TokenService;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl extends ServiceImpl<RefreshTokenMapper, RefreshToken> implements RefreshTokenService {
-    private final JwtService jwtService;
+    private final TokenConfig tokenConfig;
+    private final TokenService tokenService;
 
     @Override
     public RefreshToken createToken(User user) {
-        Map<String, Object> claims = Map.of(
-            "email", user.getEmail()
-        );
+        String token = tokenService.generateToken();
 
-        String jwt = jwtService.generateRefreshToken(user, claims);
-
-        RefreshToken token = RefreshToken.builder()
-            .token(jwt)
+        RefreshToken refreshToken = RefreshToken.builder()
+            .token(token)
             .userId(user.getId())
-            .createdAt(new Timestamp(jwtService.extractCreatedAt(jwt)))
-            .expiresAt(new Timestamp(jwtService.extractExpiresAt(jwt)))
+            .createdAt(new Timestamp(System.currentTimeMillis()))
+            .expiresAt(new Timestamp(System.currentTimeMillis() + tokenConfig.getRefreshTokenExpiresIn()))
             .build();
-        save(token);
-        return token;
+        save(refreshToken);
+        return refreshToken;
     }
 
     @Override
-    public RefreshToken findByToken(String token) {
+    public RefreshToken getByToken(String token) {
         return getOne(new LambdaQueryWrapper<RefreshToken>()
             .eq(RefreshToken::getToken, token));
     }
@@ -46,6 +43,9 @@ public class RefreshTokenServiceImpl extends ServiceImpl<RefreshTokenMapper, Ref
     @Override
     public boolean isTokenValid(RefreshToken token) {
         if (token == null) {
+            return false;
+        }
+        if (token.getCreatedAt().after(new Date())) {
             return false;
         }
         return !token.getExpiresAt().before(new Date());

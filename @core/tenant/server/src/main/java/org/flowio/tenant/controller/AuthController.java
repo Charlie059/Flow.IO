@@ -27,7 +27,7 @@ class AuthController {
      */
     @PostMapping("/validate")
     ResponseEntity<Response<TokenValidateResponse>> validateAccessToken(@Valid @RequestBody TokenValidateRequest request) {
-        var token = accessTokenService.findByToken(request.getToken());
+        var token = accessTokenService.getByToken(request.getToken());
         if (token == null) {
             throw new InvalidTokenException();
         }

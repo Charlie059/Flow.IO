@@ -5,8 +5,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.flowio.tenant.entity.AccessToken;
+import org.flowio.tenant.entity.User;
+import org.flowio.tenant.mapper.UserMapper;
 import org.flowio.tenant.service.AccessTokenService;
-import org.flowio.tenant.service.JwtService;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,9 +22,9 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtService jwtService;
+public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final AccessTokenService accessTokenService;
+    private final UserMapper userMapper;
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -36,15 +38,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        final String jwt = authHeader.substring(7);
-        final String username = jwtService.extractUsername(jwt);
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            var token = accessTokenService.findByToken(jwt);
-            if (token == null || !accessTokenService.isTokenValid(token) || !jwtService.isTokenValid(jwt, userDetails)) {
-                filterChain.doFilter(request, response);
-                return;
-            }
+        final String token = authHeader.substring(7);
+        final AccessToken accessToken = accessTokenService.getByToken(token);
+        if (accessToken != null && accessTokenService.isTokenValid(accessToken)
+            && SecurityContextHolder.getContext().getAuthentication() == null
+        ) {
+            final User user = userMapper.selectById(accessToken.getUserId());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
 
             var authToken = new UsernamePasswordAuthenticationToken(
                 userDetails,
