@@ -56,7 +56,7 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
         // check if tenant name exists
         Tenant existingTenant = getByName(request.getName());
         if (existingTenant != null) {
-            throw new TenantExistException();
+            throw new TenantExistException(existingTenant.getId());
         }
 
         // create tenant and store
@@ -66,7 +66,6 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
             .build();
         save(tenant);
 
-        // TODO: create admin user
         return tenant;
     }
 }

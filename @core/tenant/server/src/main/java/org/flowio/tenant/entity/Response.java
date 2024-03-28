@@ -23,4 +23,8 @@ public class Response<T> {
     public static Response error(Integer code, String message) {
         return Response.builder().code(code).message(message).build();
     }
+
+    public static Response error(Integer code, String message, Object data) {
+        return Response.builder().code(code).message(message).data(data).build();
+    }
 }

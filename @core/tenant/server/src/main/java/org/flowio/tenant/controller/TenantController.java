@@ -38,8 +38,8 @@ class TenantController {
     ResponseEntity<Response<TenantCreateResponse>> createTenant(@Valid @RequestBody TenantCreateRequest request) {
         Tenant tenant = tenantService.create(request);
 
-        var adminPassword = rngService.randomPassword(16);
         // create admin user
+        var adminPassword = rngService.randomPassword(16);
         User adminUser = userService.create(UserCreateRequest.builder()
             .tenantId(tenant.getId())
             .email(request.getAdminEmail())
