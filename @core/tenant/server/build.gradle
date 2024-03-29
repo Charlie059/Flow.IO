@@ -40,6 +40,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // mybatis plus
     testImplementation "com.baomidou:mybatis-plus-spring-boot3-starter-test:${mybatisPlusVersion}"
+    testImplementation 'io.grpc:grpc-testing'
 }
 
 buildscript {
