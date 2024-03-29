@@ -35,6 +35,16 @@ public interface UserService extends IService<User> {
     User create(UserCreateRequest request);
 
     /**
+     * Create a new {@link User} as admin for the given {@link Tenant}
+     *
+     * @param tenant   The {@link Tenant} to create user for
+     * @param email    The email of the user
+     * @param password The password of the user
+     * @return created {@link User}
+     */
+    User createAdmin(Tenant tenant, String email, String password);
+
+    /**
      * Login with email and password
      *
      * @param request The {@link UserLoginRequest}

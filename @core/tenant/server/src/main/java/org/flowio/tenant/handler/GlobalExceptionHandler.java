@@ -14,8 +14,8 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler({BaseException.class})
-    public ResponseEntity<Response> handleBaseException(HttpServletRequest request, Exception ex) {
-        return ((BaseException) ex).toResponseEntity();
+    public ResponseEntity<Response> handleBaseException(HttpServletRequest request, BaseException ex) {
+        return ex.toResponseEntity();
     }
 
     @ExceptionHandler({RuntimeException.class})

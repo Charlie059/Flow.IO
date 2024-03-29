@@ -75,6 +75,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    public User createAdmin(Tenant tenant, String email, String password) {
+        return create(UserCreateRequest.builder()
+            .tenantId(tenant.getId())
+            .email(email)
+            .name(tenant.getName() + " admin")
+            .password(password)
+            .role("ADMIN")
+            .build());
+    }
+
+    @Override
     public User login(UserLoginRequest request) {
         // check if tenant exists
         Tenant tenant = tenantService.getById(request.getTenantId());
