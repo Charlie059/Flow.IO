@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.flowio.tenant.entity.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @TableName(value = "users", autoResultMap = true)
 public class User implements UserDetails {

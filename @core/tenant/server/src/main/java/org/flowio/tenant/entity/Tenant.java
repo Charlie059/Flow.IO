@@ -8,11 +8,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @Data
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @TableName("tenants")
 public class Tenant {
