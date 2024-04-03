@@ -11,7 +11,7 @@ import java.util.zip.CRC32;
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
     private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private static final int TOKEN_LENGTH = 16;
+    private static final int TOKEN_LENGTH = 24;
 
     private final SecureRandom secureRandom;
 
