@@ -3,6 +3,7 @@ package org.flowio.tenant.entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.flowio.tenant.error.ResponseError;
 
 @Data
 @Builder
@@ -18,6 +19,10 @@ public class Response<T> {
 
     public static Response success() {
         return Response.builder().code(0).message("OK").build();
+    }
+
+    public static Response error(ResponseError error) {
+        return Response.builder().code(error.getCode()).message(error.getMessage()).build();
     }
 
     public static Response error(Integer code, String message) {

@@ -3,6 +3,7 @@ package org.flowio.tenant.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flowio.tenant.dto.request.UserCreateRequest;
 import org.flowio.tenant.dto.request.UserLoginRequest;
 import org.flowio.tenant.entity.Tenant;
@@ -13,8 +14,6 @@ import org.flowio.tenant.exception.UserExistException;
 import org.flowio.tenant.mapper.UserMapper;
 import org.flowio.tenant.service.TenantService;
 import org.flowio.tenant.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -25,8 +24,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
-    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
@@ -97,7 +96,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // so we need to retrieve the user by email and tenant first
         User user = getByEmailAndTenant(request.getEmail(), tenant);
         if (user == null) {
-            logger.info("user not found with given email and tenant: {} and {}", request.getEmail(), tenant.getName());
+            log.info("user not found with given email and tenant: {} and {}", request.getEmail(), tenant.getName());
             throw new InvalidCredentialsException();
         }
 
@@ -110,7 +109,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 )
             );
         } catch (AuthenticationException ex) {
-            logger.error("Invalid credentials", ex);
+            log.error("Invalid credentials", ex);
             // use our own exception
             throw new InvalidCredentialsException();
         }

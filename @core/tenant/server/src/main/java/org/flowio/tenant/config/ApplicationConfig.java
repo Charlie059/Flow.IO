@@ -2,10 +2,9 @@ package org.flowio.tenant.config;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flowio.tenant.entity.User;
 import org.flowio.tenant.mapper.UserMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,9 +20,8 @@ import java.security.SecureRandom;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class ApplicationConfig {
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
-
     private final UserMapper userMapper;
 
     @Bean
@@ -42,7 +40,7 @@ public class ApplicationConfig {
                     .eq(User::getTenantId, tenantId)
                 );
             } catch (Exception ex) {
-                logger.error("unexpected exception while retrieving UserDetails", ex);
+                log.error("unexpected exception while retrieving UserDetails", ex);
                 return null;
             }
         };

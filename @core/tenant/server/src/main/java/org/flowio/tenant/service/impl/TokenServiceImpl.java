@@ -2,8 +2,6 @@ package org.flowio.tenant.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.flowio.tenant.service.TokenService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -14,7 +12,6 @@ import java.util.zip.CRC32;
 public class TokenServiceImpl implements TokenService {
     private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int TOKEN_LENGTH = 16;
-    private static final Logger logger = LoggerFactory.getLogger(TokenServiceImpl.class);
 
     private final SecureRandom secureRandom;
 

@@ -9,6 +9,12 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ResponseError {
+    // standard http responses
+    BAD_REQUEST(400, "Bad request"),
+    UNAUTHORIZED(401, "Unauthorized"),
+    ROUTE_NOT_FOUND(404, "Route not found"),
+    INTERNAL_SERVER_ERROR(500, "Internal server error"),
+    // custom errors
     TENANT_NOT_FOUND(1000, "Tenant not found"),
     TENANT_ALREADY_EXISTS(1001, "Tenant already exists"),
     USER_NOT_FOUND(2000, "User not found"),

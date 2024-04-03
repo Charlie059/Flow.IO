@@ -1,31 +1,35 @@
 package org.flowio.tenant.handler;
 
-import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.flowio.tenant.entity.Response;
+import org.flowio.tenant.error.ResponseError;
 import org.flowio.tenant.exception.BaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler({BaseException.class})
-    public ResponseEntity<Response> handleBaseException(HttpServletRequest request, BaseException ex) {
+    public ResponseEntity<Response> handleBaseException(BaseException ex) {
         return ex.toResponseEntity();
     }
 
     @ExceptionHandler({RuntimeException.class})
-    public ResponseEntity<Response> handleInternalError(HttpServletRequest request, Exception ex) {
-        return new ResponseEntity<>(Response.error(500, "Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Response> handleInternalError(RuntimeException ex) {
+        log.error("Internal server error", ex);
+        return new ResponseEntity<>(Response.error(ResponseError.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class})
-    protected ResponseEntity<Response> handleBadRequest(HttpServletRequest request, Exception ex) {
-        return new ResponseEntity<>(Response.error(400, "Bad request"), HttpStatus.BAD_REQUEST);
+    protected ResponseEntity<Response> handleBadRequest(HttpMessageNotReadableException ex) {
+        return new ResponseEntity<>(Response.error(ResponseError.BAD_REQUEST), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
@@ -34,8 +38,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({NoResourceFoundException.class})
-    protected ResponseEntity<Object> handleNotFound(HttpServletRequest request, Exception ex) {
-        return new ResponseEntity<>(Response.error(404, "Route not found"), HttpStatus.NOT_FOUND);
+    protected ResponseEntity<Object> handleNotFound(NoResourceFoundException ex) {
+        return new ResponseEntity<>(Response.error(ResponseError.ROUTE_NOT_FOUND), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+    protected ResponseEntity<Object> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex) {
+        // we do not want to expose 405 error, so we return 404
+        return new ResponseEntity<>(Response.error(ResponseError.ROUTE_NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 }
 
