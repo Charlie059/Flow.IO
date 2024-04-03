@@ -7,12 +7,15 @@ import org.flowio.tenant.dto.request.TenantUpdateRequest;
 import org.flowio.tenant.dto.response.TenantCreateResponse;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.entity.Tenant;
+import org.flowio.tenant.entity.User;
+import org.flowio.tenant.exception.UnauthenticatedException;
 import org.flowio.tenant.service.RngService;
 import org.flowio.tenant.service.TenantService;
 import org.flowio.tenant.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,9 +75,18 @@ class TenantController {
     }
 
     @PatchMapping("/{tenantId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('tenant:update')")
     ResponseEntity<Response<Tenant>> updateTenant(@PathVariable("tenantId") Long tenantId, @Valid @RequestBody TenantUpdateRequest request) {
         Tenant tenant = tenantService.getByIdOrThrow(tenantId);
+
+        // check whether the current principal has access to the tenant
+        var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!user.getTenantId().equals(tenantId)) {
+            throw new UnauthenticatedException();
+        }
+
+        // update the tenant
+        tenant = tenantService.update(tenant, request);
 
         return ResponseEntity.ok(Response.success(tenant));
     }

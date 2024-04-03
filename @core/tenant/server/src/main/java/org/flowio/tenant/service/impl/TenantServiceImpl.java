@@ -1,9 +1,11 @@
 package org.flowio.tenant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.flowio.tenant.dto.request.TenantCreateRequest;
+import org.flowio.tenant.dto.request.TenantUpdateRequest;
 import org.flowio.tenant.entity.BusinessType;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.exception.BusinessTypeNotFoundException;
@@ -13,6 +15,9 @@ import org.flowio.tenant.mapper.TenantMapper;
 import org.flowio.tenant.service.BusinessTypeService;
 import org.flowio.tenant.service.TenantService;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +70,25 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
             .businessTypeId(businessType.getId())
             .build();
         save(tenant);
+
+        return tenant;
+    }
+
+    @Override
+    public Tenant update(Tenant tenant, TenantUpdateRequest request) throws BusinessTypeNotFoundException {
+        // check if business type exists
+        BusinessType businessType = businessTypeService.getById(request.getBusinessTypeId());
+        if (businessType == null) {
+            throw new BusinessTypeNotFoundException();
+        }
+
+        // update tenant
+        tenant.setName(request.getName());
+        tenant.setBusinessTypeId(businessType.getId());
+        tenant.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        update(tenant, new LambdaUpdateWrapper<Tenant>()
+            .eq(Tenant::getId, tenant.getId())
+        );
 
         return tenant;
     }

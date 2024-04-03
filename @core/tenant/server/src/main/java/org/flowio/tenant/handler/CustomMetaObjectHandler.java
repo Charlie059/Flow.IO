@@ -14,13 +14,13 @@ public class CustomMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         log.info("start insert fill ....");
-        this.strictInsertFill(metaObject, "createdAt", Timestamp.class, Timestamp.valueOf(LocalDateTime.now()));
-        this.strictInsertFill(metaObject, "updatedAt", Timestamp.class, Timestamp.valueOf(LocalDateTime.now()));
+        this.strictInsertFill(metaObject, "createdAt", () -> Timestamp.valueOf(LocalDateTime.now()), Timestamp.class);
+        this.strictInsertFill(metaObject, "updatedAt", () -> Timestamp.valueOf(LocalDateTime.now()), Timestamp.class);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         log.info("start update fill ....");
-        this.strictUpdateFill(metaObject, "updatedAt", Timestamp.class, Timestamp.valueOf(LocalDateTime.now()));
+        this.strictUpdateFill(metaObject, "updatedAt", () -> Timestamp.valueOf(LocalDateTime.now()), Timestamp.class);
     }
 }

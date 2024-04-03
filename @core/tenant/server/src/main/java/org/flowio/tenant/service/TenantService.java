@@ -2,6 +2,7 @@ package org.flowio.tenant.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.flowio.tenant.dto.request.TenantCreateRequest;
+import org.flowio.tenant.dto.request.TenantUpdateRequest;
 import org.flowio.tenant.entity.BusinessType;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.exception.BusinessTypeNotFoundException;
@@ -44,4 +45,13 @@ public interface TenantService extends IService<Tenant> {
      * @throws BusinessTypeNotFoundException if {@link BusinessType} not found
      */
     Tenant create(TenantCreateRequest request) throws TenantExistException, BusinessTypeNotFoundException;
+
+    /**
+     * Update {@link Tenant}.
+     *
+     * @param request {@link TenantUpdateRequest}
+     * @return updated {@link Tenant}
+     * @throws BusinessTypeNotFoundException if {@link BusinessType} not found
+     */
+    Tenant update(Tenant tenant, TenantUpdateRequest request) throws BusinessTypeNotFoundException;
 }

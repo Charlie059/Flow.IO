@@ -64,13 +64,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         // create user and store
-        Role role = Role.valueOf(request.getRole());
         User user = User.builder()
             .email(request.getEmail())
             .name(request.getName())
             .password(passwordEncoder.encode(request.getPassword()))
             .tenantId(request.getTenantId())
-            .roles(List.of(role))
+            .role(Role.valueOf(request.getRole()))
             .build();
         save(user);
         return user;
