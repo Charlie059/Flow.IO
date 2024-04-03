@@ -8,6 +8,7 @@ import org.flowio.tenant.dto.request.UserCreateRequest;
 import org.flowio.tenant.dto.request.UserLoginRequest;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.entity.User;
+import org.flowio.tenant.entity.enums.Role;
 import org.flowio.tenant.exception.InvalidCredentialsException;
 import org.flowio.tenant.exception.TenantNotFoundException;
 import org.flowio.tenant.exception.UserExistException;
@@ -63,11 +64,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         // create user and store
+        Role role = Role.valueOf(request.getRole());
         User user = User.builder()
             .email(request.getEmail())
             .name(request.getName())
             .password(passwordEncoder.encode(request.getPassword()))
             .tenantId(request.getTenantId())
+            .roles(List.of(role))
             .build();
         save(user);
         return user;

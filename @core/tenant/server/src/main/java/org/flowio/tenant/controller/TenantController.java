@@ -3,6 +3,7 @@ package org.flowio.tenant.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.flowio.tenant.dto.request.TenantCreateRequest;
+import org.flowio.tenant.dto.request.TenantUpdateRequest;
 import org.flowio.tenant.dto.response.TenantCreateResponse;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.entity.Tenant;
@@ -11,7 +12,9 @@ import org.flowio.tenant.service.TenantService;
 import org.flowio.tenant.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,6 +66,14 @@ class TenantController {
      */
     @GetMapping("/{tenantId}")
     ResponseEntity<Response<Tenant>> getTenant(@PathVariable("tenantId") Long tenantId) {
+        Tenant tenant = tenantService.getByIdOrThrow(tenantId);
+
+        return ResponseEntity.ok(Response.success(tenant));
+    }
+
+    @PatchMapping("/{tenantId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<Response<Tenant>> updateTenant(@PathVariable("tenantId") Long tenantId, @Valid @RequestBody TenantUpdateRequest request) {
         Tenant tenant = tenantService.getByIdOrThrow(tenantId);
 
         return ResponseEntity.ok(Response.success(tenant));
