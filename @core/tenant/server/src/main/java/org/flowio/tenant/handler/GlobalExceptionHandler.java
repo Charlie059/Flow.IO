@@ -7,6 +7,7 @@ import org.flowio.tenant.exception.BaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,15 +38,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(Response.error(400, ex.getBindingResult().getFieldError().getDefaultMessage()), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({NoResourceFoundException.class})
-    protected ResponseEntity<Object> handleNotFound(NoResourceFoundException ex) {
+    @ExceptionHandler({NoResourceFoundException.class, HttpRequestMethodNotSupportedException.class})
+    protected ResponseEntity<Object> handleNotFound(Exception ex) {
         return new ResponseEntity<>(Response.error(ResponseError.ROUTE_NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
-    protected ResponseEntity<Object> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex) {
-        // we do not want to expose 405 error, so we return 404
-        return new ResponseEntity<>(Response.error(ResponseError.ROUTE_NOT_FOUND), HttpStatus.NOT_FOUND);
+    @ExceptionHandler({AccessDeniedException.class})
+    protected ResponseEntity<Object> handleUnauthorized(AccessDeniedException ex) {
+        return new ResponseEntity<>(Response.error(ResponseError.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
     }
 }
 
