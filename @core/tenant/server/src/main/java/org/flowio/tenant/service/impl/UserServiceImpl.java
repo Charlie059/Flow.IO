@@ -50,6 +50,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    public List<User> getByTenant(Tenant tenant) {
+        return list(
+            new LambdaQueryWrapper<User>()
+                .eq(User::getTenantId, tenant.getId())
+        );
+    }
+
+    @Override
     public User create(UserCreateRequest request) {
         // check if tenant exists
         Tenant tenant = tenantService.getById(request.getTenantId());

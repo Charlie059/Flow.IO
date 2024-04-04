@@ -2,6 +2,7 @@ package org.flowio.tenant.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.flowio.tenant.dto.UserDto;
 import org.flowio.tenant.dto.request.TenantCreateRequest;
 import org.flowio.tenant.dto.request.TenantUpdateRequest;
 import org.flowio.tenant.dto.response.TenantCreateResponse;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tenants")
@@ -74,6 +77,13 @@ class TenantController {
         return ResponseEntity.ok(Response.success(tenant));
     }
 
+    /**
+     * Update a tenant.
+     *
+     * @param tenantId tenant id
+     * @param request  {@link TenantUpdateRequest}
+     * @return {@link Response} of the updated tenant.
+     */
     @PatchMapping("/{tenantId}")
     @PreAuthorize("hasAnyAuthority('tenant:update')")
     ResponseEntity<Response<Tenant>> updateTenant(@PathVariable("tenantId") Long tenantId, @Valid @RequestBody TenantUpdateRequest request) {
@@ -89,5 +99,23 @@ class TenantController {
         tenant = tenantService.update(tenant, request);
 
         return ResponseEntity.ok(Response.success(tenant));
+    }
+
+    /**
+     * List all the users of a tenant.
+     *
+     * @param tenantId tenant id
+     * @return {@link Response} of the updated tenant.
+     */
+    @GetMapping("/{tenantId}/users")
+    @PreAuthorize("hasAnyAuthority('tenant:list_users')")
+    ResponseEntity<Response<List<UserDto>>> listUsers(@PathVariable("tenantId") Long tenantId) {
+        Tenant tenant = tenantService.getByIdOrThrow(tenantId);
+
+        var users = userService.getByTenant(tenant).stream()
+            .map(User::toDto)
+            .toList();
+
+        return ResponseEntity.ok(Response.success(users));
     }
 }

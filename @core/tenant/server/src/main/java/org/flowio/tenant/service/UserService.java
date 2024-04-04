@@ -27,6 +27,14 @@ public interface UserService extends IService<User> {
     User getByEmailAndTenant(String email, Tenant tenant);
 
     /**
+     * Get the list of {@link User}s by tenant
+     *
+     * @param tenant The tenant
+     * @return The list of {@link User}s from the tenant
+     */
+    List<User> getByTenant(Tenant tenant);
+
+    /**
      * Create a new {@link User}
      *
      * @param request The {@link UserCreateRequest}

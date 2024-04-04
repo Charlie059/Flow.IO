@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.flowio.tenant.dto.UserDto;
 import org.flowio.tenant.entity.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,6 +37,14 @@ public class User implements UserDetails {
     private Timestamp createdAt;
     @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
     private Timestamp updatedAt;
+
+    public UserDto toDto() {
+        return UserDto.builder()
+            .id(id)
+            .email(email)
+            .name(name)
+            .build();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
