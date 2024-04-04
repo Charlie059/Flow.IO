@@ -10,6 +10,7 @@ import org.flowio.tenant.entity.AccessToken;
 import org.flowio.tenant.entity.RefreshToken;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.entity.User;
+import org.flowio.tenant.entity.enums.Role;
 import org.flowio.tenant.service.AccessTokenService;
 import org.flowio.tenant.service.RefreshTokenService;
 import org.flowio.tenant.service.UserService;
@@ -36,7 +37,7 @@ class UserController {
      */
     @PostMapping("")
     ResponseEntity<Response<UserCreateResponse>> createUser(@Valid @RequestBody UserCreateRequest request) {
-        User user = userService.create(request);
+        User user = userService.create(request, Role.USER);
 
         return new ResponseEntity<>(
             Response.success(UserCreateResponse.builder().id(user.getId()).build()),

@@ -58,7 +58,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public User create(UserCreateRequest request) {
+    public User create(UserCreateRequest request, Role role) {
         // check if tenant exists
         Tenant tenant = tenantService.getById(request.getTenantId());
         if (tenant == null) {
@@ -77,7 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             .name(request.getName())
             .password(passwordEncoder.encode(request.getPassword()))
             .tenantId(request.getTenantId())
-            .role(Role.valueOf(request.getRole()))
+            .roles(List.of(role))
             .build();
         save(user);
         return user;
@@ -85,13 +85,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public User createAdmin(Tenant tenant, String email, String password) {
-        return create(UserCreateRequest.builder()
-            .tenantId(tenant.getId())
-            .email(email)
-            .name(tenant.getName() + " admin")
-            .password(password)
-            .role("ADMIN")
-            .build());
+        return create(
+            UserCreateRequest.builder()
+                .tenantId(tenant.getId())
+                .email(email)
+                .name(tenant.getName() + " admin")
+                .password(password)
+                .build(),
+            Role.ADMIN
+        );
     }
 
     @Override

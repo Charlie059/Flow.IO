@@ -5,6 +5,7 @@ import org.flowio.tenant.dto.request.UserCreateRequest;
 import org.flowio.tenant.dto.request.UserLoginRequest;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.entity.User;
+import org.flowio.tenant.entity.enums.Role;
 
 import java.util.List;
 
@@ -38,9 +39,10 @@ public interface UserService extends IService<User> {
      * Create a new {@link User}
      *
      * @param request The {@link UserCreateRequest}
+     * @param role    The role of the user
      * @return The created {@link User}
      */
-    User create(UserCreateRequest request);
+    User create(UserCreateRequest request, Role role);
 
     /**
      * Create a new {@link User} as admin for the given {@link Tenant}

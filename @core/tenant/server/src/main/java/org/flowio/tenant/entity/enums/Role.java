@@ -16,7 +16,8 @@ public enum Role {
     ADMIN(Set.of(
         Permission.TENANT_UPDATE,
         Permission.TENANT_DELETE,
-        Permission.TENANT_LIST_USERS
+        Permission.TENANT_LIST_USERS,
+        Permission.TENANT_MANAGE_USERS
     ));
 
     private final Set<Permission> permissions;

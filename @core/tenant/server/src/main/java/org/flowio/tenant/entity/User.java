@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -31,8 +34,8 @@ public class User implements UserDetails {
     private String password;
     @TableField(value = "tenant_id")
     private Long tenantId;
-    @EnumValue
-    private Role role;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<Role> roles;
     @TableField(value = "created_at", fill = FieldFill.INSERT)
     private Timestamp createdAt;
     @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
@@ -48,7 +51,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.getAuthorities();
+        return roles.stream()
+            .flatMap(role -> role.getAuthorities().stream())
+            .collect(Collectors.toSet());
     }
 
     @Override

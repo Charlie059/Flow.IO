@@ -24,7 +24,4 @@ public class UserCreateRequest {
     @NotNull(message = "Tenant id is required")
     @Min(value = 1, message = "Tenant id is required")
     private Long tenantId;
-
-    @Builder.Default
-    private String role = "USER";
 }
