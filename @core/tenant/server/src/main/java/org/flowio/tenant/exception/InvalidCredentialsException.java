@@ -1,9 +1,9 @@
 package org.flowio.tenant.exception;
 
-import org.springframework.http.HttpStatus;
+import org.flowio.tenant.error.ResponseError;
 
 public class InvalidCredentialsException extends BaseException {
     public InvalidCredentialsException() {
-        super(HttpStatus.UNAUTHORIZED, 401, "Invalid credentials.");
+        super(ResponseError.INVALID_CREDENTIALS);
     }
 }

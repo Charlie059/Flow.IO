@@ -1,60 +1,41 @@
 package org.flowio.tenant.exception;
 
 import io.grpc.Status;
-import io.grpc.Status.Code;
+import io.grpc.StatusException;
 import lombok.Getter;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.error.ResponseError;
-import org.springframework.http.HttpStatus;
+import org.flowio.tenant.utils.GrpcUtils;
 import org.springframework.http.ResponseEntity;
 
-import java.io.Serializable;
+import java.util.Map;
 
 @Getter
 public abstract class BaseException extends RuntimeException {
-    private final int code;
-    private final HttpStatus status;
-    private final Code grpcCode;
-    private final Serializable data;
+    private final ResponseError error;
+    private final Map<String, String> data;
 
-    protected BaseException(HttpStatus status, int code, String message) {
-        this(status, code, message, null);
+    protected BaseException(ResponseError error) {
+        this(error, null);
     }
 
-    protected BaseException(HttpStatus status, int code, String message, Serializable data) {
-        super(message);
-        this.status = status;
-        this.code = code;
-        this.grpcCode = getGrpcCodeFromHttpStatus(status);
+    protected BaseException(ResponseError error, Map<String, String> data) {
+        super(error.getMessage());
+        this.error = error;
         this.data = data;
     }
 
-    protected BaseException(HttpStatus status, ResponseError responseError) {
-        this(status, responseError, null);
-    }
-
-    protected BaseException(HttpStatus status, ResponseError responseError, Serializable data) {
-        this(status, responseError.getCode(), responseError.getMessage(), data);
-    }
-
-    private static Code getGrpcCodeFromHttpStatus(HttpStatus status) {
-        try {
-            return Code.valueOf(status.name());
-        } catch (IllegalArgumentException e) {
-            return Code.UNKNOWN;
-        }
-    }
-
     public Response toResponse() {
-        return Response.error(code, getMessage(), data);
+        return Response.error(error.getCode(), getMessage(), data);
     }
 
     public ResponseEntity<Response> toResponseEntity() {
-        return new ResponseEntity<>(toResponse(), status);
+        return new ResponseEntity<>(toResponse(), error.getHttpStatus());
     }
 
-    public Status toRpcStatus() {
-        return Status.fromCode(grpcCode)
-            .withDescription(getMessage());
+    public StatusException toRpcStatusException() {
+        return Status.fromCode(error.getGrpcCode())
+            .withDescription(getMessage())
+            .asException(GrpcUtils.mapToMetadata(data));
     }
 }

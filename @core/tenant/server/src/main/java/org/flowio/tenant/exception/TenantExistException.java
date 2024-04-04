@@ -1,19 +1,15 @@
 package org.flowio.tenant.exception;
 
 import org.flowio.tenant.error.ResponseError;
-import org.springframework.http.HttpStatus;
 
-import java.io.Serializable;
+import java.util.Map;
 
 public class TenantExistException extends BaseException {
     public TenantExistException() {
-        super(HttpStatus.FORBIDDEN, ResponseError.TENANT_ALREADY_EXISTS);
+        super(ResponseError.TENANT_ALREADY_EXISTS);
     }
 
     public TenantExistException(Long tenantId) {
-        super(HttpStatus.FORBIDDEN, ResponseError.TENANT_ALREADY_EXISTS, new ResponseData(tenantId));
-    }
-
-    private record ResponseData(Long tenantId) implements Serializable {
+        super(ResponseError.TENANT_ALREADY_EXISTS, Map.of("tenantId", String.valueOf(tenantId)));
     }
 }

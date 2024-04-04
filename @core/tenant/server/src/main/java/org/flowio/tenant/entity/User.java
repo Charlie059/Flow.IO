@@ -1,6 +1,5 @@
 package org.flowio.tenant.entity;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName(value = "users")
+@TableName(value = "users", autoResultMap = true)
 public class User implements UserDetails {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
