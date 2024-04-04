@@ -1,7 +1,7 @@
 package org.flowio.tenant.exception;
 
-import com.google.rpc.Code;
-import com.google.rpc.Status;
+import io.grpc.Status;
+import io.grpc.Status.Code;
 import lombok.Getter;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.error.ResponseError;
@@ -14,7 +14,7 @@ import java.io.Serializable;
 public abstract class BaseException extends RuntimeException {
     private final int code;
     private final HttpStatus status;
-    private final int grpcCode;
+    private final Code grpcCode;
     private final Serializable data;
 
     protected BaseException(HttpStatus status, int code, String message) {
@@ -25,7 +25,7 @@ public abstract class BaseException extends RuntimeException {
         super(message);
         this.status = status;
         this.code = code;
-        this.grpcCode = getGrpcCodeFromHttpStatus(status).getNumber();
+        this.grpcCode = getGrpcCodeFromHttpStatus(status);
         this.data = data;
     }
 
@@ -54,9 +54,7 @@ public abstract class BaseException extends RuntimeException {
     }
 
     public Status toRpcStatus() {
-        return Status.newBuilder()
-            .setCode(grpcCode)
-            .setMessage(getMessage())
-            .build();
+        return Status.fromCode(grpcCode)
+            .withDescription(getMessage());
     }
 }

@@ -54,7 +54,7 @@ public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBa
 
     @Override
     public void get(TenantGetRequest request, StreamObserver<TenantGetResponse> responseObserver) {
-        Tenant tenant = tenantService.getById(request.getId());
+        Tenant tenant = tenantService.getByIdOrThrow(request.getId());
 
         TenantGetResponse response = TenantGetResponse.newBuilder()
             .setId(tenant.getId())

@@ -1,4 +1,4 @@
-package org.flowio.tenant.config;
+package org.flowio.tenant.grpc.config;
 
 import net.devh.boot.grpc.server.interceptor.GrpcGlobalServerInterceptor;
 import org.flowio.tenant.grpc.LogGrpcInterceptor;
