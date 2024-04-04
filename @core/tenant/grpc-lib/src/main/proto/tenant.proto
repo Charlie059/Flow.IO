@@ -42,8 +42,9 @@ message TenantGetResponse {
 
 // update
 message TenantUpdateRequest {
-  string name = 1;
-  int32 businessTypeId = 2;
+  int64 id = 1;
+  string name = 2;
+  int32 businessTypeId = 3;
 }
 
 message TenantUpdateResponse {
@@ -51,13 +52,13 @@ message TenantUpdateResponse {
 }
 
 // list users
-message UserResp {
-  int64 id = 1;
-  string email = 2;
-}
 message TenantListUsersRequest {
   int64 id = 1;
 }
 message TenantListUsersResponse {
   repeated UserResp users = 1;
+}
+message UserResp {
+  int64 id = 1;
+  string email = 2;
 }
