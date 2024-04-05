@@ -28,18 +28,18 @@ message UserCreateResponse {
 message UserLoginRequest {
   string email = 1;
   string password = 2;
-  int64 tenatnId = 3;
+  int64 tenantId = 3;
 }
 
 message UserLoginResponse {
   int64 id = 1;
   int64 tenantId = 2;
-  TokenResp accessToken = 3;
-  TokenResp refreshToken = 4;
+  TokenProto accessToken = 3;
+  TokenProto refreshToken = 4;
 }
 
-message TokenResp {
+message TokenProto {
   string token = 1;
   string type = 2;
-  google.protobuf.Timestamp expireAt = 3;
+  google.protobuf.Timestamp expiresAt = 3;
 }

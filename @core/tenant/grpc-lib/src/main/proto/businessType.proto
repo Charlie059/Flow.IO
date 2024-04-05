@@ -11,11 +11,11 @@ service BusinessTypeService {
   rpc list (google.protobuf.Empty) returns (BusinessTypeListResponse) ;
 }
 
-message BusinessTypeResp {
+message BusinessTypeProto {
   string id = 1;
   string name = 2;
 }
 
 message BusinessTypeListResponse {
-  repeated BusinessTypeResp businessTypes = 1;
+  repeated BusinessTypeProto businessTypes = 1;
 }

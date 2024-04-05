@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.flowio.tenant.dto.TokenDto;
+import org.flowio.tenant.proto.TokenProto;
+import org.flowio.tenant.utils.GrpcUtils;
 
 import java.sql.Timestamp;
 
@@ -32,6 +34,14 @@ public class RefreshToken {
         return TokenDto.builder()
             .token(token)
             .expiresAt(expiresAt.toLocalDateTime().toString())
+            .build();
+    }
+
+    public TokenProto toProto() {
+        return TokenProto.newBuilder()
+            .setToken(token)
+            .setType("")
+            .setExpiresAt(GrpcUtils.toProtoTimestamp(expiresAt))
             .build();
     }
 }
