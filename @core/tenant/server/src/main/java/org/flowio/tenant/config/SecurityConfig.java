@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(proxyTargetClass = true)
 public class SecurityConfig {
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final LogoutHandler logoutHandler;

@@ -4,17 +4,23 @@ import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.flowio.tenant.entity.Tenant;
+import org.flowio.tenant.entity.User;
 import org.flowio.tenant.exception.TenantExistException;
+import org.flowio.tenant.exception.UnauthenticatedException;
 import org.flowio.tenant.proto.AdminUserResp;
 import org.flowio.tenant.proto.TenantCreateRequest;
 import org.flowio.tenant.proto.TenantCreateResponse;
 import org.flowio.tenant.proto.TenantGetRequest;
 import org.flowio.tenant.proto.TenantGetResponse;
 import org.flowio.tenant.proto.TenantServiceGrpc;
+import org.flowio.tenant.proto.TenantUpdateRequest;
+import org.flowio.tenant.proto.TenantUpdateResponse;
 import org.flowio.tenant.service.BusinessTypeService;
 import org.flowio.tenant.service.RngService;
 import org.flowio.tenant.service.TenantService;
 import org.flowio.tenant.service.UserService;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @GrpcService
 @AllArgsConstructor
@@ -29,7 +35,7 @@ public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBa
         businessTypeService.getByIdOrThrow(request.getBusinessTypeId());
         Tenant existingTenant = tenantService.getByName(request.getName());
         if (existingTenant != null) {
-            throw new TenantExistException();
+            throw new TenantExistException(existingTenant.getId());
         }
 
         org.flowio.tenant.dto.request.TenantCreateRequest internalRequest = new org.flowio.tenant.dto.request.TenantCreateRequest(
@@ -60,6 +66,27 @@ public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBa
             .setId(tenant.getId())
             .setName(tenant.getName())
             .setBusinessTypeId(tenant.getBusinessTypeId())
+            .build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    @Secured("ROLE_ADMIN")
+    public void update(TenantUpdateRequest request, StreamObserver<TenantUpdateResponse> responseObserver) {
+        Tenant tenant = tenantService.getByIdOrThrow(request.getId());
+
+        // make sure the user has access to the tenant
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !((User) auth.getPrincipal()).getTenantId().equals(tenant.getId())) {
+            throw new UnauthenticatedException();
+        }
+
+        // TODO: implement tenant update
+
+        TenantUpdateResponse response = TenantUpdateResponse.newBuilder()
+            .setId(tenant.getId())
             .build();
 
         responseObserver.onNext(response);
