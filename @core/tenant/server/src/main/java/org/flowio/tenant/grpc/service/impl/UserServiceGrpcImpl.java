@@ -3,10 +3,8 @@ package org.flowio.tenant.grpc.service.impl;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.flowio.tenant.dto.response.UserAssignRoleResponse;
 import org.flowio.tenant.entity.AccessToken;
 import org.flowio.tenant.entity.RefreshToken;
-import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.entity.User;
 import org.flowio.tenant.entity.enums.Role;
 import org.flowio.tenant.exception.InvalidArgumentException;
@@ -22,7 +20,6 @@ import org.flowio.tenant.service.AccessTokenService;
 import org.flowio.tenant.service.RefreshTokenService;
 import org.flowio.tenant.service.UserService;
 import org.flowio.tenant.utils.SecurityUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;

@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.flowio.tenant.dto.request.TokenValidateRequest;
 import org.flowio.tenant.dto.response.TokenValidateResponse;
-import org.flowio.tenant.entity.AccessToken;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.exception.InvalidTokenException;
 import org.flowio.tenant.service.AccessTokenService;
