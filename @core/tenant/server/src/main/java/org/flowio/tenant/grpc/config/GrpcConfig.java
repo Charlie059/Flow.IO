@@ -12,8 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
 @RequiredArgsConstructor
@@ -21,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public class GrpcConfig {
     private final AccessTokenService accessTokenService;
     private final UserService userService;
-    private final UserDetailsService userDetailsService;
 
     @Bean
     public GrpcAuthenticationReader grpcAuthenticationReader() {
@@ -31,12 +28,11 @@ public class GrpcConfig {
                 && SecurityContextHolder.getContext().getAuthentication() == null
             ) {
                 final User user = userService.getById(accessToken.getUserId());
-                UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
 
                 var authToken = new UsernamePasswordAuthenticationToken(
-                    userDetails,
+                    user,
                     user.getPassword(),
-                    userDetails.getAuthorities()
+                    user.getAuthorities()
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
