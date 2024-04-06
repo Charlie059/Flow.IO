@@ -2,25 +2,17 @@ syntax = "proto3";
 
 package org.flowio.tenant.proto;
 
+import "google/protobuf/empty.proto";
+
 option java_multiple_files = true;
 option java_outer_classname = "RoleServiceProto";
 
 service RoleService {
-  rpc list (ListRolesRequest) returns (ListRolesResponse) ;
-  rpc assign (AssignRoleRequest) returns (AssignRoleResponse) ;
+  rpc list (google.protobuf.Empty) returns (ListRolesResponse) ;
 }
 
 // list
-message ListRolesRequest {
-}
 message ListRolesResponse {
   repeated string roles = 1;
 }
 
-// assign
-message AssignRoleRequest {
-  int64 userId = 1;
-  repeated string roles = 2;
-}
-message AssignRoleResponse {
-}

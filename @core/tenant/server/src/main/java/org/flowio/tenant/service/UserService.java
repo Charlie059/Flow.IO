@@ -6,10 +6,20 @@ import org.flowio.tenant.dto.request.UserLoginRequest;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.entity.User;
 import org.flowio.tenant.entity.enums.Role;
+import org.flowio.tenant.exception.UserNotFoundException;
 
 import java.util.List;
 
 public interface UserService extends IService<User> {
+    /**
+     * Get {@link User} by id, or throw exception if not found
+     *
+     * @param id The id of {@link User}.
+     * @return The {@link User} with the given id
+     * @throws UserNotFoundException if {@link User} not found
+     */
+    User getByIdOrThrow(Long id) throws UserNotFoundException;
+
     /**
      * Get the list of {@link User} by email. The email may be used in multiple tenants.
      *
@@ -61,4 +71,13 @@ public interface UserService extends IService<User> {
      * @return The {@link User} if login success, otherwise null
      */
     User login(UserLoginRequest request);
+
+    /**
+     * Assign {@link Role}s to the user
+     *
+     * @param user  The {@link User} to assign roles
+     * @param roles The list of {@link Role} to assign
+     * @return The updated {@link User}
+     */
+    User assignRoles(User user, List<Role> roles);
 }

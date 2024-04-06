@@ -21,7 +21,7 @@ class RoleController {
      */
     @GetMapping("")
     ResponseEntity<Response<List<Role>>> list() {
-        var roles = List.of(Role.values());
+        final var roles = List.of(Role.values());
         return ResponseEntity.ok(Response.success(roles));
     }
 }

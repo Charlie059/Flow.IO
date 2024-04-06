@@ -13,10 +13,10 @@ import org.flowio.tenant.exception.UnauthenticatedException;
 import org.flowio.tenant.service.RngService;
 import org.flowio.tenant.service.TenantService;
 import org.flowio.tenant.service.UserService;
+import org.flowio.tenant.utils.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +43,7 @@ class TenantController {
      */
     @PostMapping("")
     ResponseEntity<Response<TenantCreateResponse>> createTenant(@Valid @RequestBody TenantCreateRequest request) {
-        Tenant tenant = tenantService.create(request);
+        final Tenant tenant = tenantService.create(request);
 
         // create admin user
         var adminPassword = rngService.randomPassword(16);
@@ -72,7 +72,7 @@ class TenantController {
      */
     @GetMapping("/{tenantId}")
     ResponseEntity<Response<Tenant>> getTenant(@PathVariable("tenantId") Long tenantId) {
-        Tenant tenant = tenantService.getByIdOrThrow(tenantId);
+        final Tenant tenant = tenantService.getByIdOrThrow(tenantId);
 
         return ResponseEntity.ok(Response.success(tenant));
     }
@@ -90,8 +90,8 @@ class TenantController {
         Tenant tenant = tenantService.getByIdOrThrow(tenantId);
 
         // check whether the current principal has access to the tenant
-        var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!user.getTenantId().equals(tenantId)) {
+        final var user = SecurityUtils.getCurrentUser();
+        if (user == null || !user.getTenantId().equals(tenantId)) {
             throw new UnauthenticatedException();
         }
 

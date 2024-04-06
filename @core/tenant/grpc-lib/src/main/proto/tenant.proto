@@ -2,14 +2,28 @@ syntax = "proto3";
 
 package org.flowio.tenant.proto;
 
+import "user.proto";
+
 option java_multiple_files = true;
 option java_outer_classname = "TenantServiceProto";
 
 service TenantService {
   rpc create (TenantCreateRequest) returns (TenantCreateResponse) ;
-  rpc get (TenantGetRequest) returns (TenantGetResponse) ;
-  rpc update (TenantUpdateRequest) returns (TenantUpdateResponse) ;
+  rpc get (TenantGetRequest) returns (TenantProto) ;
+  rpc update (TenantUpdateRequest) returns (TenantProto) ;
   rpc listUsers (TenantListUsersRequest) returns (TenantListUsersResponse) ;
+}
+
+// objects
+message TenantProto {
+  int64 id = 1;
+  string name = 2;
+  int32 businessTypeId = 3;
+}
+message AdminUserProto {
+  int64 id = 1;
+  string email = 2;
+  string password = 3;
 }
 
 // create
@@ -18,26 +32,14 @@ message TenantCreateRequest {
   string adminEmail = 2;
   int32 businessTypeId = 3;
 }
-
 message TenantCreateResponse {
   int64 id = 1;
-  AdminUserResp adminUser = 2;
-}
-
-message AdminUserResp {
-  int64 id = 1;
-  string email = 2;
-  string password = 3;
+  AdminUserProto adminUser = 2;
 }
 
 // get
 message TenantGetRequest {
   int64 id = 1;
-}
-message TenantGetResponse {
-  int64 id = 1;
-  string name = 2;
-  int32 businessTypeId = 3;
 }
 
 // update
@@ -47,18 +49,10 @@ message TenantUpdateRequest {
   int32 businessTypeId = 3;
 }
 
-message TenantUpdateResponse {
-  int64 id = 1;
-}
-
 // list users
 message TenantListUsersRequest {
   int64 id = 1;
 }
 message TenantListUsersResponse {
   repeated UserProto users = 1;
-}
-message UserProto {
-  int64 id = 1;
-  string email = 2;
 }

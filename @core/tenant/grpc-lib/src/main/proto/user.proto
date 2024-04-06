@@ -10,6 +10,18 @@ option java_outer_classname = "UserServiceProto";
 service UserService {
   rpc create (UserCreateRequest) returns (UserCreateResponse) ;
   rpc login (UserLoginRequest) returns (UserLoginResponse) ;
+  rpc assignRole (AssignRoleRequest) returns (AssignRoleResponse) ;
+}
+
+// objects
+message UserProto {
+  int64 id = 1;
+  string email = 2;
+}
+message TokenProto {
+  string token = 1;
+  string type = 2;
+  google.protobuf.Timestamp expiresAt = 3;
 }
 
 // create
@@ -38,8 +50,14 @@ message UserLoginResponse {
   TokenProto refreshToken = 4;
 }
 
-message TokenProto {
-  string token = 1;
-  string type = 2;
-  google.protobuf.Timestamp expiresAt = 3;
+// assign roles
+
+// assign
+message AssignRoleRequest {
+  int64 userId = 1;
+  repeated string roles = 2;
+}
+message AssignRoleResponse {
+  int64 userId = 1;
+  repeated string roles = 2;
 }

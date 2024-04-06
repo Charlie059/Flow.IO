@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.flowio.tenant.dto.request.TokenValidateRequest;
 import org.flowio.tenant.dto.response.TokenValidateResponse;
+import org.flowio.tenant.entity.AccessToken;
 import org.flowio.tenant.entity.Response;
 import org.flowio.tenant.exception.InvalidTokenException;
 import org.flowio.tenant.service.AccessTokenService;
@@ -27,12 +28,8 @@ class AuthController {
      */
     @PostMapping("/validate")
     ResponseEntity<Response<TokenValidateResponse>> validateAccessToken(@Valid @RequestBody TokenValidateRequest request) {
-        var token = accessTokenService.getByToken(request.getToken());
-        if (token == null) {
-            throw new InvalidTokenException();
-        }
-
-        if (!accessTokenService.isTokenValid(token)) {
+        final var token = accessTokenService.getByToken(request.getToken());
+        if (token == null || !accessTokenService.isTokenValid(token)) {
             throw new InvalidTokenException();
         }
 

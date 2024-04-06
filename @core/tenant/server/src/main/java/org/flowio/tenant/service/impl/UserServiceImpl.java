@@ -1,6 +1,7 @@
 package org.flowio.tenant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,9 +10,11 @@ import org.flowio.tenant.dto.request.UserLoginRequest;
 import org.flowio.tenant.entity.Tenant;
 import org.flowio.tenant.entity.User;
 import org.flowio.tenant.entity.enums.Role;
+import org.flowio.tenant.exception.InvalidArgumentException;
 import org.flowio.tenant.exception.InvalidCredentialsException;
 import org.flowio.tenant.exception.TenantNotFoundException;
 import org.flowio.tenant.exception.UserExistException;
+import org.flowio.tenant.exception.UserNotFoundException;
 import org.flowio.tenant.mapper.UserMapper;
 import org.flowio.tenant.service.TenantService;
 import org.flowio.tenant.service.UserService;
@@ -21,6 +24,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -31,6 +36,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final TenantService tenantService;
+
+    @Override
+    public User getByIdOrThrow(Long id) throws UserNotFoundException {
+        User user = super.getById(id);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        return user;
+    }
 
     @Override
     public List<User> getByEmail(String email) {
@@ -126,5 +140,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new InvalidCredentialsException();
         }
         return getByEmailAndTenant(request.getEmail(), tenant);
+    }
+
+    @Override
+    public User assignRoles(User user, List<Role> roles) {
+        if (roles == null) {
+            throw new InvalidArgumentException();
+        }
+
+        // update user
+        user.setRoles(roles);
+        user.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        update(user, new LambdaUpdateWrapper<User>()
+            .eq(User::getId, user.getId())
+        );
+
+        return user;
     }
 }

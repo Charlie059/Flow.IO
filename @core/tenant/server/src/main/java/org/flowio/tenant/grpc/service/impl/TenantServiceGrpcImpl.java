@@ -1,27 +1,28 @@
 package org.flowio.tenant.grpc.service.impl;
 
 import io.grpc.stub.StreamObserver;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.flowio.tenant.entity.Tenant;
-import org.flowio.tenant.entity.User;
 import org.flowio.tenant.exception.UnauthenticatedException;
-import org.flowio.tenant.proto.AdminUserResp;
+import org.flowio.tenant.proto.AdminUserProto;
 import org.flowio.tenant.proto.TenantCreateRequest;
 import org.flowio.tenant.proto.TenantCreateResponse;
 import org.flowio.tenant.proto.TenantGetRequest;
-import org.flowio.tenant.proto.TenantGetResponse;
+import org.flowio.tenant.proto.TenantListUsersRequest;
+import org.flowio.tenant.proto.TenantListUsersResponse;
+import org.flowio.tenant.proto.TenantProto;
 import org.flowio.tenant.proto.TenantServiceGrpc;
 import org.flowio.tenant.proto.TenantUpdateRequest;
-import org.flowio.tenant.proto.TenantUpdateResponse;
+import org.flowio.tenant.proto.UserProto;
 import org.flowio.tenant.service.RngService;
 import org.flowio.tenant.service.TenantService;
 import org.flowio.tenant.service.UserService;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.flowio.tenant.utils.SecurityUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @GrpcService
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBase {
     private final TenantService tenantService;
     private final RngService rngService;
@@ -39,21 +40,22 @@ public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBa
 
         TenantCreateResponse response = TenantCreateResponse.newBuilder()
             .setId(tenant.getId())
-            .setAdminUser(AdminUserResp.newBuilder()
+            .setAdminUser(AdminUserProto.newBuilder()
                 .setId(adminUser.getId())
                 .setEmail(adminUser.getEmail())
                 .setPassword(adminPassword)
                 .build())
             .build();
+
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
-    public void get(TenantGetRequest request, StreamObserver<TenantGetResponse> responseObserver) {
+    public void get(TenantGetRequest request, StreamObserver<TenantProto> responseObserver) {
         Tenant tenant = tenantService.getByIdOrThrow(request.getId());
 
-        TenantGetResponse response = TenantGetResponse.newBuilder()
+        TenantProto response = TenantProto.newBuilder()
             .setId(tenant.getId())
             .setName(tenant.getName())
             .setBusinessTypeId(tenant.getBusinessTypeId())
@@ -64,20 +66,46 @@ public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBa
     }
 
     @Override
-    @Secured("ROLE_ADMIN")
-    public void update(TenantUpdateRequest request, StreamObserver<TenantUpdateResponse> responseObserver) {
+    @PreAuthorize("hasAnyAuthority('tenant:update')")
+    public void update(TenantUpdateRequest request, StreamObserver<TenantProto> responseObserver) {
         Tenant tenant = tenantService.getByIdOrThrow(request.getId());
 
         // make sure the user has access to the tenant
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !((User) auth.getPrincipal()).getTenantId().equals(tenant.getId())) {
+        var user = SecurityUtils.getCurrentUser();
+        if (user == null || user.getTenantId().equals(tenant.getId())) {
             throw new UnauthenticatedException();
         }
 
-        // TODO: implement tenant update, until authentication issues are resolved
+        var internalRequest = new org.flowio.tenant.dto.request.TenantUpdateRequest(
+            request.getName(), request.getBusinessTypeId()
+        );
 
-        TenantUpdateResponse response = TenantUpdateResponse.newBuilder()
+        tenantService.update(tenant, internalRequest);
+
+        TenantProto response = TenantProto.newBuilder()
             .setId(tenant.getId())
+            .setName(tenant.getName())
+            .setBusinessTypeId(tenant.getBusinessTypeId())
+            .build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void listUsers(TenantListUsersRequest request, StreamObserver<TenantListUsersResponse> responseObserver) {
+        Tenant tenant = tenantService.getByIdOrThrow(request.getId());
+
+        var users = userService.getByTenant(tenant).stream()
+            .map(user -> UserProto.newBuilder()
+                .setId(user.getId())
+                .setEmail(user.getEmail())
+                .build()
+            )
+            .toList();
+
+        TenantListUsersResponse response = TenantListUsersResponse.newBuilder()
+            .addAllUsers(users)
             .build();
 
         responseObserver.onNext(response);

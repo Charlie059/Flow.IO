@@ -24,7 +24,7 @@ class BusinessTypeController {
      */
     @GetMapping("")
     ResponseEntity<Response<List<BusinessTypeDto>>> list() {
-        var businessTypes = businessTypeService.list().stream()
+        final var businessTypes = businessTypeService.list().stream()
             .map(businessType -> BusinessTypeDto.builder()
                 .id(businessType.getId())
                 .name(businessType.getName())
