@@ -50,7 +50,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             var authToken = new UsernamePasswordAuthenticationToken(
                 userDetails,
-                null,
+                user.getPassword(),
                 userDetails.getAuthorities()
             );
             authToken.setDetails(
