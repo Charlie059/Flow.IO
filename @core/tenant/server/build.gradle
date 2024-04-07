@@ -38,6 +38,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // mybatis plus
     testImplementation "com.baomidou:mybatis-plus-spring-boot3-starter-test:${mybatisPlusVersion}"
+    // grpc
     testImplementation 'io.grpc:grpc-testing'
 }
 

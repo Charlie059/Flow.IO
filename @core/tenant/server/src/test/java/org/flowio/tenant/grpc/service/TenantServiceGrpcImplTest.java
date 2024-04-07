@@ -10,11 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
+@DirtiesContext
 class TenantServiceGrpcImplTest {
     private final Logger logger = LoggerFactory.getLogger(TenantServiceGrpcImplTest.class);
 
