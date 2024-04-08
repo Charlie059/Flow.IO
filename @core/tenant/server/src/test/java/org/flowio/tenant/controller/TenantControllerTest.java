@@ -38,8 +38,8 @@ class TenantControllerTest {
     @Test
     void testCreate() throws Exception {
         TenantCreateRequest request = TenantCreateRequest.builder()
-            .name("test")
-            .adminEmail("example@test.com")
+            .name("testCreate")
+            .adminEmail("test1@example.com")
             .businessTypeId(1)
             .build();
 
@@ -59,7 +59,7 @@ class TenantControllerTest {
         // mock a tenant
         TenantCreateRequest request = TenantCreateRequest.builder()
             .name("testGet")
-            .adminEmail("example@test.com")
+            .adminEmail("test2@example.com")
             .businessTypeId(1)
             .build();
         Tenant tenant = tenantService.create(request);
@@ -80,7 +80,7 @@ class TenantControllerTest {
         // mock a tenant
         TenantCreateRequest createRequest = TenantCreateRequest.builder()
             .name("testUpdate")
-            .adminEmail("example@test.com")
+            .adminEmail("test3@example.com")
             .businessTypeId(1)
             .build();
         Tenant tenant = tenantService.create(createRequest);
