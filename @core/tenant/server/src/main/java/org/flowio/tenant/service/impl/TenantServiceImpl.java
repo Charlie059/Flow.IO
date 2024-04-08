@@ -78,6 +78,13 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
     public Tenant update(Tenant tenant, TenantUpdateRequest request) throws BusinessTypeNotFoundException {
 
         // argument checks
+        if (request.getName() != null) {
+            // check if tenant name exists
+            Tenant existingTenant = getByName(request.getName());
+            if (existingTenant != null && !existingTenant.getId().equals(tenant.getId())) {
+                throw new TenantExistException(existingTenant.getId());
+            }
+        }
         if (request.getBusinessTypeId() != null) {
             // check if business type exists
             BusinessType businessType = businessTypeService.getById(request.getBusinessTypeId());
