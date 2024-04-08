@@ -15,8 +15,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.MOCK,
@@ -43,15 +48,14 @@ class TenantControllerTest {
             .businessTypeId(1)
             .build();
 
-        mvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/tenants")
-                    .content(mapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/api/v1/tenants")
+                .content(mapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON)
             )
-            .andExpect(MockMvcResultMatchers.status().isCreated())
-            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(0))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data").isMap());
+            .andExpect(status().isCreated())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.code").value(0))
+            .andExpect(jsonPath("$.data").isMap());
     }
 
     @Test
@@ -64,15 +68,12 @@ class TenantControllerTest {
             .build();
         Tenant tenant = tenantService.create(request);
 
-        mvc.perform(
-                MockMvcRequestBuilders.get("/api/v1/tenants/{tenantId}", tenant.getId())
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(0))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data").isMap())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(tenant.getId()));
+        mvc.perform(get("/api/v1/tenants/{tenantId}", tenant.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.code").value(0))
+            .andExpect(jsonPath("$.data").isMap())
+            .andExpect(jsonPath("$.data.id").value(tenant.getId()));
     }
 
     @Test
@@ -96,34 +97,32 @@ class TenantControllerTest {
             .name("testUpdate2")
             .businessTypeId(4)
             .build();
-        mvc.perform(
-                MockMvcRequestBuilders.patch("/api/v1/tenants/{tenantId}", tenant.getId())
-                    .header("Authorization", "Bearer " + token.getToken())
-                    .content(mapper.writeValueAsString(request1))
-                    .contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(patch("/api/v1/tenants/{tenantId}", tenant.getId())
+                .header("Authorization", "Bearer " + token.getToken())
+                .content(mapper.writeValueAsString(request1))
+                .contentType(MediaType.APPLICATION_JSON)
             )
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(0))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data").isMap())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value("testUpdate2"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data.businessTypeId").value(4));
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.code").value(0))
+            .andExpect(jsonPath("$.data").isMap())
+            .andExpect(jsonPath("$.data.name").value("testUpdate2"))
+            .andExpect(jsonPath("$.data.businessTypeId").value(4));
 
         // TEST #2: partial request
         TenantUpdateRequest request2 = TenantUpdateRequest.builder()
             .name("testUpdate3")
             .build();
-        mvc.perform(
-                MockMvcRequestBuilders.patch("/api/v1/tenants/{tenantId}", tenant.getId())
-                    .header("Authorization", "Bearer " + token.getToken())
-                    .content(mapper.writeValueAsString(request2))
-                    .contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(patch("/api/v1/tenants/{tenantId}", tenant.getId())
+                .header("Authorization", "Bearer " + token.getToken())
+                .content(mapper.writeValueAsString(request2))
+                .contentType(MediaType.APPLICATION_JSON)
             )
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(0))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data").isMap())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value("testUpdate3"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data.businessTypeId").value(4));
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.code").value(0))
+            .andExpect(jsonPath("$.data").isMap())
+            .andExpect(jsonPath("$.data.name").value("testUpdate3"))
+            .andExpect(jsonPath("$.data.businessTypeId").value(4));
     }
 }
