@@ -76,15 +76,23 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
 
     @Override
     public Tenant update(Tenant tenant, TenantUpdateRequest request) throws BusinessTypeNotFoundException {
-        // check if business type exists
-        BusinessType businessType = businessTypeService.getById(request.getBusinessTypeId());
-        if (businessType == null) {
-            throw new BusinessTypeNotFoundException();
+
+        // argument checks
+        if (request.getBusinessTypeId() != null) {
+            // check if business type exists
+            BusinessType businessType = businessTypeService.getById(request.getBusinessTypeId());
+            if (businessType == null) {
+                throw new BusinessTypeNotFoundException();
+            }
         }
 
         // update tenant
-        tenant.setName(request.getName());
-        tenant.setBusinessTypeId(businessType.getId());
+        if (request.getName() != null) {
+            tenant.setName(request.getName());
+        }
+        if (request.getBusinessTypeId() != null) {
+            tenant.setBusinessTypeId(request.getBusinessTypeId());
+        }
         tenant.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
         update(tenant, new LambdaUpdateWrapper<Tenant>()
             .eq(Tenant::getId, tenant.getId())

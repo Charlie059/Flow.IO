@@ -72,7 +72,7 @@ public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBa
 
         // make sure the user has access to the tenant
         var user = SecurityUtils.getCurrentUser();
-        if (user == null || user.getTenantId().equals(tenant.getId())) {
+        if (user == null || !user.getTenantId().equals(tenant.getId())) {
             throw new UnauthenticatedException();
         }
 
@@ -93,6 +93,7 @@ public class TenantServiceGrpcImpl extends TenantServiceGrpc.TenantServiceImplBa
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('tenant:list_users')")
     public void listUsers(TenantListUsersRequest request, StreamObserver<TenantListUsersResponse> responseObserver) {
         Tenant tenant = tenantService.getByIdOrThrow(request.getId());
 
