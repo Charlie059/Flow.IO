@@ -14,8 +14,6 @@ dependencies {
     implementation "me.paulschwarz:spring-dotenv:4.0.0"
     // flyway
     implementation 'org.flywaydb:flyway-core'
-    // jwt
-    implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
 
     // spring boot devtools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -27,9 +25,6 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     // h2
     runtimeOnly 'com.h2database:h2'
-    // jjwt
-    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
-    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
 
     // lombok
     annotationProcessor 'org.projectlombok:lombok'
