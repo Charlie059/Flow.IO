@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import org.flowio.tenant.entity.Tenant;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -12,7 +11,6 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @MybatisPlusTest
-@DirtiesContext
 class TenantMapperTest {
     @Autowired
     private TenantMapper tenantMapper;
