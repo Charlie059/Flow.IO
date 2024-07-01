@@ -5,7 +5,7 @@ import { IOAuth2Config } from "~/external-auth-integration/auth-providers/oauth2
  * Service for configuring Slack V2 OAuth2.
  */
 @Injectable()
-export class AwsckV2OAuth2Config {
+export class AwsV2OAuth2Config {
   public oAuth2Config: IOAuth2Config;
 
   constructor() {

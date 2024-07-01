@@ -22,7 +22,7 @@ import {
 @Injectable()
 export class AwsV2OAuth2Service implements IOAuth {
   constructor(
-    @Inject("AwsV1OAuth2Config") private readonly config: IOAuth2Config,
+    @Inject("AwsV2OAuth2Config") private readonly config: IOAuth2Config,
     private readonly encryptionDecryptionService: EncryptionDecryptionService,
     private readonly httpService: HttpService,
   ) {}
