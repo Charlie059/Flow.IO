@@ -5,6 +5,7 @@ import { GithubV1OAuth2Service } from "./auth-providers/oauth2/github/v1/github.
 import { AirtableV1OAuth2Service } from "./auth-providers/oauth2/airtable/v1/airtable.v1.service";
 import { SlackV2OAuth2Service } from "./auth-providers/oauth2/slack/v2/slack.v2.service";
 import { StripeOauth2Service } from "./auth-providers/oauth2/stripe/v1/stripe.service";
+import { AwsV2OAuth2Service } from "./auth-providers/oauth2/aws/v2/aws.v2.service";
 
 @Injectable()
 export class AuthProviderFactory {
@@ -16,12 +17,14 @@ export class AuthProviderFactory {
     private airtableV1OAuth2Service: AirtableV1OAuth2Service,
     private slackV2OAuth2Service: SlackV2OAuth2Service,
     private stripeOAuth2Service: StripeOauth2Service,
+    private awsV2OAuth2Service: AwsV2OAuth2Service,
   ) {
     this.registerProvider("oauth-google-v2", this.googleV2OAuth2Service);
     this.registerProvider("oauth-github-v1", this.githubV1OAuth2Service);
     this.registerProvider("oauth-airtable-v1", this.airtableV1OAuth2Service);
     this.registerProvider("oauth-slack-v2", this.slackV2OAuth2Service);
     this.registerProvider("oauth-stripe-v2", this.stripeOAuth2Service);
+    this.registerProvider("oauth-aws-v2", this.awsV2OAuth2Service);
   }
 
   private registerProvider(key: string, provider: IOAuth) {

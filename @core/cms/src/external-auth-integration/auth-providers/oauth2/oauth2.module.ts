@@ -12,6 +12,8 @@ import { SlackV2OAuth2Service } from "./slack/v2/slack.v2.service";
 import { SlackV2OAuth2Config } from "./slack/v2/slack.v2.config";
 import { StripeOauth2Service } from "./stripe/v1/stripe.service";
 import { StripeV2OAuth2Config } from "./stripe/v1/stripe.config";
+import { AwsV2OAuth2Service } from "./aws/v2/aws.v2.service";
+import { AwsckV2OAuth2Config } from "./aws/v2/aws.v2.config";
 
 @Module({
   imports: [EncryptionDecryptionModule, HttpModule, CacheModule.register()],
@@ -41,7 +43,19 @@ import { StripeV2OAuth2Config } from "./stripe/v1/stripe.config";
       provide: "StripeOAuth2Config",
       useFactory: () => new StripeV2OAuth2Config().oAuth2Config,
     },
+    AwsV2OAuth2Service,
+    {
+      provide: "AwsV1OAuth2Config",
+      useFactory: () => new AwsckV2OAuth2Config().oAuth2Config,
+    },
   ],
-  exports: [GoogleV2OAuth2Service, GithubV1OAuth2Service, AirtableV1OAuth2Service, SlackV2OAuth2Service, StripeOauth2Service],
+  exports: [
+    GoogleV2OAuth2Service,
+    GithubV1OAuth2Service,
+    AirtableV1OAuth2Service,
+    SlackV2OAuth2Service,
+    StripeOauth2Service,
+    AwsV2OAuth2Service,
+  ],
 })
 export class OAuth2Module {}

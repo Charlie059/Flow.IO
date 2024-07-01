@@ -169,3 +169,9 @@ ormconfig.json
 .local.env.*
 
 .idea
+
+# test.py #
+###########
+test.py
+@core/get-pip.py
+package-lock.json
