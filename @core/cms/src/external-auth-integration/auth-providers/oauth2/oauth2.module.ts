@@ -13,7 +13,9 @@ import { SlackV2OAuth2Config } from "./slack/v2/slack.v2.config";
 import { StripeOauth2Service } from "./stripe/v1/stripe.service";
 import { StripeV2OAuth2Config } from "./stripe/v1/stripe.config";
 import { AwsV2OAuth2Service } from "./aws/v2/aws.v2.service";
-import { AwsckV2OAuth2Config } from "./aws/v2/aws.v2.config";
+import { AwsV2OAuth2Config } from "./aws/v2/aws.v2.config";
+import { DiscordV2OAuth2Service } from "./discord/v2/discord.v2.service";
+import { DiscordV2OAuth2Config } from "./discord/v2/discord.v2.config";
 
 @Module({
   imports: [EncryptionDecryptionModule, HttpModule, CacheModule.register()],
@@ -45,8 +47,13 @@ import { AwsckV2OAuth2Config } from "./aws/v2/aws.v2.config";
     },
     AwsV2OAuth2Service,
     {
-      provide: "AwsV1OAuth2Config",
-      useFactory: () => new AwsckV2OAuth2Config().oAuth2Config,
+      provide: "AwsV2OAuth2Config",
+      useFactory: () => new AwsV2OAuth2Config().oAuth2Config,
+    },
+    DiscordV2OAuth2Service,
+    {
+      provide: "DiscordV2OAuth2Config",
+      useFactory: () => new DiscordV2OAuth2Config().oAuth2Config,
     },
   ],
   exports: [
@@ -56,6 +63,7 @@ import { AwsckV2OAuth2Config } from "./aws/v2/aws.v2.config";
     SlackV2OAuth2Service,
     StripeOauth2Service,
     AwsV2OAuth2Service,
+    DiscordV2OAuth2Service,
   ],
 })
 export class OAuth2Module {}
