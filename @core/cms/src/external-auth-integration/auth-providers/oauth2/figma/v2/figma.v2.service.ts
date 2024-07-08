@@ -17,19 +17,19 @@ import {
 } from "~/external-auth-integration/auth-providers/oauth2/@types";
 
 /**
- * Service to handle Discord V2 OAuth2 authentication.
+ * Service to handle Figma V2 OAuth2 authentication.
  */
 @Injectable()
-export class DiscordV2OAuth2Service implements IOAuth {
+export class FigmaV2OAuth2Service implements IOAuth {
   constructor(
-    @Inject("DiscordV2OAuth2Config") private readonly config: IOAuth2Config,
+    @Inject("FigmaV2OAuth2Config") private readonly config: IOAuth2Config,
     private readonly encryptionDecryptionService: EncryptionDecryptionService,
     private readonly httpService: HttpService,
   ) {}
 
   /**
-   * Builds and returns the authentication URL for AWS OAuth.
-   * @returns {Promise<string>} The AWS OAuth URL.
+   * Builds and returns the authentication URL for Figma OAuth.
+   * @returns {Promise<string>} The Figma OAuth URL.
    */
   async authenticate(): Promise<string> {
     const encodedState = await this.buildState();
@@ -47,6 +47,7 @@ export class DiscordV2OAuth2Service implements IOAuth {
     Logger.log(`Generated OAuth URL: ${url}`);
     return url;
   }
+
   /**
    * Handles the OAuth callback and exchanges the code for a token.
    * @param {any} query - The query parameters from the callback request.
@@ -55,7 +56,7 @@ export class DiscordV2OAuth2Service implements IOAuth {
   async handleCallback(query: any, @Res() res: any) {
     try {
       if (!query || !query.code) {
-        Logger.error("No code received", "AwsV1OAuth2Service");
+        Logger.error("No code received", "FigmaV2OAuth2Service");
         throw new HttpException("No code received", HttpStatus.BAD_REQUEST);
       }
 
@@ -104,7 +105,7 @@ export class DiscordV2OAuth2Service implements IOAuth {
     const oAuth2State: IOAuth2State = {
       userId: "aaaa", // TODO: Replace with real user ID
       providerInfo: {
-        provider: "discord",
+        provider: "figma",
         version: "v2",
       },
     };

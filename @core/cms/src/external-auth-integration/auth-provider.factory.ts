@@ -7,6 +7,7 @@ import { SlackV2OAuth2Service } from "./auth-providers/oauth2/slack/v2/slack.v2.
 import { StripeOauth2Service } from "./auth-providers/oauth2/stripe/v1/stripe.service";
 import { AwsV2OAuth2Service } from "./auth-providers/oauth2/aws/v2/aws.v2.service";
 import { DiscordV2OAuth2Service } from "./auth-providers/oauth2/discord/v2/discord.v2.service";
+import { FigmaV2OAuth2Service } from "./auth-providers/oauth2/figma/v2/figma.v2.service";
 
 @Injectable()
 export class AuthProviderFactory {
@@ -20,6 +21,7 @@ export class AuthProviderFactory {
     private stripeOAuth2Service: StripeOauth2Service,
     private awsV2OAuth2Service: AwsV2OAuth2Service,
     private discordV2OAuth2Service: DiscordV2OAuth2Service,
+    private figmaV2OAuth2Service: FigmaV2OAuth2Service,
   ) {
     this.registerProvider("oauth-google-v2", this.googleV2OAuth2Service);
     this.registerProvider("oauth-github-v1", this.githubV1OAuth2Service);
@@ -28,6 +30,7 @@ export class AuthProviderFactory {
     this.registerProvider("oauth-stripe-v2", this.stripeOAuth2Service);
     this.registerProvider("oauth-aws-v2", this.awsV2OAuth2Service);
     this.registerProvider("oauth-discord-v2", this.discordV2OAuth2Service);
+    this.registerProvider("oauth-figma-v2", this.figmaV2OAuth2Service);
   }
 
   private registerProvider(key: string, provider: IOAuth) {

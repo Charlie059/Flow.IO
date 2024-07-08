@@ -16,6 +16,8 @@ import { AwsV2OAuth2Service } from "./aws/v2/aws.v2.service";
 import { AwsV2OAuth2Config } from "./aws/v2/aws.v2.config";
 import { DiscordV2OAuth2Service } from "./discord/v2/discord.v2.service";
 import { DiscordV2OAuth2Config } from "./discord/v2/discord.v2.config";
+import { FigmaV2OAuth2Service } from "./figma/v2/figma.v2.service";
+import { FigmaV2OAuth2Config } from "./figma/v2/figma.v2.config";
 
 @Module({
   imports: [EncryptionDecryptionModule, HttpModule, CacheModule.register()],
@@ -55,6 +57,11 @@ import { DiscordV2OAuth2Config } from "./discord/v2/discord.v2.config";
       provide: "DiscordV2OAuth2Config",
       useFactory: () => new DiscordV2OAuth2Config().oAuth2Config,
     },
+    FigmaV2OAuth2Service,
+    {
+      provide: "FigmaV2OAuth2Config",
+      useFactory: () => new FigmaV2OAuth2Config().oAuth2Config,
+    },
   ],
   exports: [
     GoogleV2OAuth2Service,
@@ -64,6 +71,7 @@ import { DiscordV2OAuth2Config } from "./discord/v2/discord.v2.config";
     StripeOauth2Service,
     AwsV2OAuth2Service,
     DiscordV2OAuth2Service,
+    FigmaV2OAuth2Service,
   ],
 })
 export class OAuth2Module {}
