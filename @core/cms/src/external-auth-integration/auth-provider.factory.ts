@@ -5,6 +5,7 @@ import { GithubV1OAuth2Service } from "./auth-providers/oauth2/github/v1/github.
 import { AirtableV1OAuth2Service } from "./auth-providers/oauth2/airtable/v1/airtable.v1.service";
 import { SlackV2OAuth2Service } from "./auth-providers/oauth2/slack/v2/slack.v2.service";
 import { StripeOauth2Service } from "./auth-providers/oauth2/stripe/v1/stripe.service";
+import { NotionV1OAuth2Service } from "./auth-providers/oauth2/notion/v1/notion.v1.service";
 import { ZoomOAuth2Service } from "./auth-providers/oauth2/zoom/zoom.service";
 import { AwsV2OAuth2Service } from "./auth-providers/oauth2/aws/v2/aws.v2.service";
 import { DiscordV2OAuth2Service } from "./auth-providers/oauth2/discord/v2/discord.v2.service";
@@ -20,6 +21,7 @@ export class AuthProviderFactory {
     private airtableV1OAuth2Service: AirtableV1OAuth2Service,
     private slackV2OAuth2Service: SlackV2OAuth2Service,
     private stripeOAuth2Service: StripeOauth2Service,
+    private notionV1OAuth2Service: NotionV1OAuth2Service,
     private zoomOAuth2Service: ZoomOAuth2Service
     private awsV2OAuth2Service: AwsV2OAuth2Service,
     private discordV2OAuth2Service: DiscordV2OAuth2Service,
@@ -30,6 +32,7 @@ export class AuthProviderFactory {
     this.registerProvider("oauth-airtable-v1", this.airtableV1OAuth2Service);
     this.registerProvider("oauth-slack-v2", this.slackV2OAuth2Service);
     this.registerProvider("oauth-stripe-v2", this.stripeOAuth2Service);
+    this.registerProvider("oauth-notion-v1", this.notionV1OAuth2Service);
     this.registerProvider("oauth-zoom-v1", this.zoomOAuth2Service);
     this.registerProvider("oauth-aws-v2", this.awsV2OAuth2Service);
     this.registerProvider("oauth-discord-v2", this.discordV2OAuth2Service);
