@@ -1,0 +1,47 @@
+package org.flowio.tenant.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.flowio.tenant.dto.TokenDto;
+import org.flowio.tenant.proto.TokenProto;
+import org.flowio.tenant.utils.GrpcUtils;
+
+import java.sql.Timestamp;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName("refresh_tokens")
+public class RefreshToken {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private String token;
+    @TableField(value = "user_id")
+    private Long userId;
+    @TableField(value = "created_at")
+    private Timestamp createdAt;
+    @TableField(value = "expires_at")
+    private Timestamp expiresAt;
+
+    public TokenDto toDto() {
+        return TokenDto.builder()
+            .token(token)
+            .expiresAt(expiresAt.toLocalDateTime().toString())
+            .build();
+    }
+
+    public TokenProto toProto() {
+        return TokenProto.newBuilder()
+            .setToken(token)
+            .setType("")
+            .setExpiresAt(GrpcUtils.toProtoTimestamp(expiresAt))
+            .build();
+    }
+}

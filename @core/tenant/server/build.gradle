@@ -1,0 +1,52 @@
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.freefair.lombok'
+
+dependencies {
+    // spring boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // mybatis plus
+    implementation "com.baomidou:mybatis-plus-spring-boot3-starter:${mybatisPlusVersion}"
+    // grpc
+    implementation "net.devh:grpc-server-spring-boot-starter:${springBootGrpcVersion}"
+    implementation project(':grpc-lib')
+    // dotenv
+    implementation "me.paulschwarz:spring-dotenv:4.0.0"
+    // flyway
+    implementation 'org.flywaydb:flyway-core'
+
+    // spring boot devtools
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // postgresql
+    runtimeOnly 'org.postgresql:postgresql'
+    // h2
+    runtimeOnly 'com.h2database:h2'
+
+    // spring boot
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // mybatis plus
+    testImplementation "com.baomidou:mybatis-plus-spring-boot3-starter-test:${mybatisPlusVersion}"
+    // grpc
+    testImplementation 'io.grpc:grpc-testing'
+}
+
+buildscript {
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+test {
+    useJUnitPlatform()
+//    doLast {
+//        exec {
+//            file('.env').readLines().each() {
+//                def (key, value) = it.tokenize('=')
+//                environment key, value
+//            }
+//            commandLine 'fooScript.sh'
+//        }
+//    }
+}

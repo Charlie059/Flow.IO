@@ -1,0 +1,5 @@
+rootProject.name = 'tenant'
+
+include 'grpc-lib'
+
+include 'server'
