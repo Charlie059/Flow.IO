@@ -48,7 +48,7 @@ export class AppController {
   @MessagePattern("oauth")
   async handleOAuth(message: any) {
     // TODO: Add JWT and pass params
-    const url = this.externalAuthIntegrationService.authenticate(message);
+    const url = this.externalAuthIntegrationService.authenticate("oauth-notion-v1");
     return url;
   }
 

@@ -12,6 +12,8 @@ import { SlackV2OAuth2Service } from "./slack/v2/slack.v2.service";
 import { SlackV2OAuth2Config } from "./slack/v2/slack.v2.config";
 import { StripeOauth2Service } from "./stripe/v1/stripe.service";
 import { StripeV2OAuth2Config } from "./stripe/v1/stripe.config";
+import { NotionV1OAuth2Service } from "./notion/v1/notion.v1.service";
+import { NotionV1OAuth2Config } from "./notion/v1/notion.v1.config";
 import { AwsV2OAuth2Service } from "./aws/v2/aws.v2.service";
 import { AwsV2OAuth2Config } from "./aws/v2/aws.v2.config";
 import { DiscordV2OAuth2Service } from "./discord/v2/discord.v2.service";
@@ -47,6 +49,11 @@ import { FigmaV2OAuth2Config } from "./figma/v2/figma.v2.config";
       provide: "StripeOAuth2Config",
       useFactory: () => new StripeV2OAuth2Config().oAuth2Config,
     },
+    NotionV1OAuth2Service,
+    {
+      provide: "NotionV1OAuth2Config",
+      useFactory: () => new NotionV1OAuth2Config().oAuth2Config,
+    },
     AwsV2OAuth2Service,
     {
       provide: "AwsV2OAuth2Config",
@@ -72,6 +79,7 @@ import { FigmaV2OAuth2Config } from "./figma/v2/figma.v2.config";
     AwsV2OAuth2Service,
     DiscordV2OAuth2Service,
     FigmaV2OAuth2Service,
+    NotionV1OAuth2Service
   ],
 })
 export class OAuth2Module {}

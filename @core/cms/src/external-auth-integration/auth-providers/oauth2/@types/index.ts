@@ -27,7 +27,7 @@ export interface IProviderConfiguration {
   tokenUrl: string; // The URL for the OAuth2 token endpoint
   callbackUrl: string; // The URL for the OAuth2 callback after authentication
   verifyTokenUrl?: string; // The URL for the OAuth2 token verification endpoint
-  refreshTokenUrl: string; // The URL for the OAuth2 token refresh endpoint
+  refreshTokenUrl?: string; // The URL for the OAuth2 token refresh endpoint
   tokenRefreshBuffer?: number; // Time in seconds before expiration to refresh the token
   callbackUrlParams?: {
     // Optional additional parameters for the callback URL
