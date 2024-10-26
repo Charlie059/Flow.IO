@@ -1,3 +1,5 @@
+(WIP)
+
 Project Description:
 
 Flow.IO is a developer-focused Command Line Interface (CLI) tool that seamlessly integrates Generative Pre-trained Transformer (GPT) technology to automate the creation and management of intricate workflows. The framework is committed to simplifying task automation across multiple platforms and services, enhancing the interaction between computer systems and artificial intelligence to be more natural and efficient.
